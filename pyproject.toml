@@ -1,0 +1,836 @@
+[tool.commitizen]
+
+# Name of the committing rules to use
+# name = "cz_conventional_commits"
+name = "cz_customize"
+
+# Current version. Example: "0.1.2"
+version = "0.0.1"
+
+# Files where the version will be updated. A pattern to match a line, can also be specified, separated by :
+version_files = ["pyproject.toml:version"]
+
+# Format for the git tag, useful for old projects, that use a convention like "v1.2.1"
+# tag_format = "v$version"
+
+# Create changelog when running cz bump
+update_changelog_on_bump = false
+
+# Use gpg signed tags instead of lightweight tags
+# gpg_sign = false
+
+# Use annotated tags instead of lightweight tags
+# annotated_tag = false
+
+# Create custom commit message, useful to skip ci.
+bump_message = "bump: release $current_version -> $new_version [skip-ci]"
+
+# Disallow empty commit messages, useful in ci.
+# allow_abort = false
+
+# filename of exported changelog
+# changelog_file = 'CHANGELOG.md'
+
+# Update changelog with the missing versions. 
+# This is good if you don't want to replace previous versions in the file. 
+# Note: when doing cz bump --changelog this is automatically set to true
+# changelog_incremental = false
+
+# Start from a given git rev to generate the changelog
+# changelog_start_rev = "None"
+
+# Style for the prompts (It will merge this value with default style.)
+style = [
+    [
+        "qmark",
+        "fg:#ff9d00 bold",
+    ],
+    [
+        "question",
+        "bold",
+    ],
+    [
+        "answer",
+        "fg:#ff9d00 bold",
+    ],
+    [
+        "pointer",
+        "fg:#ff9d00 bold",
+    ],
+    [
+        "highlighted",
+        "fg:#ff9d00 bold",
+    ],
+    [
+        "selected",
+        "fg:#cc5454",
+    ],
+    [
+        "separator",
+        "fg:#cc5454",
+    ],
+    [
+        "instruction",
+        "",
+    ],
+    [
+        "text",
+        "",
+    ],
+    [
+        "disabled",
+        "fg:#858585 italic",
+    ],
+]
+
+# If enabled, commitizen will show keyboard shortcuts when selecting from a list. 
+# Define a key for each of your choices to set the key
+use_shortcuts = true
+
+[tool.commitizen.customize]
+message_template = "{{change_type}}{% if scope %}({{scope}}){% endif %}: {{title}}{% if description %}\n\n{{description}}{% endif %}"
+schema = "<type>: <body>"
+schema_pattern = "(feat|fix|refactor|chore): (\\s.*)"
+bump_pattern = "^(break|feat|fix|refactor|chore)"
+bump_map = { "break" = "MAJOR", "feat" = "MINOR", "fix" = "PATCH", "refactor" = "PATCH" }
+change_type_order = ["BREAKING CHANGE", "feat", "fix", "refactor", "chore"]
+info = """
+This is customized info
+"""
+commit_parser = "^(?P<change_type>feat|fix|refactor|chore): \\s(?P<title>.*)?"
+changelog_pattern = "^(feat|fix|refactor|chore)?(!)?"
+change_type_map = { "feat" = "feat", "fix" = "fix", "refactor" = "refactor", "chore" = "chore" }
+
+[[tool.commitizen.customize.questions]]
+type = "list"
+name = "change_type"
+choices = [
+    { value = "feat", name = "feature: Adding a new feature." },
+    { value = "fix", name = "bug fix: Fixing a bug" },
+    { value = "refactor", name = "refactor: Changing code for peformance or convenience purpose (e.g. readibility)" },
+    { value = "chore", name = "chore: Everything else (writing documentation, formatting, adding tests, cleaning useless code etc.)" },
+]
+# choices = ["feature", "fix"]  # short version
+message = "Select the type of change you are committing"
+
+[[tool.commitizen.customize.questions]]
+type = "input"
+name = "scope"
+message = "SCOPE [ENTER TO SKIP]\n    Describe the section of the codebase being updated.\n    Should be an identifiable description, eg classname, filename, modulename.\n    Statements should be lowercase with no punctuation. \n\n    EG: parser\n\n"
+
+[[tool.commitizen.customize.questions]]
+type = "input"
+name = "title"
+message = "TITLE\n    Each statement should start with a verb conjugated in an imperative way.\n    Statements should be seperated from themselves with \";\".\n    Statements should be lowercase with no period. \n\n    EG: added x thing; removed y thing; fixed z issue\n\n"
+
+[[tool.commitizen.customize.questions]]
+type = "input"
+name = "description"
+message = "DESCRIPTION\n    Provide a more detailed description of the changes made in this commit. \n    Statements should be seperated from themselves with a new line [ENTER].\n    Statements should be lowercase with no period. \n\n    EG: added x thing\n        removed y thing\n        fixed z issue\n\n"
+multiline = true
+
+[tool.mypy]
+
+# IMPORT DISCOVERY
+
+# Specifies the paths to use, after trying the paths from MYPYPATH environment variable. 
+# Useful if you’d like to keep stubs in your repo, along with the config file. 
+# Multiple paths are always separated with a : or , regardless of the platform. 
+# User home directory and environment variables will be expanded.
+# Relative paths are treated relative to the working directory of the mypy command, not the config file. 
+# Use the MYPY_CONFIG_FILE_DIR environment variable to refer to paths relative to the config file 
+# e.g. mypy_path = $MYPY_CONFIG_FILE_DIR/src
+mypy_path = "$MYPY_CONFIG_FILE_DIR/src/aroma,$MYPY_CONFIG_FILE_DIR/.typings"
+
+# A comma-separated list of paths which should be checked by mypy if none are given on the command line. 
+# Supports recursive file globbing using glob, where * (e.g. *.py) matches files in the current directory 
+# and **/ (e.g. **/*.py) matches files in any directories below the current one. 
+# User home directory and environment variables will be expanded.
+files = "$MYPY_CONFIG_FILE_DIR/src/aroma/**/*.py"
+
+# A regular expression that matches file names, 
+# directory names and paths which mypy should ignore while recursively discovering files to check. 
+# Use forward slashes (/) as directory separators on all platforms.
+# Crafting a single regular expression that excludes multiple files while 
+# remaining human-readable can be a challenge. 
+# (?x) enables the VERBOSE flag for the subsequent regular expression, 
+# which ignores most whitespace and supports comments.
+exclude = ['.+\\.pyi']
+
+# Enables PEP 420 style namespace packages. See the corresponding flag --namespace-packages for more information.
+namespace_packages = true
+
+# This flag tells mypy that top-level packages will be based in either the current directory,
+# or a member of the MYPYPATH environment variable or mypy_path config option. 
+# This option is only useful in conjunction with namespace_packages. See Mapping file paths to modules for details.
+explicit_package_bases = true
+
+# Suppresses error messages about imports that cannot be resolved.
+# If this option is used in a per-module section, the module name should match the name of the imported module, 
+# not the module containing the import statement
+# ignore_missing_imports = false
+
+# Directs what to do with imports when the imported module is found as a .py file and not part of the files, 
+# modules and packages provided on the command line.
+# The four possible values are normal, silent, skip and error. 
+# For explanations see the discussion for the --follow-imports command line flag.
+# Using this option in a per-module section (potentially with a wildcard, 
+# as described at the top of this page) is a good way to prevent mypy from checking portions of your code.
+# If this option is used in a per-module section, the module name should match the name of the imported module, 
+# not the module containing the import statement.
+# follow_imports = "normal"
+
+# Determines whether to respect the follow_imports setting even for stub (.pyi) files.
+# Used in conjunction with follow_imports=skip, 
+# this can be used to suppress the import of a module from typeshed, replacing it with Any.
+# Used in conjunction with follow_imports=error, 
+# this can be used to make any use of a particular typeshed module an error.
+# follow_imports_for_stubs = false
+
+# Specifies the path to the Python executable to inspect to collect a list of available PEP 561 packages. 
+# User home directory and environment variables will be expanded. 
+# Defaults to the executable used to run mypy.
+# python_executable = ''
+
+# Disables using type information in installed packages (see PEP 561). 
+# This will also disable searching for a usable Python executable. 
+# This acts the same as --no-site-packages command line flag.
+# no_site_packages = false
+
+# Enables reporting error messages generated within installed packages.
+# see PEP 561 for more details on distributing type information. 
+# Those error messages are suppressed by default, since you are usually not able to control errors in 3rd party code.
+# no_silence_site_packages = false
+
+
+## PLATFORM CONFIGURATION
+
+# Specifies the Python version used to parse and check the target program. 
+# The string should be in the format MAJOR.MINOR – for example 2.7. 
+# The default is the version of the Python interpreter used to run mypy.
+python_version = "3.12"
+
+# Specifies the OS platform for the target program, for example darwin or win32 (meaning OS X or Windows). 
+# The default is the current platform as revealed by Python’s sys.platform variable.
+# platform = ''
+
+# Specifies a list of variables that mypy will treat as compile-time constants that are always true.
+# always_true = ['']
+
+# Specifies a list of variables that mypy will treat as compile-time constants that are always false.
+# always_false = ['']
+
+
+## DISALLOW DYNAMIC TYPING
+
+# Disallows usage of types that come from unfollowed imports 
+# (anything imported from an unfollowed import is automatically given a type of Any).
+disallow_any_unimported = true
+
+# Disallows all expressions in the module that have type Any.
+# disallow_any_expr = true
+
+# Disallows functions that have Any in their signature after decorator transformation.
+disallow_any_decorated = true
+
+# Disallows explicit Any in type positions such as type annotations and generic type parameters.
+# disallow_any_explicit = true
+
+# Disallows usage of generic types that do not specify explicit type parameters.
+disallow_any_generics = true
+
+# Disallows subclassing a value of type Any.
+disallow_subclassing_any = true
+
+
+## UNTYPED DEFINITIONS AND CALLS
+
+# Disallows calling functions without type annotations from functions with type annotations.
+disallow_untyped_calls = true
+
+# Disallows defining functions without type annotations or with incomplete type annotations.
+disallow_untyped_defs = true
+
+# Disallows defining functions with incomplete type annotations.
+disallow_incomplete_defs = true
+
+# Type-checks the interior of functions without type annotations.
+check_untyped_defs = true
+
+# Reports an error whenever a function with type annotations is decorated with a decorator without annotations.
+disallow_untyped_decorators = true
+
+
+## NONE AND OPTIONAL HANDLING
+
+# Changes the treatment of arguments with a default value of None by not implicitly making their type Optional.
+no_implicit_optional = true
+
+# Enables or disables strict Optional checks. If False, mypy treats None as compatible with every type.
+strict_optional = true
+
+
+## CONFIGURING WARNINGS
+
+# Warns about casting an expression to its inferred type.
+warn_redundant_casts = true
+
+# Warns about unneeded # type: ignore comments.
+warn_unused_ignores = true
+
+# Shows errors for missing return statements on some execution paths.
+warn_no_return = true
+
+# Shows a warning when returning a value with type Any from a function declared with a non-Any return type.
+warn_return_any = true
+
+# Shows a warning when encountering any code inferred to be unreachable or redundant after performing type analysis.
+warn_unreachable = true
+
+
+## SUPPRESSING ERRORS
+
+# Shows errors related to strict None checking, if the global strict_optional flag is enabled.
+# show_none_errors = true
+
+# Ignores all non-fatal errors.
+# ignore_errors = false
+
+
+## MISCELLANEOUS STRICTNESS FLAGS
+
+# Causes mypy to suppress errors caused by not being able to fully infer the types of global and class variables.
+# allow_untyped_globals = false
+
+# Allows variables to be redefined with an arbitrary type, 
+# as long as the redefinition is in the same block and nesting level as the original definition.
+# allow_redefinition = false
+
+# Disallows inferring variable type for None from two assignments in different scopes. 
+# This is always implicitly enabled when using the mypy daemon.
+# local_partial_types = false
+
+# Allows disabling one or multiple error codes globally.
+# disable_error_code = ['']
+
+# Allows enabling one or multiple error codes globally.
+# enable_error_code = ['']
+
+# By default, imported values to a module are treated as exported and mypy allows other modules to import them. 
+# When false, mypy will not re-export unless the item is imported using from-as or is included in __all__
+implicit_reexport = false
+
+# Make arguments prepended via Concatenate be truly positional-only.
+# strict_concatenate = true
+extra_checks = true
+
+# Prohibit equality checks, identity checks, and container checks between non-overlapping types.
+strict_equality = true
+
+
+# Enable all optional error checking flags. 
+# You can see the list of flags enabled by strict mode in the full mypy --help output.
+# strict = true
+
+
+## CONFIGURING ERROR MESSAGES
+
+# Prefixes each error with the relevant context.
+# show_error_context = false
+
+# Shows column numbers in error messages.
+# show_column_numbers = false
+
+# Shows error codes in error messages. 
+# show_error_codes = false
+
+# Use visually nicer output in error messages: 
+# use soft word wrap, show source code snippets, and show error location markers.
+# pretty = true
+
+# Shows error messages with color enabled.
+# color_output = true
+
+# Shows a short summary line after error messages.
+# error_summary = true
+
+# Show absolute paths to files.
+# show_absolute_path = false
+
+
+## INCREMENTAL MODE
+
+# Enables incremental mode.
+incremental = false
+
+# Specifies the location where mypy stores incremental cache info. 
+# User home directory and environment variables will be expanded. 
+# This setting will be overridden by the MYPY_CACHE_DIR environment variable.
+# Note that the cache is only read when incremental mode is enabled but is always written to, 
+# unless the value is set to /dev/null (UNIX) or nul (Windows).
+# cache_dir = '.mypy-cache'
+
+# Use an SQLite database to store the cache.
+# sqlite_cache = false
+
+# Include fine-grained dependency information in the cache for the mypy daemon.
+# cache_fine_grained = false
+
+# Makes mypy use incremental cache data even if it was generated by a different version of mypy. 
+# By default, mypy will perform a version check and regenerate the cache if it was written by older versions of mypy
+# skip_version_check = false
+
+# Skip cache internal consistency checks based on mtime.
+# skip_cache_mtime_checks = false
+
+
+## ADVANCED OPTIONS
+
+# A comma-separated list of mypy plugins. 
+# plugins = ["pydantic.mypy"]
+
+# Invokes pdb on fatal error.
+# pdb = false
+
+# Shows traceback on fatal error.
+# show_traceback = false
+
+# Raise exception on fatal error.
+# raise_exceptions = false
+
+# Specifies a custom module to use as a substitute for the typing module.
+# custom_typing_module = ''
+
+# Specifies an alternative directory to look for stubs instead of the default typeshed directory. 
+# User home directory and environment variables will be expanded.
+# custom_typeshed_dir = ''
+
+# Warns about missing type annotations in typeshed. 
+# This is only relevant in combination with disallow_untyped_defs or disallow_incomplete_defs.
+warn_incomplete_stub = true
+
+## REPORT GENERATION
+
+# Causes mypy to generate a text file report documenting how many expressions of type Any are present 
+# within your codebase.
+any_exprs_report = '.mypy_reports/any_expr'
+
+# Causes mypy to generate a Cobertura XML type checking coverage report.
+# To generate this report, you must either manually install the lxml library 
+# or specify mypy installation with the setuptools extra mypy[reports].
+# cobertura_xml_report = ''
+
+# Causes mypy to generate an HTML type checking coverage report.
+# To generate this report, you must either manually install the lxml library 
+# or specify mypy installation with the setuptools extra mypy[reports].
+# html_report = ''
+# xslt_html_report = ''
+
+# Causes mypy to generate a text file report documenting the functions 
+# and lines that are typed and untyped within your codebase.
+# linecount_report = '.mypy_reports/linecount'
+
+# Causes mypy to generate a JSON file that maps each source file’s absolute
+# filename to a list of line numbers that belong to typed functions in that file.
+# linecoverage_report = '.mypy_reports/linecoverage'
+
+# Causes mypy to generate a flat text file report with per-module statistics of how many lines are typechecked etc.
+lineprecision_report = '.mypy_reports/lineprecision'
+
+# Causes mypy to generate a text file type checking coverage report.
+# To generate this report, you must either manually install the lxml
+# library or specify mypy installation with the setuptools extra mypy[reports].
+# txt_report = ''
+# xslt_txt_report = ''
+
+# Causes mypy to generate an XML type checking coverage report.
+# To generate this report, you must either manually install the 
+# lxml library or specify mypy installation with the setuptools extra mypy[reports].
+# xml_report = ''
+
+
+## MISCELLANEOUS
+
+# Causes mypy to generate a JUnit XML test result document with type checking results. 
+# This can make it easier to integrate mypy with continuous integration (CI) tools.
+# junit_xml = ''
+
+# Makes script x become module x instead of __main__. 
+# This is useful when checking multiple scripts in a single run.
+# scripts_are_modules = false
+
+# Warns about per-module sections in the config file that do not match any files processed when invoking mypy. 
+# (This requires turning off incremental mode using incremental = False.)
+warn_unused_configs = true
+
+# Controls how much debug output will be generated. Higher numbers are more verbose.
+verbosity = 0
+
+# [tool.mypy-uplink]
+# ignore_errors = true
+
+# [[tool.mypy.overrides]]
+# module = "data.consumer.*"
+# ignore_errors = true
+# follow_imports = "skip"
+# ignore_missing_imports = true
+# disallow_any_unimported = false
+
+# [tool.pydantic-mypy]
+
+# # If enabled, disallow extra arguments to the __init__ call even when Config.extra is not "forbid".
+# init_forbid_extra = true
+
+# # If enabled, include the field types as type hints in the generated signature for the __init__ method. 
+# # This means that you'll get mypy errors if you pass an argument that is not already the right type to __init__, 
+# # even if parsing could safely convert the type.
+# init_typed = true
+
+# # If enabled, raise a mypy error whenever a model is created for which calls to its __init__ 
+# # or construct methods require the use of aliases that cannot be statically determined. 
+# # This is the case, for example, if allow_population_by_field_name=False and the model uses an alias generator.
+# warn_required_dynamic_aliases = true
+
+# # If enabled, raise a mypy error whenever a field is declared on a model without explicitly specifying its type.
+# warn_untyped_fields = true
+
+
+[tool.pyright]
+
+## MAIN PYRIGHT CONFIG OPTIONS
+
+# Paths of directories or files that should be included. If no paths are specified, pyright defaults to the directory that contains the config file Paths may contain wildcard characters ** (a directory or multiple levels of directories), * (a sequence of zero or more characters), or ? (a single character). If no include paths are specified, the root path for the workspace is assumed.
+include = ['./src/aroma']
+
+# Paths of directories or files that should not be included. These override the includes directories, allowing specific subdirectories to be ignored. Note that files in the exclude paths may still be included in the analysis if they are referenced (imported) by source files that are not excluded. Paths may contain wildcard characters ** (a directory or multiple levels of directories), * (a sequence of zero or more characters), or ? (a single character). If no exclude paths are specified, Pyright automatically excludes the following: **/node_modules, **/__pycache__, .git and any virtual environment directories.
+exclude = ['./.typings']
+
+# Paths of directories or files whose diagnostic output (errors and warnings) should be suppressed even if they are an included file or within the transitive closure of an included file. Paths may contain wildcard characters ** (a directory or multiple levels of directories), * (a sequence of zero or more characters), or ? (a single character).
+# ignore = ['./distiller/data/consumers']
+
+# Paths of directories or files that should use “strict” analysis if they are included. This is the same as manually adding a “# pyright: strict” comment. In strict mode, most type-checking rules are enabled. Refer to this table for details about which rules are enabled in strict mode. Paths may contain wildcard characters ** (a directory or multiple levels of directories), * (a sequence of zero or more characters), or ? (a single character).
+# strict = ['']
+
+# Set of identifiers that should be assumed to contain a constant value wherever used within this program. For example, { "DEBUG": true } indicates that pyright should assume that the identifier DEBUG will always be equal to True. If this identifier is used within a conditional expression (such as if not DEBUG:) pyright will use the indicated value to determine whether the guarded block is reachable or not.
+# defineConstant = {}
+
+# Path to a directory that contains typeshed type stub files. Pyright ships with a bundled copy of typeshed type stubs. If you want to use a different version of typeshed stubs, you can clone the typeshed github repo to a local directory and reference the location with this path. This option is useful if you’re actively contributing updates to typeshed.
+# typeshedPath = ""
+
+# Path to a directory that contains custom type stubs. Each package's type stub file(s) are expected to be in its own subdirectory. The default value of this setting is "./typings".
+stubPath = './.typings'
+
+# Path to a directory containing one or more subdirectories, each of which contains a virtual environment. When used in conjunction with a venv setting (see below), pyright will search for imports in the virtual environment’s site-packages directory rather than the paths specified by the default Python interpreter. If you are working on a project with other developers, it is best not to specify this setting in the config file, since this path will typically differ for each developer. Instead, it can be specified on the command line or in a per-user setting.
+venvPath = "."
+
+# Used in conjunction with the venvPath, specifies the virtual environment to use.
+venv = ".venv"
+
+# Specifies whether output logs should be verbose. This is useful when diagnosing certain problems like import resolution issues.
+# verboseOutput = false
+
+# Additional search paths (in addition to the root path) that will be used when searching for modules imported by files within this execution environment. If specified, this overrides the default extraPaths setting when resolving imports for files within this execution environment. Note that each file’s execution environment mapping is independent, so if file A is in one execution environment and imports a second file B within a second execution environment, any imports from B will use the extraPaths in the second execution environment.
+# extraPaths = ['']
+
+# The version of Python used for this execution environment. If not specified, the global pythonVersion setting is used instead
+pythonVersion = "3.12"
+
+# Specifies the target platform that will be used for this execution environment. If not specified, the global pythonPlatform setting is used instead.
+# pythonPlatform = ""
+
+# Specifies the default rule set to use. Some rules can be overridden using additional configuration flags documented below. The default value for this setting is "basic". If set to "off", all type-checking rules are disabled, but Python syntax and semantic errors are still reported.
+typeCheckingMode = "strict"
+
+# Determines whether pyright reads, parses and analyzes library code to extract type information in the absence of type stub files. Type information will typically be incomplete. We recommend using type stubs where possible. The default value for this option is false.
+# useLibraryCodeForTypes = false
+
+
+## TYPE CHECK DISANOSTICS SETTINGS
+
+# When inferring the type of a list, use strict type assumptions. For example, the expression [1, 'a', 3.4] could be inferred to be of type List[Any] or List[Union[int, str, float]]. If this setting is true, it will use the latter (stricter) type. The default value for this setting is 'false'.
+strictListInference = true
+
+# When inferring the type of a dictionary’s keys and values, use strict type assumptions. For example, the expression {'a': 1, 'b': 'a'} could be inferred to be of type Dict[str, Any] or Dict[str, Union[int, str]]. If this setting is true, it will use the latter (stricter) type. The default value for this setting is 'false'.
+strictDictionaryInference = true
+
+# When inferring the type of a set, use strict type assumptions. For example, the expression {1, 'a', 3.4} could be inferred to be of type Set[Any] or Set[Union[int, str, float]]. If this setting is true, it will use the latter (stricter) type. The default value for this setting is 'false'.
+strictSetInference = true
+
+# PEP 484 indicates that when a function parameter is assigned a default value of None, its type should implicitly be Optional even if the explicit type is not. When enabled, this rule requires that parameter type annotations use Optional explicitly in this case. The default value for this setting is 'true'.
+# strictParameterNoneValue = true
+
+# PEP 484 defines support for "# type: ignore" comments. This switch enables or disables support for these comments. The default value for this setting is 'true'. This does not affect "# pyright: ignore" comments.
+# enableTypeIgnoreComments = true
+
+# Generate or suppress diagnostics for imports that have no corresponding source file. This happens when a type stub is found, but the module source file was not found, indicating that the code may fail at runtime when using this execution environment. Type checking will be done using the type stub. The default value for this setting is 'warning'.
+# reportMissingModuleSource = "warning"
+
+# Generate or suppress diagnostics for imports that have no corresponding imported python file or type stub file. The default value for this setting is 'error'.
+# reportMissingImports = "error"
+
+# Generate or suppress diagnostics for undefined variables. The default value for this setting is 'error'.
+# reportUndefinedVariable = "error"
+
+# Generate or suppress diagnostics for 'assert' statement that will provably always assert. This can be indicative of a programming error. The default value for this setting is 'warning'.
+# reportAssertAlwaysTrue = "warning"
+
+# Generate or suppress diagnostics for invalid escape sequences used within string literals. The Python specification indicates that such sequences will generate a syntax error in future versions. The default value for this setting is 'warning'.
+# reportInvalidStringEscapeSequence = "warning"
+
+# Generate or suppress diagnostics when a TypeVar is used inappropriately (e.g. if a TypeVar appears only once) within a generic function signature. The default value for this setting is 'warning'.
+# reportInvalidTypeVarUse = "warning"
+
+# Generate or suppress diagnostics for imports that have no corresponding type stub file (either a typeshed file or a custom type stub). The type checker requires type stubs to do its best job at analysis. The default value for this setting is 'none'. Note that there is a corresponding quick fix for this diagnostics that let you generate custom type stub to improve editing experiences.
+reportMissingTypeStubs = true
+
+# Generate or suppress diagnostics for a missing or misnamed “self” parameter in instance methods and “cls” parameter in class methods. Instance methods in metaclasses (classes that derive from “type”) are allowed to use “cls” for instance methods. The default value for this setting is 'warning'.
+# reportSelfClsParameterName = "warning"
+
+# Generate or suppress diagnostics for statements that define or manipulate __all__ in a way that is not allowed by a static type checker, thus rendering the contents of __all__ to be unknown or incorrect. Also reports names within the __all__ list that are not present in the module namespace. The default value for this setting is 'warning'.
+# reportUnsupportedDunderAll = "warning"
+
+# Generate or suppress diagnostics for simple expressions whose results are not used in any way. The default value for this setting is 'none'.
+reportUnusedExpression = true
+
+# Generate or suppress diagnostics for a wildcard import from an external library. The use of this language feature is highly discouraged and can result in bugs when the library is updated. The default value for this setting is 'warning'.
+# reportWildcardImportFromLibrary = "warning"
+
+# Generate or suppress diagnostics for general type inconsistencies, unsupported operations, argument/parameter mismatches, etc. This covers all of the basic type-checking rules not covered by other rules. It does not include syntax errors. The default value for this setting is 'error'.
+# reportGeneralTypeIssues = "error"
+
+# Generate or suppress diagnostics for an attempt to subscript (index) a variable with an Optional type. The default value for this setting is 'error'.
+# reportOptionalSubscript = "error"
+
+# Generate or suppress diagnostics for an attempt to access a member of a variable with an Optional type. The default value for this setting is 'error'.
+# reportOptionalMemberAccess = "error"
+
+# Generate or suppress diagnostics for an attempt to call a variable with an Optional type. The default value for this setting is 'error'.
+# reportOptionalCall = "error"
+
+# Generate or suppress diagnostics for an attempt to use an Optional type as an iterable value (e.g. within a for statement). The default value for this setting is 'error'.
+# reportOptionalIterable = "error"
+
+# Generate or suppress diagnostics for an attempt to use an Optional type as a context manager (as a parameter to a with statement). The default value for this setting is 'error'.
+# reportOptionalContextManager = "error"
+
+# Generate or suppress diagnostics for an attempt to use an Optional type as an operand to a binary or unary operator (like '+', '==', 'or', 'not'). The default value for this setting is 'error'.
+# reportOptionalOperand = "error"
+
+# Generate or suppress diagnostics for an attempt to access a non-required field within a TypedDict without first checking whether it is present. The default value for this setting is 'error'.
+# reportTypedDictNotRequiredAccess = "error"
+
+# Generate or suppress diagnostics for use of a symbol from a "py.typed" module that is not meant to be exported from that module. The default value for this setting is 'error'.
+# reportPrivateImportUsage = "error"
+
+# Generate or suppress diagnostics for unbound and possibly unbound variables. The default value for this setting is 'error'.
+# reportUnboundVariable = "error"
+
+# Generate or suppress diagnostics for call statements whose return value is not used in any way and is a Coroutine. This identifies a common error where an await keyword is mistakenly omitted. The default value for this setting is 'error'.
+# reportUnusedCoroutine = "error"
+
+# Generate or suppress diagnostics for attempts to redefine variables whose names are all-caps with underscores and numerals. The default value for this setting is 'none'.
+reportConstantRedefinition = true
+
+# Generate or suppress diagnostics for an imported symbol or module that is imported more than once. The default value for this setting is 'none'.
+reportDuplicateImport = true
+
+# Generate or suppress diagnostics for non-standard member accesses for functions. The default value for this setting is 'none'.
+reportFunctionMemberAccess = true
+
+# Generate or suppress diagnostics for cyclical import chains. These are not errors in Python, but they do slow down type analysis and often hint at architectural layering issues. Generally, they should be avoided. The default value for this setting is 'none'. Note that there are import cycles in the typeshed stdlib typestub files that are ignored by this setting.
+reportImportCycles = true
+
+# Generate or suppress diagnostics for methods that override a method of the same name in a base class in an incompatible manner (wrong number of parameters, incompatible parameter types, or incompatible return type). The default value for this setting is 'none'.
+reportIncompatibleMethodOverride = true
+
+# Generate or suppress diagnostics for class variable declarations that override a symbol of the same name in a base class with a type that is incompatible with the base class symbol type. The default value for this setting is 'none'.
+reportIncompatibleVariableOverride = true
+
+# Generate or suppress diagnostics for a module-level __getattr__ call in a type stub file, indicating that it is incomplete. The default value for this setting is 'none'.
+reportIncompleteStub = true
+
+# Generate or suppress diagnostics when an __init__ method signature is inconsistent with a __new__ signature. The default value for this setting is 'none'.
+reportInconsistentConstructor = true
+
+# Generate or suppress diagnostics for statements that are syntactically correct but have no purpose within a type stub file. The default value for this setting is 'none'.
+reportInvalidStubStatement = true
+
+# Generate or suppress diagnostics for a 'match' statement that does not provide cases that exhaustively match against all potential types of the target expression. The default value for this setting is 'none'.
+reportMatchNotExhaustive = true
+
+# Generate or suppress diagnostics for input parameters for functions or methods that are missing a type annotation. The 'self' and 'cls' parameters used within methods are exempt from this check. The default value for this setting is 'none'.
+reportMissingParameterType = true
+
+# Generate or suppress diagnostics when a generic class is used without providing explicit or implicit type arguments. The default value for this setting is 'none'.
+reportMissingTypeArgument = true
+
+# Generate or suppress diagnostics for function overloads that overlap in signature and obscure each other or have incompatible return types. The default value for this setting is 'none'.
+reportOverlappingOverload = true
+
+# Generate or suppress diagnostics for incorrect usage of private or protected variables or functions. Protected class members begin with a single underscore (“_”) and can be accessed only by subclasses. Private class members begin with a double underscore but do not end in a double underscore and can be accessed only within the declaring class. Variables and functions declared outside of a class are considered private if their names start with either a single or double underscore, and they cannot be accessed outside of the declaring module. The default value for this setting is 'none'.
+reportPrivateUsage = true
+
+# Prior to Python 3.5, the grammar did not support type annotations, so types needed to be specified using “type comments”. Python 3.5 eliminated the need for function type comments, and Python 3.6 eliminated the need for variable type comments. Future versions of Python will likely deprecate all support for type comments. If enabled, this check will flag any type comment usage unless it is required for compatibility with the specified language version. The default value for this setting is 'none'.
+reportTypeCommentUsage = true
+
+# Generate or suppress diagnostics for call arguments for functions or methods that have an unknown type. The default value for this setting is 'none'.
+reportUnknownArgumentType = true
+
+# Generate or suppress diagnostics for input or return parameters for lambdas that have an unknown type. The default value for this setting is 'none'.
+reportUnknownLambdaType = true
+
+# Generate or suppress diagnostics for class or instance variables that have an unknown type. The default value for this setting is 'none'.
+reportUnknownMemberType = true
+
+# Generate or suppress diagnostfinalics for input parameters for functions or methods that are missing a type annotation. The 'self' and 'cls' parameters used within methods are exempt from this check. The default value for this setting is 'none'.
+reportUnknownParameterType = true
+
+# Generate or suppress diagnostics for variables that have an unknown type. The default value for this setting is 'none'.
+reportUnknownVariableType = true
+
+# Generate or suppress diagnostics for 'cast' calls that are statically determined to be unnecessary. Such calls are sometimes indicative of a programming error. The default value for this setting is 'none'.
+reportUnnecessaryCast = true
+
+# Generate or suppress diagnostics for '==' or '!=' comparisons or other conditional expressions that are statically determined to always evaluate to False or True. Such comparisons are sometimes indicative of a programming error. The default value for this setting is 'none'.
+reportUnnecessaryComparison = true
+
+# Generate or suppress diagnostics for 'in' operations that are statically determined to always evaluate to False or True. Such operations are sometimes indicative of a programming error. The default value for this setting is 'none'.
+reportUnnecessaryContains = true
+
+# Generate or suppress diagnostics for 'isinstance' or 'issubclass' calls where the result is statically determined to be always true. Such calls are often indicative of a programming error. The default value for this setting is 'none'.
+reportUnnecessaryIsInstance = true
+
+# Generate or suppress diagnostics for a class with a private name (starting with an underscore) that is not accessed. The default value for this setting is 'none'.
+reportUnusedClass = true
+
+# Generate or suppress diagnostics for an imported symbol that is not referenced within that file. The default value for this setting is 'none'.
+# reportUnusedImport = "none"
+
+# Generate or suppress diagnostics for a function or method with a private name (starting with an underscore) that is not accessed. The default value for this setting is 'none'.
+reportUnusedFunction = true
+
+# Generate or suppress diagnostics for a variable that is not accessed. The default value for this setting is 'none'. Variables whose names begin with an underscore are exempt from this check.
+reportUnusedVariable = true
+
+# Generate or suppress diagnostics for base classes whose type cannot be determined statically. These obscure the class type, defeating many type analysis features. The default value for this setting is 'none'.
+reportUntypedBaseClass = true
+
+# Generate or suppress diagnostics for class decorators that have no type annotations. These obscure the class type, defeating many type analysis features. The default value for this setting is 'none'.
+reportUntypedClassDecorator = true
+
+# Generate or suppress diagnostics for function decorators that have no type annotations. These obscure the function type, defeating many type analysis features. The default value for this setting is 'none'.
+reportUntypedFunctionDecorator = true
+
+# Generate or suppress diagnostics when “namedtuple” is used rather than “NamedTuple”. The former contains no type information, whereas the latter does. The default value for this setting is 'none'.
+reportUntypedNamedTuple = true
+
+# Generate or suppress diagnostics for function calls, list expressions, set expressions, or dictionary expressions within a default value initialization expression. Such calls can mask expensive operations that are performed at module initialization time. The default value for this setting is 'none'.
+reportCallInDefaultInitializer = true
+
+# Generate or suppress diagnostics for two or more string literals that follow each other, indicating an implicit concatenation. This is considered a bad practice and often masks bugs such as missing commas. The default value for this setting is 'none'.
+reportImplicitStringConcatenation = true
+
+# Generate or suppress diagnostics for __init__, __init_subclass__, __enter__ and __exit__ methods in a subclass that fail to call through to the same-named method on a base class. The default value for this setting is 'none'.
+reportMissingSuperCall = true
+
+# Generate or suppress diagnostics for properties where the type of the value passed to the setter is not assignable to the value returned by the getter. Such mismatches violate the intended use of properties, which are meant to act like variables. The default value for this setting is 'none'.
+reportPropertyTypeMismatch = true
+
+# Generate or suppress diagnostics for instance variables within a class that are not initialized or declared within the class body or the __init__ method. The default value for this setting is 'none'.
+reportUninitializedInstanceVariable = true
+
+# Generate or suppress diagnostics for a '# type: ignore' or '# pyright: ignore' comment that would have no effect if removed. The default value for this setting is 'none'.
+# reportUnnecessaryTypeIgnoreComment = "none"
+
+# Generate or suppress diagnostics for call statements whose return value is not used in any way and is not None. The default value for this setting is 'none'.
+# reportUnusedCallResult = "none"
+
+
+[tool.pylint.MAIN]
+load-plugins = [
+    # "pylint_pydantic",
+    "pylint.extensions.broad_try_clause",
+    "pylint.extensions.code_style",
+    "pylint.extensions.comparison_placement",
+    "pylint.extensions.confusing_elif",
+    "pylint.extensions.for_any_all",
+    "pylint.extensions.consider_refactoring_into_while_condition",
+    "pylint.extensions.consider_ternary_expression",
+    "pylint.extensions.bad_builtin",
+    "pylint.extensions.mccabe",
+    "pylint.extensions.dict_init_mutate",
+    "pylint.extensions.docstyle",
+    "pylint.extensions.dunder",
+    "pylint.extensions.check_elif",
+    "pylint.extensions.empty_comment",
+    "pylint.extensions.eq_without_hash",
+    "pylint.extensions.private_import",
+    "pylint.extensions.magic_value",
+    "pylint.extensions.redefined_variable_type",
+    "pylint.extensions.no_self_use",
+    "pylint.extensions.overlapping_exceptions",
+    "pylint.extensions.docparams",
+    "pylint.extensions.redefined_loop_name",
+    "pylint.extensions.set_membership",
+    "pylint.extensions.typing",
+    "pylint.extensions.while_used",
+]
+init-hook = "import sys, os; sys.path.insert(0, os.path.join('src','aroma')); sys.path.insert(0, os.path.join('.venv','lib','site-packages'))"
+source-roots = ["src/aroma"]
+
+[tool.pylint.'MASTER']
+disable = "R0903, C0199, C0411"
+enable = "W0614,C0302,R0915,E1121"
+ignore-patterns = ".+\\.pyi"
+# extension-pkg-whitelist = "pydantic"
+
+[tool.pylint.'FORMAT']
+max-line-length = 79
+max-module-lines = 350
+ignore-long-lines = "^(.*(((#\\s*(pylint|mypy|pyright|type))|(['\"]http)).*))$"
+
+[tool.pylint.'DESIGN']
+# min-public-methods = 1
+max-statements = 20
+max-args = 5
+max-locals = 10
+max-returns = 4
+max-branches = 5
+max-parents = 4
+max-attributes = 4
+max-public-methods = 10
+max-complexity = 5
+
+[tool.pylint.'SIMILARITIES']
+min-similarity-lines = 3
+
+[tool.pylint.'REFACTORING']
+max-nested-blocks = 3
+
+[tool.pylint.'BASIC']
+no-docstring-rgx = '__.*__'
+
+[tool.pylint.broad_try_clause]
+max-try-statements = 2
+
+[tool.autopep8]
+# don't let autopep8 autofix line length issues...
+max_line_length = 500
+in_place = true
+recursive = true
+aggressive = 3
+experimental = true
+
+[tool.isort]
+include_trailing_comma = false
+use_parentheses = false
+ensure_newline_before_comments = false
+line_length = 79
+# add_imports = ["from __future__ import annotations"]
+append_only = true
+skip_gitignore = true
+force_single_line = false
+lines_between_sections = 1
+src_paths = ["src/aroma"]
+extend_skip = [".env", '.toml', ".json", ".yaml", ".gitignore"]
+known_third_party = []

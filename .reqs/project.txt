@@ -1,0 +1,5 @@
+mypy
+pylint
+autopep8
+pre_commit
+commitizen

@@ -1,0 +1,70 @@
+fail_fast: true
+
+repos:
+
+  - repo: local
+    hooks:
+    - id: mypy
+      name: mypy
+      entry: "mypy ./src/aroma"
+      language: python
+      language_version: python3.12
+      additional_dependencies: ["mypy",
+                                "mypy-extensions"]
+      types: [python]
+      args: ["--config-file=pyproject.toml"]
+      require_serial: true
+      verbose: true
+      pass_filenames: false
+
+  - repo: https://github.com/RobertCraigie/pyright-python
+    rev: v1.1.338
+    hooks:
+    - id: pyright
+
+  - repo: local
+    hooks:
+    - id: pylint
+      name: pylint
+      entry: "pylint src/aroma"
+      language: python
+      language_version: python3.12
+      additional_dependencies: []
+      types: [python]
+      args: ["--rcfile=pyproject.toml"]
+      require_serial: true
+      verbose: true
+      pass_filenames: false
+
+  - repo: local
+    hooks:
+    - id: isort
+      name: isort
+      entry: "isort"
+      language: python
+      language_version: python3.12
+      additional_dependencies: []
+      types: [python]
+      args: ["--settings-path=pyproject.toml"]
+      require_serial: true
+      verbose: true
+      pass_filenames: true
+
+  - repo: local
+    hooks:
+    - id: autopep8
+      name: autopep8
+      entry: "autopep8"
+      language: python
+      language_version: python3.12
+      additional_dependencies: []
+      types: [python]
+      args: ["--global-config=pyproject.toml"]
+      require_serial: true
+      verbose: true
+
+  - repo: https://github.com/commitizen-tools/commitizen
+    rev: v2.29.0
+    hooks:
+      - id: commitizen
+        stages: [commit-msg]

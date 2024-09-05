@@ -1,0 +1,2 @@
+-r .reqs/project.txt
+-r .reqs/app.txt
