@@ -155,7 +155,7 @@ files = "$MYPY_CONFIG_FILE_DIR/src/aroma/**/*.py"
 # remaining human-readable can be a challenge. 
 # (?x) enables the VERBOSE flag for the subsequent regular expression, 
 # which ignores most whitespace and supports comments.
-exclude = ['.+\\.pyi']
+exclude = ['.+/.pyi', '.+/pylibs/.+', '.+/exlibs/.+']
 
 # Enables PEP 420 style namespace packages. See the corresponding flag --namespace-packages for more information.
 namespace_packages = true
@@ -503,7 +503,7 @@ verbosity = 0
 include = ['./src/aroma']
 
 # Paths of directories or files that should not be included. These override the includes directories, allowing specific subdirectories to be ignored. Note that files in the exclude paths may still be included in the analysis if they are referenced (imported) by source files that are not excluded. Paths may contain wildcard characters ** (a directory or multiple levels of directories), * (a sequence of zero or more characters), or ? (a single character). If no exclude paths are specified, Pyright automatically excludes the following: **/node_modules, **/__pycache__, .git and any virtual environment directories.
-exclude = ['./.typings']
+exclude = ['./.typings', './src/pylibs', './src/exlibs']
 
 # Paths of directories or files whose diagnostic output (errors and warnings) should be suppressed even if they are an included file or within the transitive closure of an included file. Paths may contain wildcard characters ** (a directory or multiple levels of directories), * (a sequence of zero or more characters), or ? (a single character).
 # ignore = ['./distiller/data/consumers']
@@ -779,6 +779,7 @@ init-hook = "import sys, os; sys.path.insert(0, os.path.join('src','aroma')); sy
 source-roots = ["src/aroma"]
 
 [tool.pylint.'MASTER']
+ignore-paths = ['src/pylibs/.*$', 'src/exlibs/.*$']
 disable = "R0903, C0199, C0411"
 enable = "W0614,C0302,R0915,E1121"
 ignore-patterns = ".+\\.pyi"
@@ -820,6 +821,7 @@ in_place = true
 recursive = true
 aggressive = 3
 experimental = true
+exclude = '*/exlibs/*,*/pylibs/*'
 
 [tool.isort]
 include_trailing_comma = false
@@ -832,5 +834,6 @@ skip_gitignore = true
 force_single_line = false
 lines_between_sections = 1
 src_paths = ["src/aroma"]
+extend_skip_glob = ["*/exlibs/*", "*/pylibs/*"]
 extend_skip = [".env", '.toml', ".json", ".yaml", ".gitignore"]
 known_third_party = []
