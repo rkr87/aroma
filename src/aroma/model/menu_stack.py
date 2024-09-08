@@ -4,7 +4,7 @@ history.
 """
 from dataclasses import dataclass, field
 
-from navigation.current_menu import CurrentMenu
+from model.current_menu import CurrentMenu
 from navigation.menu import Menu
 
 

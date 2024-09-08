@@ -7,10 +7,10 @@ from functools import partial
 import sdl2
 
 from input.controller import Controller
-from navigation.current_menu import CurrentMenu
+from model.current_menu import CurrentMenu
+from model.menu_action import MenuAction
+from model.menu_stack import MenuStack
 from navigation.menu import Menu
-from navigation.menu_action import MenuAction
-from navigation.menu_stack import MenuStack
 
 
 class Navigator:

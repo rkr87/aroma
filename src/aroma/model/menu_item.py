@@ -3,7 +3,7 @@ Defines data structures for handling menu items.
 """
 from dataclasses import dataclass
 
-from navigation.menu_action import MenuAction
+from model.menu_action import MenuAction
 
 
 @dataclass

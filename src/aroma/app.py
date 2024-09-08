@@ -13,7 +13,7 @@ from sdl2.ext import quit as ext_quit
 
 from constants import RESOURCES
 from input.controller import Controller
-from navigation.current_menu import CurrentMenu
+from model.current_menu import CurrentMenu
 from navigation.navigator import Navigator
 from render.screen import Screen
 from render.text_generator import TextGenerator

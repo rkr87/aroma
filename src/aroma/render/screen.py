@@ -7,9 +7,9 @@ from sdl2 import (SDL_CreateTextureFromSurface, SDL_DestroyTexture, SDL_Rect,
 from sdl2.ext import Color, Renderer, Window, load_image
 
 from constants import RESOURCES, SCREEN_HEIGHT, SCREEN_WIDTH
-from navigation.current_menu import CurrentMenu
+from model.current_menu import CurrentMenu
+from model.menu_item import MenuItem
 from navigation.menu import Menu
-from navigation.menu_item import MenuItem
 from render.text_generator import Style, TextGenerator
 
 BG_COLOR = Color(16, 16, 16)
