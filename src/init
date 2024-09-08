@@ -1,0 +1,31 @@
+#!/usr/bin/env python3
+"""
+Entry point for initialising and starting the application.
+Sets up the Python path and starts the main app.
+"""
+
+
+import sys
+from pathlib import Path
+
+# Add directories to the Python path for module imports
+path_dirs: list[str] = ["aroma", "pylibs", "exlibs"]
+for d in path_dirs:
+    path: Path = Path(__file__).parent / d
+    sys.path.insert(0, str(path))
+
+
+from aroma.app import \
+    App  # pylint: disable=wrong-import-position # type: ignore # nopep8
+
+
+def init() -> None:
+    """
+    Initializes and starts the application.
+    """
+    app: App = App()
+    app.start()
+
+
+if __name__ == "__main__":
+    init()

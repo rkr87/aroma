@@ -1,6 +1,5 @@
 # my additions
 .vscode
-config.json
 *.code-workspace
 *.jpg
 todo
