@@ -9,7 +9,7 @@ from sdl2.ext import Color, Renderer, Window, load_image
 from constants import RESOURCES, SCREEN_HEIGHT, SCREEN_WIDTH
 from model.current_menu import CurrentMenu
 from model.menu_item import MenuItem
-from navigation.menu import Menu
+from navigation.base_menu import BaseMenu
 from render.text_generator import Style, TextGenerator
 
 BG_COLOR = Color(16, 16, 16)
@@ -94,7 +94,7 @@ class Screen:
             self.text_gen.get_text(breadcrumbs[-1], Style.BREADCRUMB)
         self._render_surface(breadcrumb_text, 10 + crumb_offset, 10)
 
-    def _render_menu(self, menu: Menu) -> None:
+    def _render_menu(self, menu: BaseMenu) -> None:
         """Renders the current menu's items."""
         items: list[MenuItem] = menu.update()
         for i, item in enumerate(items):

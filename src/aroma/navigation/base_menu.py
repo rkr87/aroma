@@ -31,7 +31,7 @@ class _MenuPos(Enum):
     TOP = auto()
 
 
-class Menu:
+class BaseMenu:
     """
     Manages menu items, their selection, and input navigation.
     """

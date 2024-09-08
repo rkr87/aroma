@@ -10,7 +10,7 @@ from input.controller import Controller
 from model.current_menu import CurrentMenu
 from model.menu_action import MenuAction
 from model.menu_stack import MenuStack
-from navigation.menu import Menu
+from navigation.base_menu import BaseMenu
 
 
 class Navigator:
@@ -24,16 +24,16 @@ class Navigator:
         """
         super().__init__()
         self.menu_stack: MenuStack = MenuStack()
-        self.menus: dict[str, Menu] = self._init_menus()
+        self.menus: dict[str, BaseMenu] = self._init_menus()
 
-    def _init_menus(self) -> dict[str, Menu]:
+    def _init_menus(self) -> dict[str, BaseMenu]:
         """
         Initializes and returns a dictionary of menus used in the application.
         """
-        new_collection: Menu = self._build_menu_new_collection()
-        collections: Menu = self._build_menu_collections(new_collection)
-        options: Menu = self._build_menu_options()
-        main: Menu = self._build_menu_main(collections, options)
+        new_collection: BaseMenu = self._build_menu_new_collection()
+        collections: BaseMenu = self._build_menu_collections(new_collection)
+        options: BaseMenu = self._build_menu_options()
+        main: BaseMenu = self._build_menu_main(collections, options)
         return {
             "new_collection": new_collection,
             "collections": collections,
@@ -41,22 +41,22 @@ class Navigator:
             "main": main
         }
 
-    def _build_menu_new_collection(self) -> Menu:
+    def _build_menu_new_collection(self) -> BaseMenu:
         """
         Builds and returns the "New Collection" menu.
         """
-        menu: Menu = Menu("New Collection")
+        menu: BaseMenu = BaseMenu("New Collection")
         menu.add_item([MenuAction("< Custom >", None)])
         menu.add_item([MenuAction("Add All Templates", None)])
         menu.add_item([MenuAction("TEMPLATE: Collection One", None)])
         menu.add_item([MenuAction("TEMPLATE: Collection Two", None)])
         return menu
 
-    def _build_menu_collections(self, new_collection_menu: Menu) -> Menu:
+    def _build_menu_collections(self, new_collection_menu: BaseMenu) -> BaseMenu:
         """
         Builds and returns the "Collections" menu.
         """
-        menu: Menu = Menu("Collections")
+        menu: BaseMenu = BaseMenu("Collections")
         menu.add_item([
             MenuAction(
                 "< Add New >",
@@ -67,11 +67,11 @@ class Navigator:
         menu.add_item([MenuAction("Existing Collection Two", None)])
         return menu
 
-    def _build_menu_options(self) -> Menu:
+    def _build_menu_options(self) -> BaseMenu:
         """
         Builds and returns the "Options" menu.
         """
-        menu: Menu = Menu("Options")
+        menu: BaseMenu = BaseMenu("Options")
         menu.add_item([
             MenuAction("Option One", None),
             MenuAction("Option Two", None),
@@ -82,18 +82,17 @@ class Navigator:
 
     def _build_menu_main(
         self,
-        collections_menu: Menu,
-        options_menu: Menu
-    ) -> Menu:
+        collections_menu: BaseMenu,
+        options_menu: BaseMenu
+    ) -> BaseMenu:
         """
         Builds and returns the main menu.
         """
-        menu: Menu = Menu("aROMa")
+        menu: BaseMenu = BaseMenu("aROMa")
         menu.add_item([
             MenuAction("Collections",
                        partial(self.menu_stack.push, collections_menu))
         ])
-        menu.add_item([MenuAction("UI Tweaks", None)])
         menu.add_item([
             MenuAction("Options", partial(self.menu_stack.push, options_menu))
         ])
