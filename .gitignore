@@ -2,9 +2,7 @@
 .vscode
 config.json
 *.code-workspace
-*.json
 *.jpg
-*.png
 todo
 TEMPLATE_SETUP.bat
 
