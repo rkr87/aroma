@@ -3,6 +3,7 @@ Defines data structures for handling menu actions.
 """
 from collections.abc import Callable
 from dataclasses import dataclass
+from typing import Any
 
 
 @dataclass
@@ -12,4 +13,4 @@ class MenuAction:  # type: ignore
     executed.
     """
     text: str
-    action: Callable[..., None] | None
+    action: Callable[..., Any] | None
