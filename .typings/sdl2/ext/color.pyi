@@ -1,0 +1,3 @@
+
+class Color:
+    def __init__(self, r: int = 255, g: int = 255, b: int = 255, a: int = 255) -> None: ...
