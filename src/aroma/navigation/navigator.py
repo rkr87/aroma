@@ -7,8 +7,10 @@ from functools import partial
 import sdl2
 
 from input.controller import Controller
+from navigation.current_menu import CurrentMenu
 from navigation.menu import Menu
 from navigation.menu_action import MenuAction
+from navigation.menu_stack import MenuStack
 
 
 class Navigator:
@@ -21,10 +23,8 @@ class Navigator:
         Initializes the Navigator with menus and sets up the main menu.
         """
         super().__init__()
-        self.menu_stack: list[Menu] = []
-        self.breadcrumbs: list[str] = []
+        self.menu_stack: MenuStack = MenuStack()
         self.menus: dict[str, Menu] = self._init_menus()
-        self._go_to_main_menu()
 
     def _init_menus(self) -> dict[str, Menu]:
         """
@@ -60,7 +60,7 @@ class Navigator:
         menu.add_item([
             MenuAction(
                 "< Add New >",
-                partial(self._push_menu, new_collection_menu)
+                partial(self.menu_stack.push, new_collection_menu)
             )
         ])
         menu.add_item([MenuAction("Existing Collection One", None)])
@@ -91,59 +91,36 @@ class Navigator:
         menu: Menu = Menu("aROMa")
         menu.add_item([
             MenuAction("Collections",
-                       partial(self._push_menu, collections_menu))
+                       partial(self.menu_stack.push, collections_menu))
         ])
         menu.add_item([MenuAction("UI Tweaks", None)])
         menu.add_item([
-            MenuAction("Options", partial(self._push_menu, options_menu))
+            MenuAction("Options", partial(self.menu_stack.push, options_menu))
         ])
         return menu
 
-    def _push_menu(self, menu: Menu) -> None:
-        """
-        Pushes a new menu onto the menu stack and updates the breadcrumb trail.
-        """
-        self.menu_stack.append(menu)
-        self.breadcrumbs.append(menu.get_breadcrumb())
-
-    def _pop_menu(self) -> None:
-        """
-        Pops the top menu from the menu stack and updates the breadcrumb trail.
-        """
-        if len(self.menu_stack) > 1:
-            self.menu_stack.pop()
-            self.breadcrumbs.pop()
-
-    def _current_menu(self) -> Menu:
+    def _current_menu(self) -> CurrentMenu:
         """
         Returns the current menu from the top of the stack, or navigates to the
         main menu if the stack is empty.
         """
-        if not self.menu_stack:
-            self._go_to_main_menu()
-        return self.menu_stack[-1]
-
-    def _go_to_main_menu(self) -> None:
-        """
-        Clears the menu stack and navigates to the main menu.
-        """
-        self.menu_stack.clear()
-        self._push_menu(self.menus["main"])
+        if current := self.menu_stack.get_current():
+            return current
+        return self.menu_stack.push(self.menus['main'])
 
     def handle_events(
         self,
         event: sdl2.SDL_Event | None = None
-    ) -> tuple[Menu, list[str]] | None:
+    ) -> CurrentMenu:
         """
         Handles controller input events, navigates through menus, and returns
-        the current menu and breadcrumbs.
+        the current menu.
         """
         if event is None:
-            return self._current_menu(), self.breadcrumbs
+            return self._current_menu()
         if Controller.button_press(event, sdl2.SDL_CONTROLLER_BUTTON_A):
-            self._pop_menu()
-            return self._current_menu(), self.breadcrumbs
-        if menu := self._current_menu():
-            menu.handle_input(event)
-            return self._current_menu(), self.breadcrumbs
-        return None
+            self.menu_stack.pop()
+            return self._current_menu()
+        current: CurrentMenu = self._current_menu()
+        current.menu.handle_input(event)
+        return current
