@@ -13,6 +13,7 @@ from sdl2.ext import quit as ext_quit
 
 from constants import RESOURCES
 from input.controller import Controller
+from model.current_menu import CurrentMenu
 from navigation.navigator import Navigator
 from render.screen import Screen
 from render.text_generator import TextGenerator
@@ -62,8 +63,8 @@ class App:
             self.stop()
             return
 
-        if current_menu := self.navigator.handle_events(event):
-            self.screen.render_screen(current_menu[0], current_menu[1])
+        menu: CurrentMenu = self.navigator.handle_events(event)
+        self.screen.render_screen(menu)
 
     def poll_event(self) -> None:
         """
@@ -80,6 +81,6 @@ class App:
         Starts the application, rendering the initial screen and entering the
         event polling loop.
         """
-        if current_menu := self.navigator.handle_events():
-            self.screen.render_screen(current_menu[0], current_menu[1])
+        menu: CurrentMenu = self.navigator.handle_events()
+        self.screen.render_screen(menu)
         self.poll_event()
