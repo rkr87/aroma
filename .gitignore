@@ -1,9 +1,9 @@
 # my additions
 .vscode
 *.code-workspace
-*.jpg
 todo
 TEMPLATE_SETUP.bat
+local_git_clean.bat
 
 
 # Byte-compiled / optimized / DLL files
