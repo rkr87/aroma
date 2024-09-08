@@ -40,11 +40,17 @@ class BaseMenu:
         """
         Holds metadata about the menu state including pagination and selection.
         """
-        total: int = 0
-        max: int = 0
+        total: int
         selected: int = 0
         pos: _MenuPos = _MenuPos.BOTTOM
         start: int = 0
+
+        @property
+        def max(self) -> int:
+            """
+            Computes the maximum number of items visible per page.
+            """
+            return min(self.total, MAX_ITEMS_PER_PAGE)
 
         @property
         def end(self) -> int:
@@ -99,24 +105,17 @@ class BaseMenu:
             """
             return self.total > self.max
 
-        def update_items(self, item_count: int) -> None:
-            """
-            Updates the metadata based on the total number of items.
-            """
-            self.total = item_count
-            self.max = min(item_count, MAX_ITEMS_PER_PAGE)
-
     def __init__(
         self,
         breadcrumb: str,
-        items: list[MenuItem] | None = None
+        items: list[MenuItem]
     ) -> None:
         """
         Initializes the menu with a breadcrumb title and optional menu items.
         """
         super().__init__()
         self.breadcrumb: str = breadcrumb
-        self.items: list[MenuItem] = items or []
+        self.items: list[MenuItem] = items
         self.meta = self._MenuState(len(self.items))
 
     def get_breadcrumb(self) -> str:
@@ -132,7 +131,7 @@ class BaseMenu:
         """Add a new menu item."""
         menu_item = MenuItem(actions)
         self.items.append(menu_item)
-        self.meta.update_items(len(self.items))
+        self.meta.total = len(self.items)
 
     def remove_item(self, index: int) -> None:
         """Remove a menu item by index."""
@@ -142,7 +141,7 @@ class BaseMenu:
                 self.meta.selected,
                 len(self.items) - 1
             )
-        self.meta.update_items(len(self.items))
+        self.meta.total = len(self.items)
 
     def update_item(
         self,
@@ -157,7 +156,7 @@ class BaseMenu:
         """Clear all menu items."""
         self.items.clear()
         self.meta.selected = 0
-        self.meta.update_items(len(self.items))
+        self.meta.total = len(self.items)
 
     def _cycle_items(self, records: int, recycle: bool = True) -> None:
         """Cycles through menu options, changing the selected option."""

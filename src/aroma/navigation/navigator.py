@@ -2,118 +2,65 @@
 Defines the Navigator class, which manages navigation through multiple menus
 using a stack-based approach.
 """
-from functools import partial
 
 import sdl2
 
 from input.controller import Controller
 from model.current_menu import CurrentMenu
-from model.menu_action import MenuAction
 from model.menu_stack import MenuStack
-from navigation.base_menu import BaseMenu
+from navigation.menu_collections import MenuCollections
+from navigation.menu_main import MenuMain
+from navigation.menu_new_collection import MenuNewCollection
+from navigation.menu_options import MenuOptions
 
 
 class Navigator:
     """
-    Manages the navigation between different menus in the application.
+    Manages the navigation between different menus in the application using a
+    stack-based approach.
     """
 
     def __init__(self) -> None:
         """
-        Initializes the Navigator with menus and sets up the main menu.
+        Initializes the Navigator with an empty menu stack and sets up the main
+        menu and its associated submenus.
         """
         super().__init__()
         self.menu_stack: MenuStack = MenuStack()
-        self.menus: dict[str, BaseMenu] = self._init_menus()
+        self.main: MenuMain = self._init_menus()
 
-    def _init_menus(self) -> dict[str, BaseMenu]:
+    def _init_menus(self) -> MenuMain:
         """
-        Initializes and returns a dictionary of menus used in the application.
+        Initializes the main menu and its submenus, returning the main menu
+        instance.
         """
-        new_collection: BaseMenu = self._build_menu_new_collection()
-        collections: BaseMenu = self._build_menu_collections(new_collection)
-        options: BaseMenu = self._build_menu_options()
-        main: BaseMenu = self._build_menu_main(collections, options)
-        return {
-            "new_collection": new_collection,
-            "collections": collections,
-            "options": options,
-            "main": main
-        }
-
-    def _build_menu_new_collection(self) -> BaseMenu:
-        """
-        Builds and returns the "New Collection" menu.
-        """
-        menu: BaseMenu = BaseMenu("New Collection")
-        menu.add_item([MenuAction("< Custom >", None)])
-        menu.add_item([MenuAction("Add All Templates", None)])
-        menu.add_item([MenuAction("TEMPLATE: Collection One", None)])
-        menu.add_item([MenuAction("TEMPLATE: Collection Two", None)])
-        return menu
-
-    def _build_menu_collections(self, new_collection_menu: BaseMenu) -> BaseMenu:
-        """
-        Builds and returns the "Collections" menu.
-        """
-        menu: BaseMenu = BaseMenu("Collections")
-        menu.add_item([
-            MenuAction(
-                "< Add New >",
-                partial(self.menu_stack.push, new_collection_menu)
-            )
-        ])
-        menu.add_item([MenuAction("Existing Collection One", None)])
-        menu.add_item([MenuAction("Existing Collection Two", None)])
-        return menu
-
-    def _build_menu_options(self) -> BaseMenu:
-        """
-        Builds and returns the "Options" menu.
-        """
-        menu: BaseMenu = BaseMenu("Options")
-        menu.add_item([
-            MenuAction("Option One", None),
-            MenuAction("Option Two", None),
-            MenuAction("Option Three", None),
-            MenuAction("Option Four", None),
-        ])
-        return menu
-
-    def _build_menu_main(
-        self,
-        collections_menu: BaseMenu,
-        options_menu: BaseMenu
-    ) -> BaseMenu:
-        """
-        Builds and returns the main menu.
-        """
-        menu: BaseMenu = BaseMenu("aROMa")
-        menu.add_item([
-            MenuAction("Collections",
-                       partial(self.menu_stack.push, collections_menu))
-        ])
-        menu.add_item([
-            MenuAction("Options", partial(self.menu_stack.push, options_menu))
-        ])
-        return menu
+        return MenuMain(
+            self.menu_stack,
+            MenuCollections(
+                self.menu_stack,
+                MenuNewCollection()
+            ),
+            MenuOptions()
+        )
 
     def _current_menu(self) -> CurrentMenu:
         """
-        Returns the current menu from the top of the stack, or navigates to the
-        main menu if the stack is empty.
+        Returns the current menu from the top of the stack. If the stack is
+        empty, it pushes the main menu onto the stack and returns it.
         """
         if current := self.menu_stack.get_current():
             return current
-        return self.menu_stack.push(self.menus['main'])
+        return self.menu_stack.push(self.main)
 
     def handle_events(
         self,
         event: sdl2.SDL_Event | None = None
     ) -> CurrentMenu:
         """
-        Handles controller input events, navigates through menus, and returns
-        the current menu.
+        Handles controller input events to navigate through menus. If the event
+        is None, it returns the current menu. If the A button is pressed, it
+        pops the top menu from the stack. Otherwise, it processes the input for
+        the current menu and returns it.
         """
         if event is None:
             return self._current_menu()
