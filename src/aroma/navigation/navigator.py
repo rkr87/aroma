@@ -8,7 +8,7 @@ import sdl2
 
 from input.controller import Controller
 from navigation.menu import Menu
-from navigation.menu_item import MenuAction
+from navigation.menu_action import MenuAction
 
 
 class Navigator:

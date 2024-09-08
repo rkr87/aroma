@@ -11,7 +11,8 @@ from sdl2 import (SDL_CONTROLLER_BUTTON_B, SDL_CONTROLLER_BUTTON_DPAD_DOWN,
                   SDL_CONTROLLER_BUTTON_DPAD_UP, SDL_Event)
 
 from input.controller import Controller
-from navigation.menu_item import MenuAction, MenuItem
+from navigation.menu_action import MenuAction
+from navigation.menu_item import MenuItem
 
 
 class Menu:
