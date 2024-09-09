@@ -45,9 +45,9 @@ class TextGenerator:
         self.font.add_style(Style.BOTTOM.value, 20, selected)
         self.font.add_style(Style.BREADCRUMB.value, 20, selected)
         self.font.add_style(Style.BREADCRUMB_TRAIL.value, 20, color)
-        self.font.add_style(Style.BUTTON_HELP_TEXT.value, 20, color)
+        self.font.add_style(Style.BUTTON_HELP_TEXT.value, 25, color)
         self.font.add_style(Style.SIDEPANE_HEADING.value, 30, selected)
-        self.font.add_style(Style.SIDEPANE_CONTENT.value, 25, color)
+        self.font.add_style(Style.SIDEPANE_CONTENT.value, 21, color)
 
     def get_selectable(
         self,
@@ -63,12 +63,14 @@ class TextGenerator:
     def get_text(
         self,
         text: str,
-        style: Style
+        style: Style = Style.DEFAULT
     ) -> SDL_Surface | None:
         """
         Renders the text using the specified style and returns the resulting
         SDL_Surface.
         """
+        if not text:
+            return None
         text_surface: SDL_Surface | None = \
             self.font.render_text(text, style.value)
         if text_surface is None:
@@ -96,6 +98,33 @@ class TextGenerator:
             amask
         )
 
+    def _process_paragraph(
+        self,
+        paragraph: str,
+        max_width: int,
+        style: Style
+    ) -> list[str]:
+        """
+        Processes a paragraph, breaking it into lines that fit within the
+        specified width.
+        """
+        lines: list[str] = []
+        current_line: str = ''
+        words = paragraph.split(' ')
+        for word in words:
+            test_line: str = f"{current_line} {word}".strip()
+            text_surface: SDL_Surface | None = \
+                self.get_text(test_line, style)
+            if text_surface and text_surface.w > max_width:
+                if current_line:
+                    lines.append(current_line)
+                current_line = word
+            else:
+                current_line = test_line
+        if current_line:
+            lines.append(current_line)
+        return lines
+
     def _get_wrapped_lines(
         self,
         text: str,
@@ -104,21 +133,18 @@ class TextGenerator:
     ) -> list[SDL_Surface]:
         """
         Breaks the text into lines that fit within the specified width and
-        returns a list of SDL_Surfaces for each line.
+        returns a list of SDL_Surfaces for each line. Considers newline
+        characters for line breaks, including multiple consecutive newlines.
         """
         lines: list[str] = []
-        line: str = ''
-        for word in text.split(' '):
-            test_line: str = f"{line} {word}".strip()
-            text_surface: SDL_Surface | None = self.get_text(test_line, style)
-            if text_surface and text_surface.w > max_width:
-                if line:
-                    lines.append(line)
-                line = word
-            else:
-                line = test_line
-        if line:
-            lines.append(line)
+        blocks = text.split('\n\n')
+        for block_index, block in enumerate(blocks):
+            for paragraph in block.split('\n'):
+                lines.extend(
+                    self._process_paragraph(paragraph, max_width, style)
+                )
+            if block_index < len(blocks) - 1:
+                lines.append(' ')
         return [s for l in lines if (s := self.get_text(l, style))]
 
     def get_wrapped_text(
