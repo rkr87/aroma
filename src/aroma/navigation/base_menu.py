@@ -17,6 +17,7 @@ from sdl2 import (SDL_CONTROLLER_BUTTON_B, SDL_CONTROLLER_BUTTON_DPAD_DOWN,
 from input.controller import Controller
 from model.menu_action import MenuAction
 from model.menu_item import MenuItem
+from model.side_pane import SidePane
 from util import clamp
 
 MAX_ITEMS_PER_PAGE = 12
@@ -108,15 +109,32 @@ class BaseMenu:
     def __init__(
         self,
         breadcrumb: str,
-        items: list[MenuItem]
+        items: list[MenuItem],
+        side_pane: SidePane | None = None
     ) -> None:
         """
         Initializes the menu with a breadcrumb title and optional menu items.
         """
         super().__init__()
+        self.side_pane: SidePane | None = side_pane
         self.breadcrumb: str = breadcrumb
         self.items: list[MenuItem] = items
         self.meta = self._MenuState(len(self.items))
+
+    def get_sidepane(self) -> SidePane | None:
+        """
+        Returns the side pane to be displayed based on the current selection.
+
+        Checks for side panes from the selected menu item, action, or the menu
+        itself.
+        """
+        item: MenuItem = self.items[self.meta.selected]
+        action: MenuAction = item.actions[item.action_index]
+        if action.side_pane:
+            return action.side_pane
+        if item.side_pane:
+            return item.side_pane
+        return self.side_pane
 
     def get_breadcrumb(self) -> str:
         """
@@ -220,7 +238,7 @@ class BaseMenu:
         if action := item.actions[item.action_index].action:
             action()
 
-    def handle_input(self, event: SDL_Event) -> None:
+    def handle_input(self, event: SDL_Event) -> bool:
         """Handle input events for this menu."""
         button_actions: dict[int, Callable[..., None]] = {
             SDL_CONTROLLER_BUTTON_DPAD_DOWN: self._next_item,
@@ -234,7 +252,8 @@ class BaseMenu:
         for button, action in button_actions.items():
             if Controller.button_press(event, button):
                 action()
-                return
+                return True
+        return False
 
     def _get_slice(self) -> list[MenuItem]:
         """
