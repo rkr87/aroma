@@ -26,8 +26,8 @@ class Screen:
     """
 
     SPACING = 15
-    PADDING = 50
-    SPLIT_PANE = int((SCREEN_WIDTH / 5 * 2) + PADDING)
+    PADDING = 40
+    SPLIT_PANE = int((SCREEN_WIDTH / 7 * 3) + PADDING + SPACING)
 
     def __init__(self, text_generator: TextGenerator) -> None:
         """
@@ -132,7 +132,7 @@ class Screen:
         """
         crumb_offset = 0
         if len(breadcrumbs) > 1:
-            crumb_trail = f"{' > '.join(breadcrumbs[:-1])} > "
+            crumb_trail = f"{' › '.join(breadcrumbs[:-1])} › "
             trail_text: SDL_Surface | None = \
                 self.text_gen.get_text(crumb_trail, Style.BREADCRUMB_TRAIL)
             if trail_text:
@@ -149,17 +149,57 @@ class Screen:
     def _render_menu(self, menu: BaseMenu) -> None:
         """Renders the current menu's items."""
         items: list[MenuItem] = menu.update()
+
         for i, item in enumerate(items):
-            text: str = item.actions[item.action_index].text
-            text_surface: SDL_Surface | None = \
-                self.text_gen.get_selectable(text, item.selected)
+            text_surface, multi_val, chevron = self._get_menu_surfaces(item)
             if text_surface:
                 y_adj: int = i * (text_surface.h + self.SPACING)
-                self._render_surface(
-                    text_surface,
-                    self.PADDING,
-                    self.PADDING + self.SPACING + y_adj
+                self._render_item(text_surface, multi_val, chevron, y_adj)
+
+    def _get_menu_surfaces(
+        self,
+        item: MenuItem
+    ) -> tuple[SDL_Surface | None, SDL_Surface | None, SDL_Surface | None]:
+        """Generates the text surfaces for the given menu item."""
+        text: str = item.actions[item.action_index].text
+        multi_val: SDL_Surface | None = None
+        chevron: SDL_Surface | None = None
+        text_surface = self.text_gen.get_selectable(text, item.selected)
+        if len(item.actions) > 1:
+            chevron = self.text_gen.get_text("›")
+            if len(split := text.split(":")) > 1:
+                text_surface = self.text_gen.get_text(f"{split[0].strip()}:")
+                multi_val = self.text_gen.get_selectable(
+                    split[1].strip(),
+                    item.selected
                 )
+        return text_surface, multi_val, chevron
+
+    def _render_item(
+        self,
+        text_surface: SDL_Surface,
+        multi_val: SDL_Surface | None,
+        chevron: SDL_Surface | None,
+        y_adj: int
+    ) -> None:
+        """Renders the item and its associated surfaces."""
+        self._render_surface(
+            text_surface,
+            self.PADDING,
+            self.PADDING + self.SPACING + y_adj
+        )
+        if multi_val:
+            self._render_surface(
+                multi_val,
+                self.PADDING + text_surface.w + self.SPACING,
+                self.PADDING + self.SPACING + y_adj
+            )
+        if chevron:
+            self._render_surface(
+                chevron,
+                self.SPLIT_PANE - chevron.w - self.PADDING,
+                self.PADDING + self.SPACING + y_adj
+            )
 
     def _render_sidepane(self, side_pane: SidePane | None) -> None:
         """Render the side pane with header and content."""

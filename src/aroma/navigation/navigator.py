@@ -12,6 +12,7 @@ from navigation.menu_collections import MenuCollections
 from navigation.menu_main import MenuMain
 from navigation.menu_new_collection import MenuNewCollection
 from navigation.menu_options import MenuOptions
+from navigation.menu_rom_naming import MenuRomNaming
 
 
 class Navigator:
@@ -40,6 +41,7 @@ class Navigator:
                 self.menu_stack,
                 MenuNewCollection()
             ),
+            MenuRomNaming(),
             MenuOptions()
         )
 
