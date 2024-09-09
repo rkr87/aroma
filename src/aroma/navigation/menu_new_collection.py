@@ -19,7 +19,7 @@ class MenuNewCollection(BaseMenu):
         Initializes the MenuNewCollection with a title and menu options for
         creating a new collection.
         """
-        super().__init__("New Collection", self._build_menu())
+        super().__init__("NEW COLLECTION", self._build_menu())
 
     def _build_menu(self) -> list[MenuItem]:  # pylint: disable=no-self-use
         """
