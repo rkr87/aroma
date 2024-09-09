@@ -3,13 +3,13 @@ Defines the main menu of the application, providing navigation options
 to access collections and settings.
 """
 
-from model.menu_action import MenuAction
 from model.menu_item import MenuItem
 from model.menu_stack import MenuStack
 from model.side_pane import SidePane
 from navigation.base_menu import BaseMenu
 from navigation.menu_collections import MenuCollections
 from navigation.menu_options import MenuOptions
+from navigation.menu_rom_naming import MenuRomNaming
 
 
 class MenuMain(BaseMenu):
@@ -22,15 +22,17 @@ class MenuMain(BaseMenu):
         self,
         menu_stack: MenuStack,
         collections_menu: MenuCollections,
+        rom_naming_menu: MenuRomNaming,
         options_menu: MenuOptions
     ) -> None:
         """
         Initializes the MenuMain with navigation to collections and options
         menus.
         """
-        self.menu_stack: MenuStack = menu_stack
+        self.menu_stack = menu_stack
         self.collections_menu: MenuCollections = collections_menu
         self.options_menu: MenuOptions = options_menu
+        self.rom_naming_menu: MenuRomNaming = rom_naming_menu
         side_pane: SidePane = SidePane(
             "Header Test",
             (
@@ -48,20 +50,7 @@ class MenuMain(BaseMenu):
         options.
         """
         return [
-            MenuItem([MenuAction("Collections", self._collections_menu)]),
-            MenuItem([MenuAction("Options", self._options_menu)]),
+            self.nested_menu_item(self.collections_menu, self.menu_stack.push),
+            self.nested_menu_item(self.rom_naming_menu, self.menu_stack.push),
+            self.nested_menu_item(self.options_menu, self.menu_stack.push)
         ]
-
-    def _collections_menu(self) -> None:
-        """
-        Pushes the collections menu onto the menu stack to allow users to
-        navigate to the collections menu.
-        """
-        self.menu_stack.push(self.collections_menu)
-
-    def _options_menu(self) -> None:
-        """
-        Pushes the options menu onto the menu stack to allow users to
-        navigate to the options menu.
-        """
-        self.menu_stack.push(self.options_menu)
