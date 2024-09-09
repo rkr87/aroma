@@ -43,12 +43,12 @@ class Navigator:
             MenuOptions()
         )
 
-    def _current_menu(self) -> CurrentMenu:
+    def _current_menu(self, force_update: bool = False) -> CurrentMenu:
         """
         Returns the current menu from the top of the stack. If the stack is
         empty, it pushes the main menu onto the stack and returns it.
         """
-        if current := self.menu_stack.get_current():
+        if current := self.menu_stack.get_current(force_update):
             return current
         return self.menu_stack.push(self.main)
 
@@ -63,10 +63,13 @@ class Navigator:
         the current menu and returns it.
         """
         if event is None:
-            return self._current_menu()
+            return self._current_menu(True)
         if Controller.button_press(event, sdl2.SDL_CONTROLLER_BUTTON_A):
             self.menu_stack.pop()
-            return self._current_menu()
+            return self._current_menu(True)
         current: CurrentMenu = self._current_menu()
-        current.menu.handle_input(event)
-        return current
+        if not (input_received := current.menu.handle_input(event)):
+            return current
+        new: CurrentMenu = self._current_menu()
+        new.update_required = input_received
+        return new

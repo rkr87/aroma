@@ -23,7 +23,8 @@ class MenuStack:
         self.menus.append(item)
         return CurrentMenu(
             self.menus[-1],
-            [x.breadcrumb for x in self.menus]
+            [x.breadcrumb for x in self.menus],
+            True
         )
 
     def pop(self) -> None:
@@ -39,7 +40,7 @@ class MenuStack:
         """
         self.menus.clear()
 
-    def get_current(self) -> CurrentMenu | None:
+    def get_current(self, update_req: bool = False) -> CurrentMenu | None:
         """
         Retrieves the current menu state.
         """
@@ -47,5 +48,6 @@ class MenuStack:
             return None
         return CurrentMenu(
             self.menus[-1],
-            [x.breadcrumb for x in self.menus]
+            [x.breadcrumb for x in self.menus],
+            update_req
         )

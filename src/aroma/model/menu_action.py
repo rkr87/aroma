@@ -5,6 +5,8 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Any
 
+from model.side_pane import SidePane
+
 
 @dataclass
 class MenuAction:  # type: ignore
@@ -14,3 +16,4 @@ class MenuAction:  # type: ignore
     """
     text: str
     action: Callable[..., Any] | None
+    side_pane: SidePane | None = None

@@ -14,3 +14,4 @@ class CurrentMenu:
     """
     menu: BaseMenu
     breadcrumbs: list[str]
+    update_required: bool

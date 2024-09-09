@@ -21,7 +21,7 @@ class MenuNewCollection(BaseMenu):
         """
         super().__init__("New Collection", self._build_menu())
 
-    def _build_menu(self) -> list[MenuItem]:
+    def _build_menu(self) -> list[MenuItem]:  # pylint: disable=no-self-use
         """
         Builds the menu with options for creating a new collection, including
         custom and template-based options.
