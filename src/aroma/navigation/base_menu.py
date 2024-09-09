@@ -6,6 +6,8 @@ handling user input using a game controller.
 from collections.abc import Callable
 from dataclasses import dataclass
 from enum import Enum, auto
+from functools import partial
+from typing import Any
 
 from sdl2 import (SDL_CONTROLLER_BUTTON_B, SDL_CONTROLLER_BUTTON_DPAD_DOWN,
                   SDL_CONTROLLER_BUTTON_DPAD_LEFT,
@@ -284,3 +286,20 @@ class BaseMenu:
         for i, option in enumerate(self.items):
             option.selected = i == self.meta.selected
         return self._get_slice()
+
+    @staticmethod  # type: ignore
+    def nested_menu_item(
+        menu: "BaseMenu",
+        stack_push: Callable[["BaseMenu"], Any],
+        side_pane: SidePane | None = None
+    ) -> MenuItem:
+        """
+        Create a nested menu item that links to another menu.
+
+        This allows for submenus to be pushed onto a menu stack, with an
+        optional side pane associated with the nested item.
+        """
+        return MenuItem(
+            [MenuAction(menu.get_breadcrumb(), partial(stack_push, menu))],
+            side_pane=side_pane
+        )
