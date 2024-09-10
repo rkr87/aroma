@@ -3,6 +3,8 @@ Defines constants.
 """
 import os
 
+APP_NAME: str = "aROMa"
+
 TSP_LIBRARY_VAR: str = "LD_LIBRARY_PATH"
 PATH_PREFIX: str = "." if TSP_LIBRARY_VAR in os.environ else "./src"
 RESOURCES: str = f"{PATH_PREFIX}/aroma/resources"
