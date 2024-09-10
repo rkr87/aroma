@@ -14,7 +14,7 @@ from sdl2.ext import quit as ext_quit
 from constants import RESOURCES
 from input.controller import Controller
 from model.current_menu import CurrentMenu
-from navigation.navigator import Navigator
+from navigation.nav_controller import NavController
 from render.screen import Screen
 from render.text_generator import TextGenerator
 
@@ -36,7 +36,7 @@ class App:
         self.controller = Controller()
         text_generator = TextGenerator(f"{RESOURCES}/ui/DejaVuSans.ttf")
         self.screen = Screen(text_generator)
-        self.navigator = Navigator()
+        self.navigator = NavController()
         self.running = True
 
     def stop(self) -> None:

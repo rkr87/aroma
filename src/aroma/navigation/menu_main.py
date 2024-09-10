@@ -4,16 +4,16 @@ to access collections and settings.
 """
 
 from constants import APP_NAME
-from model.menu_item import MenuItem
+from model.menu_item_base import MenuItemBase
 from model.menu_stack import MenuStack
 from model.side_pane import SidePane
-from navigation.base_menu import BaseMenu
+from navigation.menu_base import MenuBase
 from navigation.menu_collections import MenuCollections
 from navigation.menu_options import MenuOptions
 from navigation.menu_rom_naming import MenuRomNaming
 
 
-class MenuMain(BaseMenu):
+class MenuMain(MenuBase):
     """
     Manages the main menu, allowing users to navigate to collections and
     options menus.
@@ -45,13 +45,13 @@ class MenuMain(BaseMenu):
         )
         super().__init__(APP_NAME, self._build_menu(), side_pane)
 
-    def _build_menu(self) -> list[MenuItem]:
+    def _build_menu(self) -> list[MenuItemBase]:
         """
         Builds the main menu with options to navigate to collections and
         options.
         """
         return [
-            self.nested_menu_item(self.collections_menu, self.menu_stack.push),
-            self.nested_menu_item(self.rom_naming_menu, self.menu_stack.push),
-            self.nested_menu_item(self.options_menu, self.menu_stack.push)
+            self.create_sub_menu(self.collections_menu, self.menu_stack.push),
+            self.create_sub_menu(self.rom_naming_menu, self.menu_stack.push),
+            self.create_sub_menu(self.options_menu, self.menu_stack.push)
         ]

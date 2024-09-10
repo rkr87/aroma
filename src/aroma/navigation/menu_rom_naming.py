@@ -6,13 +6,14 @@ import os
 
 from constants import RESOURCES, RUNNING_ON_TSP
 from model.menu_action import MenuAction
-from model.menu_item import MenuItem
+from model.menu_item_base import MenuItemBase
+from model.menu_item_multi import MenuItemMulti
 from model.side_pane import SidePane
-from navigation.base_menu import BaseMenu
+from navigation.menu_base import MenuBase
 from util import check_crc, extract_from_zip
 
 
-class MenuRomNaming(BaseMenu):
+class MenuRomNaming(MenuBase):
     """
     A menu for managing ROM naming preferences.
     """
@@ -30,7 +31,7 @@ class MenuRomNaming(BaseMenu):
         """
         super().__init__("ROM NAMING", self._build_menu())
 
-    def _build_menu(self) -> list[MenuItem]:
+    def _build_menu(self) -> list[MenuItemBase]:
         """
         Build the menu for selecting between stock and custom arcade ROM
         naming libraries.
@@ -39,7 +40,7 @@ class MenuRomNaming(BaseMenu):
             self._arcade_rom_naming()
         ]
 
-    def _arcade_rom_naming(self) -> MenuItem:
+    def _arcade_rom_naming(self) -> MenuItemMulti:
         """
         Create a menu item for selecting between stock and custom ROM naming
         libraries, showing their current installation state.
@@ -48,14 +49,14 @@ class MenuRomNaming(BaseMenu):
         if RUNNING_ON_TSP:
             installed = check_crc(f"{self.LIBRARY_PATH}/{self.LIBRARY_NAME}")
         current: int = 1 if installed == self.CUSTOM_LIBRARY_CRC else 0
-        return MenuItem(
+        return MenuItemMulti(
+            "ARCADE ROM NAMING",
             [
                 MenuAction(
-                    "ARCADE ROM NAMING: STOCK",
+                    "STOCK",
                     self._install_stock_arcade_library,
                     SidePane(
-                        "ARCADE ROM NAMING",
-                        (
+                        content=(
                             "WARNING: CHANGING THIS SETTING WILL FORCE REBOOT!"
                             "\n\n"
                             f"You are currently using: STOCK ({installed})\n\n"
@@ -71,11 +72,10 @@ class MenuRomNaming(BaseMenu):
                     True
                 ),
                 MenuAction(
-                    "ARCADE ROM NAMING: CUSTOM",
+                    "CUSTOM",
                     self._install_custom_arcade_library,
                     SidePane(
-                        "ARCADE ROM NAMING",
-                        (
+                        content=(
                             "WARNING: CHANGING THIS SETTING WILL FORCE REBOOT!"
                             "\n\n"
                             "WARNING: REVERTING TO STOCK WILL REMOVE ANY "
@@ -96,7 +96,8 @@ class MenuRomNaming(BaseMenu):
                     True
                 )
             ],
-            current
+            current,
+            SidePane(header="ARCADE ROM NAMING")
         )
 
     def _install_stock_arcade_library(self) -> None:

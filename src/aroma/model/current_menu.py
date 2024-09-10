@@ -4,7 +4,7 @@ navigation history.
 """
 from dataclasses import dataclass
 
-from navigation.base_menu import BaseMenu
+from navigation.menu_base import MenuBase
 
 
 @dataclass
@@ -12,6 +12,6 @@ class CurrentMenu:
     """
     Represents the currently active menu and its navigation breadcrumbs.
     """
-    menu: BaseMenu
+    menu: MenuBase
     breadcrumbs: list[str]
     update_required: bool

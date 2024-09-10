@@ -12,9 +12,11 @@ from sdl2.ext import Color, Renderer, Window, load_image
 from constants import (APP_NAME, BG_COLOR, RESOURCES, SCREEN_HEIGHT,
                        SCREEN_WIDTH, SECONDARY_COLOR)
 from model.current_menu import CurrentMenu
-from model.menu_item import MenuItem
+from model.menu_item_base import MenuItemBase
+from model.menu_item_multi import MenuItemMulti
+from model.menu_item_single import MenuItemSingle
 from model.side_pane import SidePane
-from navigation.base_menu import BaseMenu
+from navigation.menu_base import MenuBase
 from render.text_generator import Style, TextGenerator
 from util import tuple_to_sdl_color
 
@@ -146,9 +148,9 @@ class Screen:
             self.SPACING
         )
 
-    def _render_menu(self, menu: BaseMenu) -> None:
+    def _render_menu(self, menu: MenuBase) -> None:
         """Renders the current menu's items."""
-        items: list[MenuItem] = menu.update()
+        items: list[MenuItemBase] = menu.update()
 
         for i, item in enumerate(items):
             text_surface, multi_val, chevron = self._get_menu_surfaces(item)
@@ -158,22 +160,18 @@ class Screen:
 
     def _get_menu_surfaces(
         self,
-        item: MenuItem
+        item: MenuItemBase
     ) -> tuple[SDL_Surface | None, SDL_Surface | None, SDL_Surface | None]:
         """Generates the text surfaces for the given menu item."""
-        text: str = item.actions[item.action_index].text
-        multi_val: SDL_Surface | None = None
-        chevron: SDL_Surface | None = None
-        text_surface = self.text_gen.get_selectable(text, item.selected)
-        if len(item.actions) > 1:
-            chevron = self.text_gen.get_text("›")
-            if len(split := text.split(":")) > 1:
-                text_surface = self.text_gen.get_text(f"{split[0].strip()}:")
-                multi_val = self.text_gen.get_selectable(
-                    split[1].strip(),
-                    item.selected
-                )
-        return text_surface, multi_val, chevron
+        select_surface = \
+            self.text_gen.get_selectable(item.get_text(), item.selected)
+        if isinstance(item, MenuItemSingle):
+            return select_surface, None, None
+        if isinstance(item, MenuItemMulti):
+            pfx_surface = self.text_gen.get_text(item.get_prefix_text())
+            chevron_surface = self.text_gen.get_text("›")
+            return pfx_surface, select_surface, chevron_surface
+        return None, None, None
 
     def _render_item(
         self,
@@ -243,22 +241,22 @@ class Screen:
 
     def render_screen(
         self,
-        menu: CurrentMenu
+        current: CurrentMenu
     ) -> None:
         """
         Renders the entire screen including background, breadcrumbs, menu, and
         side pane.
         """
-        if menu.update_required:
+        if current.update_required:
             self._render_background()
-            self._render_breadcrumbs(menu.breadcrumbs)
-            self._render_menu(menu.menu)
+            self._render_breadcrumbs(current.breadcrumbs)
+            self._render_menu(current.menu)
             line_y = self.SPACING + self.PADDING
             self._draw_line(
                 tuple_to_sdl_color(SECONDARY_COLOR),
                 (self._side_pane_line_pos, 0),
                 (line_y, SCREEN_HEIGHT - line_y * 2)
             )
-            self._render_sidepane(menu.menu.get_sidepane())
+            self._render_sidepane(current.menu.content.side_pane)
             self.renderer.present()
-            menu.update_required = False
+            current.update_required = False
