@@ -9,8 +9,8 @@ from sdl2 import (SDL_CreateTextureFromSurface, SDL_DestroyTexture, SDL_Rect,
                   SDL_Surface, SDL_Texture)
 from sdl2.ext import Color, Renderer, Window, load_image
 
-from constants import (BG_COLOR, RESOURCES, SCREEN_HEIGHT, SCREEN_WIDTH,
-                       SECONDARY_COLOR)
+from constants import (APP_NAME, BG_COLOR, RESOURCES, SCREEN_HEIGHT,
+                       SCREEN_WIDTH, SECONDARY_COLOR)
 from model.current_menu import CurrentMenu
 from model.menu_item import MenuItem
 from model.side_pane import SidePane
@@ -34,7 +34,7 @@ class Screen:
         Initializes the screen with a window, renderer, and text generator.
         """
         super().__init__()
-        self.window = Window("aROMa", size=(SCREEN_WIDTH, SCREEN_HEIGHT))
+        self.window = Window(APP_NAME, size=(SCREEN_WIDTH, SCREEN_HEIGHT))
         self.window.show()
         self.renderer = Renderer(self.window)
         self.text_gen: TextGenerator = text_generator
