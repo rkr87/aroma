@@ -3,6 +3,7 @@ Defines the main menu of the application, providing navigation options
 to access collections and settings.
 """
 
+from constants import APP_NAME
 from model.menu_item import MenuItem
 from model.menu_stack import MenuStack
 from model.side_pane import SidePane
@@ -42,7 +43,7 @@ class MenuMain(BaseMenu):
                 "\n\nthis side pane is generated at the menu level"
             )
         )
-        super().__init__("aROMa", self._build_menu(), side_pane)
+        super().__init__(APP_NAME, self._build_menu(), side_pane)
 
     def _build_menu(self) -> list[MenuItem]:
         """
