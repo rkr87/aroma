@@ -5,110 +5,21 @@ handling user input using a game controller.
 
 from abc import ABC
 from collections.abc import Callable
-from dataclasses import dataclass
-from enum import Enum, auto
 from functools import partial
 from typing import Any
 
-from sdl2 import (SDL_CONTROLLER_BUTTON_B, SDL_CONTROLLER_BUTTON_DPAD_DOWN,
-                  SDL_CONTROLLER_BUTTON_DPAD_LEFT,
-                  SDL_CONTROLLER_BUTTON_DPAD_RIGHT,
-                  SDL_CONTROLLER_BUTTON_DPAD_UP,
-                  SDL_CONTROLLER_BUTTON_LEFTSHOULDER,
-                  SDL_CONTROLLER_BUTTON_RIGHTSHOULDER, SDL_Event)
-
-from input.controller import Controller
 from model.menu_item_base import MenuItemBase
-from model.menu_item_multi import MenuItemMulti
 from model.menu_item_single import MenuItemSingle
 from model.side_pane import SidePane
-from util import clamp
-
-MAX_ITEMS_PER_PAGE = 12
-
-
-class _MenuPos(Enum):
-    """
-    Enum to represent the position of the menu (bottom or top) relative to
-    the visible page.
-    """
-    BOTTOM = auto()
-    TOP = auto()
+from navigation.action_manager import ActionManager
+from navigation.content_manager import ContentManager
+from navigation.selection_manager import SelectionManager
 
 
 class MenuBase(ABC):
     """
-    Manages menu items, their selection, and input navigation.
+    Base class for managing menu items, navigation, and user actions.
     """
-    @dataclass
-    class _MenuState:  # pylint: disable=too-many-instance-attributes
-        """
-        Holds metadata about the menu state including pagination and selection.
-        """
-        total: int
-        selected: int = 0
-        pos: _MenuPos = _MenuPos.BOTTOM
-        start: int = 0
-
-        @property
-        def max(self) -> int:
-            """
-            Computes the maximum number of items visible per page.
-            """
-            return min(self.total, MAX_ITEMS_PER_PAGE)
-
-        @property
-        def end(self) -> int:
-            """
-            Computes the end of the visible slice based on the start and max
-            values.
-            """
-            return self.start + self.max
-
-        @property
-        def clamp(self) -> int:
-            """
-            Computes the maximum valid start index for pagination.
-            """
-            return self.total - self.max
-
-        @property
-        def slice_eq_max_clamp(self) -> bool:
-            """
-            Checks if the start of the slice is equal to the maximum clamp
-            value.
-            """
-            return self.start == self.clamp
-
-        @property
-        def selected_in_slice(self) -> bool:
-            """
-            Checks if the currently selected index is within the visible slice.
-            """
-            return self.start <= self.selected < self.end
-
-        @property
-        def selected_gt_slice_start(self) -> bool:
-            """
-            Checks if the selected index is greater than the start of the
-            slice.
-            """
-            return self.selected > self.start
-
-        @property
-        def selected_gte_slice_end(self) -> bool:
-            """
-            Checks if the selected index is greater than or equal to the end of
-            the slice.
-            """
-            return self.selected >= self.end
-
-        @property
-        def pagination_required(self) -> bool:
-            """
-            Checks if pagination is needed based on the total number of items.
-            """
-            return self.total > self.max
 
     def __init__(
         self,
@@ -117,174 +28,22 @@ class MenuBase(ABC):
         side_pane: SidePane | None = None
     ) -> None:
         """
-        Initializes the menu with a breadcrumb title and optional menu items.
+        Initialize the menu with breadcrumb, items, and optional side pane.
         """
         super().__init__()
-        self.side_pane: SidePane | None = side_pane
-        self.breadcrumb: str = breadcrumb
-        self.items: list[MenuItemBase] = items
-        self.meta = self._MenuState(len(self.items))
-
-    def _get_selected(self) -> MenuItemBase:
-        """
-        Retrieves the currently selected menu item based on the selection
-        index.
-        """
-        return self.items[self.meta.selected]
-
-    def get_side_pane(self) -> SidePane | None:
-        """
-        Returns the side pane to be displayed based on the current selection.
-        """
-        return SidePane.merge(
-            self._get_selected().get_side_pane(),
-            self.side_pane
-        )
-
-    def get_breadcrumb(self) -> str:
-        """
-        Returns the breadcrumb (title) of the menu.
-        """
-        return self.breadcrumb
-
-    def add_item(
-        self,
-        item: MenuItemBase
-    ) -> None:
-        """Add a new menu item."""
-        self.items.append(item)
-        self.meta.total = len(self.items)
-
-    def remove_item(self, index: int) -> None:
-        """Remove a menu item by index."""
-        if 0 <= index < len(self.items):
-            del self.items[index]
-            self.meta.selected = min(
-                self.meta.selected,
-                len(self.items) - 1
-            )
-        self.meta.total = len(self.items)
-
-    def update_item(
-        self,
-        index: int,
-        new_item: MenuItemBase
-    ) -> None:
-        """Update an existing menu item."""
-        if 0 <= index < len(self.items):
-            self.items[index] = new_item
-
-    def clear_items(self) -> None:
-        """Clear all menu items."""
-        self.items.clear()
-        self.meta.selected = 0
-        self.meta.total = 0
-
-    def _cycle_items(self, records: int, recycle: bool = True) -> None:
-        """Cycles through menu options, changing the selected option."""
-        total_items: int = len(self.items)
-        new_index: int = self.meta.selected + records
-
-        if recycle:
-            self.meta.selected = new_index % total_items
-            return
-
-        if self.meta.selected_gt_slice_start and records < 0:
-            self.meta.selected = self.meta.start
-            return
-
-        if self.meta.slice_eq_max_clamp and records > 0:
-            self.meta.selected = total_items - 1
-            return
-
-        self.meta.start = clamp(new_index, 0, self.meta.clamp)
-        if (not self.meta.selected_in_slice or records < 0):
-            self.meta.selected = self.meta.start
-
-    def _next_page(self) -> None:
-        """Cycles to the next menu page."""
-        self._cycle_items(self.meta.max, False)
-        self.meta.pos = _MenuPos.TOP
-
-    def _prev_page(self) -> None:
-        """Cycles to the previous menu page."""
-        self._cycle_items(-self.meta.max, False)
-        self.meta.pos = _MenuPos.TOP
-
-    def _next_item(self) -> None:
-        """Cycles to the next menu item."""
-        self._cycle_items(1)
-        self.meta.pos = _MenuPos.BOTTOM
-
-    def _prev_item(self) -> None:
-        """Cycles to the previous menu item."""
-        self._cycle_items(-1)
-        self.meta.pos = _MenuPos.TOP
-
-    def _next_item_action(self) -> None:
-        """Cycles to the next action for the selected menu item."""
-        item: MenuItemBase = self._get_selected()
-        if isinstance(item, MenuItemMulti):
-            item.next_action()
-
-    def _prev_item_action(self) -> None:
-        """Cycles to the previous action for the selected menu item."""
-        item: MenuItemBase = self._get_selected()
-        if isinstance(item, MenuItemMulti):
-            item.next_action()
-
-    def _perform_single_action(self) -> None:
-        """Executes the currently selected action."""
-        item: MenuItemBase = self._get_selected()
-        if isinstance(item, MenuItemSingle):
-            item.run_action()
-
-    def handle_input(self, event: SDL_Event) -> bool:
-        """Handle input events for this menu."""
-        button_actions: dict[int, Callable[..., None]] = {
-            SDL_CONTROLLER_BUTTON_DPAD_DOWN: self._next_item,
-            SDL_CONTROLLER_BUTTON_DPAD_UP: self._prev_item,
-            SDL_CONTROLLER_BUTTON_RIGHTSHOULDER: self._next_page,
-            SDL_CONTROLLER_BUTTON_LEFTSHOULDER: self._prev_page,
-            SDL_CONTROLLER_BUTTON_DPAD_RIGHT: self._next_item_action,
-            SDL_CONTROLLER_BUTTON_DPAD_LEFT: self._prev_item_action,
-            SDL_CONTROLLER_BUTTON_B: self._perform_single_action
-        }
-        for button, action in button_actions.items():
-            if Controller.button_press(event, button):
-                action()
-                return True
-        return False
-
-    def _get_slice(self) -> list[MenuItemBase]:
-        """
-        Returns the current slice of menu items for rendering.
-        """
-        if not self.meta.pagination_required:
-            return self.items
-
-        if (
-            self.meta.pos == _MenuPos.BOTTOM and
-            self.meta.selected >= self.meta.end
-        ):
-            self.meta.start = self.meta.selected - self.meta.max + 1
-
-        elif (
-            self.meta.selected < self.meta.start or
-            self.meta.selected >= self.meta.end
-        ):
-            self.meta.start = self.meta.selected
-
-        self.meta.start = min(self.meta.start, self.meta.total - self.meta.max)
-        return self.items[self.meta.start:self.meta.end]
+        self.breadcrumb = breadcrumb
+        self.select = SelectionManager(len(items))
+        self.content = ContentManager(items, self.select, side_pane)
+        self.action = ActionManager(self.select, self.content)
 
     def update(self) -> list[MenuItemBase]:
         """
-        Update the selection state of menu items and return renderable items.
+        Update the menu's selection state and return visible items.
         """
-        for i, option in enumerate(self.items):
-            option.selected = i == self.meta.selected
-        return self._get_slice()
+        for i, item in enumerate(self.content.items):
+            item.selected = i == self.select.state.selected
+
+        return self.content.get_slice()
 
     @staticmethod  # type: ignore
     def create_sub_menu(
@@ -296,7 +55,7 @@ class MenuBase(ABC):
         Create a single menu item that pushes a submenu onto the menu stack.
         """
         return MenuItemSingle(
-            menu.get_breadcrumb(),
+            menu.breadcrumb,
             partial(stack_push, menu),
             side_pane=side_pane
         )

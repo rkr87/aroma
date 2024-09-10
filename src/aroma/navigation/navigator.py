@@ -3,7 +3,15 @@ Defines the Navigator class, which manages navigation through multiple menus
 using a stack-based approach.
 """
 
-import sdl2
+from collections.abc import Callable
+
+from sdl2 import (SDL_CONTROLLER_BUTTON_A, SDL_CONTROLLER_BUTTON_B,
+                  SDL_CONTROLLER_BUTTON_DPAD_DOWN,
+                  SDL_CONTROLLER_BUTTON_DPAD_LEFT,
+                  SDL_CONTROLLER_BUTTON_DPAD_RIGHT,
+                  SDL_CONTROLLER_BUTTON_DPAD_UP,
+                  SDL_CONTROLLER_BUTTON_LEFTSHOULDER,
+                  SDL_CONTROLLER_BUTTON_RIGHTSHOULDER, SDL_Event)
 
 from input.controller import Controller
 from model.current_menu import CurrentMenu
@@ -56,7 +64,7 @@ class Navigator:
 
     def handle_events(
         self,
-        event: sdl2.SDL_Event | None = None
+        event: SDL_Event | None = None
     ) -> CurrentMenu:
         """
         Handles controller input events to navigate through menus. If the event
@@ -66,12 +74,21 @@ class Navigator:
         """
         if event is None:
             return self._current_menu(True)
-        if Controller.button_press(event, sdl2.SDL_CONTROLLER_BUTTON_A):
+        if Controller.button_press(event, SDL_CONTROLLER_BUTTON_A):
             self.menu_stack.pop()
             return self._current_menu(True)
         current: CurrentMenu = self._current_menu()
-        if not (input_received := current.menu.handle_input(event)):
-            return current
-        new: CurrentMenu = self._current_menu()
-        new.update_required = input_received
-        return new
+        button_actions: dict[int, Callable[..., None]] = {
+            SDL_CONTROLLER_BUTTON_DPAD_DOWN: current.menu.select.next_item,
+            SDL_CONTROLLER_BUTTON_DPAD_UP: current.menu.select.prev_item,
+            SDL_CONTROLLER_BUTTON_RIGHTSHOULDER: current.menu.select.next_page,
+            SDL_CONTROLLER_BUTTON_LEFTSHOULDER: current.menu.select.prev_page,
+            SDL_CONTROLLER_BUTTON_DPAD_RIGHT: current.menu.action.run_next,
+            SDL_CONTROLLER_BUTTON_DPAD_LEFT: current.menu.action.run_prev,
+            SDL_CONTROLLER_BUTTON_B: current.menu.action.run_selected
+        }
+        for button, action in button_actions.items():
+            if Controller.button_press(event, button):
+                action()
+                return self._current_menu(True)
+        return current

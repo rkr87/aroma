@@ -241,22 +241,22 @@ class Screen:
 
     def render_screen(
         self,
-        menu: CurrentMenu
+        current: CurrentMenu
     ) -> None:
         """
         Renders the entire screen including background, breadcrumbs, menu, and
         side pane.
         """
-        if menu.update_required:
+        if current.update_required:
             self._render_background()
-            self._render_breadcrumbs(menu.breadcrumbs)
-            self._render_menu(menu.menu)
+            self._render_breadcrumbs(current.breadcrumbs)
+            self._render_menu(current.menu)
             line_y = self.SPACING + self.PADDING
             self._draw_line(
                 tuple_to_sdl_color(SECONDARY_COLOR),
                 (self._side_pane_line_pos, 0),
                 (line_y, SCREEN_HEIGHT - line_y * 2)
             )
-            self._render_sidepane(menu.menu.get_side_pane())
+            self._render_sidepane(current.menu.content.side_pane)
             self.renderer.present()
-            menu.update_required = False
+            current.update_required = False

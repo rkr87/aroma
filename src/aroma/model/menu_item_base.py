@@ -26,7 +26,7 @@ class MenuItemBase(ABC):
         """
         super().__init__()
         self.selected: bool = selected
-        self.side_pane: SidePane | None = side_pane
+        self._side_pane: SidePane | None = side_pane
 
     @abstractmethod
     def get_actions(self) -> list[MenuAction]:
@@ -48,12 +48,13 @@ class MenuItemBase(ABC):
     def get_prefix_text(self) -> str | None:
         """Return option prefix text"""
 
-    def get_side_pane(self) -> SidePane | None:
+    @property
+    def side_pane(self) -> SidePane | None:
         """
         Return the merged side pane for the menu item, combining action and
         item panes.
         """
-        return SidePane.merge(self._get_action_side_pane(), self.side_pane)
+        return SidePane.merge(self._get_action_side_pane(), self._side_pane)
 
     @abstractmethod
     def _get_action_side_pane(self) -> SidePane | None:
