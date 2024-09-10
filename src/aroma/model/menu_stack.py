@@ -5,7 +5,7 @@ history.
 from dataclasses import dataclass, field
 
 from model.current_menu import CurrentMenu
-from navigation.base_menu import BaseMenu
+from navigation.menu_base import MenuBase
 
 
 @dataclass
@@ -14,9 +14,9 @@ class MenuStack:
     Manages a stack of menus and provides methods to navigate through them.
     """
 
-    menus: list[BaseMenu] = field(default_factory=list)
+    menus: list[MenuBase] = field(default_factory=list)
 
-    def push(self, item: BaseMenu) -> CurrentMenu:
+    def push(self, item: MenuBase) -> CurrentMenu:
         """
         Adds a new menu to the stack and returns the current menu state.
         """

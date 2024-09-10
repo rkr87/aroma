@@ -9,11 +9,11 @@ from model.menu_action import MenuAction
 from model.menu_item_base import MenuItemBase
 from model.menu_item_multi import MenuItemMulti
 from model.side_pane import SidePane
-from navigation.base_menu import BaseMenu
+from navigation.menu_base import MenuBase
 from util import check_crc, extract_from_zip
 
 
-class MenuRomNaming(BaseMenu):
+class MenuRomNaming(MenuBase):
     """
     A menu for managing ROM naming preferences.
     """

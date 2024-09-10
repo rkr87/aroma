@@ -5,10 +5,10 @@ Defines a menu for configuring options, including various settings and choices.
 from model.menu_action import MenuAction
 from model.menu_item_base import MenuItemBase
 from model.menu_item_multi import MenuItemMulti
-from navigation.base_menu import BaseMenu
+from navigation.menu_base import MenuBase
 
 
-class MenuOptions(BaseMenu):
+class MenuOptions(MenuBase):
     """
     Manages the menu for configuring options, providing various settings and
     choices.

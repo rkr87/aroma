@@ -5,11 +5,11 @@ and displaying existing ones.
 
 from model.menu_item_base import MenuItemBase
 from model.menu_stack import MenuStack
-from navigation.base_menu import BaseMenu
+from navigation.menu_base import MenuBase
 from navigation.menu_new_collection import MenuNewCollection
 
 
-class MenuCollections(BaseMenu):
+class MenuCollections(MenuBase):
     """
     Manages a menu for collections, allowing users to add new collections
     or select from existing ones.

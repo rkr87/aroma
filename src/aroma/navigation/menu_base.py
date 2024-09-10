@@ -36,7 +36,7 @@ class _MenuPos(Enum):
     TOP = auto()
 
 
-class BaseMenu(ABC):
+class MenuBase(ABC):
     """
     Manages menu items, their selection, and input navigation.
     """
@@ -288,8 +288,8 @@ class BaseMenu(ABC):
 
     @staticmethod  # type: ignore
     def create_sub_menu(
-        menu: "BaseMenu",
-        stack_push: Callable[["BaseMenu"], Any],
+        menu: "MenuBase",
+        stack_push: Callable[["MenuBase"], Any],
         side_pane: SidePane | None = None
     ) -> MenuItemSingle:
         """

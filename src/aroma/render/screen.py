@@ -16,7 +16,7 @@ from model.menu_item_base import MenuItemBase
 from model.menu_item_multi import MenuItemMulti
 from model.menu_item_single import MenuItemSingle
 from model.side_pane import SidePane
-from navigation.base_menu import BaseMenu
+from navigation.menu_base import MenuBase
 from render.text_generator import Style, TextGenerator
 from util import tuple_to_sdl_color
 
@@ -148,7 +148,7 @@ class Screen:
             self.SPACING
         )
 
-    def _render_menu(self, menu: BaseMenu) -> None:
+    def _render_menu(self, menu: MenuBase) -> None:
         """Renders the current menu's items."""
         items: list[MenuItemBase] = menu.update()
 

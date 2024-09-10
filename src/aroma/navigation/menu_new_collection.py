@@ -5,10 +5,10 @@ templates and customize the collection.
 
 from model.menu_item_base import MenuItemBase
 from model.menu_item_single import MenuItemSingle
-from navigation.base_menu import BaseMenu
+from navigation.menu_base import MenuBase
 
 
-class MenuNewCollection(BaseMenu):
+class MenuNewCollection(MenuBase):
     """
     Manages the menu for creating a new collection, offering options to
     customise and add templates to the collection.
