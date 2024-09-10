@@ -23,7 +23,7 @@ from navigation.menu_options import MenuOptions
 from navigation.menu_rom_naming import MenuRomNaming
 
 
-class Navigator:
+class NavController:
     """
     Manages the navigation between different menus in the application using a
     stack-based approach.
