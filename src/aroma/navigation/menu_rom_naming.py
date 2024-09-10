@@ -4,7 +4,7 @@ TODO
 
 import os
 
-from constants import RESOURCES
+from constants import RESOURCES, RUNNING_ON_TSP
 from model.menu_action import MenuAction
 from model.menu_item import MenuItem
 from model.side_pane import SidePane
@@ -44,7 +44,9 @@ class MenuRomNaming(BaseMenu):
         Create a menu item for selecting between stock and custom ROM naming
         libraries, showing their current installation state.
         """
-        installed = check_crc(f"{self.LIBRARY_PATH}/{self.LIBRARY_NAME}")
+        installed: str = "n/a"
+        if RUNNING_ON_TSP:
+            installed = check_crc(f"{self.LIBRARY_PATH}/{self.LIBRARY_NAME}")
         current: int = 1 if installed == self.CUSTOM_LIBRARY_CRC else 0
         return MenuItem(
             [
@@ -65,7 +67,8 @@ class MenuRomNaming(BaseMenu):
                             "\n\n"
                             "RECOMMENDATION: Switch to custom naming library."
                         )
-                    )
+                    ),
+                    True
                 ),
                 MenuAction(
                     "ARCADE ROM NAMING: CUSTOM",
@@ -89,7 +92,8 @@ class MenuRomNaming(BaseMenu):
                             f"{self.ARCADE_NAMES_FILE}\n\n"
                             f"CREDITS:\n Nevrdid - custom {self.LIBRARY_NAME}"
                         )
-                    )
+                    ),
+                    True
                 )
             ],
             current
