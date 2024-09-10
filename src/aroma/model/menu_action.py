@@ -17,3 +17,4 @@ class MenuAction:  # type: ignore
     text: str
     action: Callable[..., Any] | None
     side_pane: SidePane | None = None
+    non_tsp_skip: bool = False
