@@ -3,8 +3,8 @@ Defines a menu for creating a new collection, including options to add
 templates and customize the collection.
 """
 
-from model.menu_action import MenuAction
-from model.menu_item import MenuItem
+from model.menu_item_base import MenuItemBase
+from model.menu_item_single import MenuItemSingle
 from navigation.base_menu import BaseMenu
 
 
@@ -21,14 +21,14 @@ class MenuNewCollection(BaseMenu):
         """
         super().__init__("NEW COLLECTION", self._build_menu())
 
-    def _build_menu(self) -> list[MenuItem]:  # pylint: disable=no-self-use
+    def _build_menu(self) -> list[MenuItemBase]:  # pylint: disable=no-self-use
         """
         Builds the menu with options for creating a new collection, including
         custom and template-based options.
         """
         return [
-            MenuItem([MenuAction("< Custom >", None)]),
-            MenuItem([MenuAction("Add All Templates", None)]),
-            MenuItem([MenuAction("TEMPLATE: Collection One", None)]),
-            MenuItem([MenuAction("TEMPLATE: Collection Two", None)]),
+            MenuItemSingle("< Custom >", None),
+            MenuItemSingle("Add All Templates", None),
+            MenuItemSingle("TEMPLATE: Collection One", None),
+            MenuItemSingle("TEMPLATE: Collection Two", None),
         ]

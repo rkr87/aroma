@@ -3,6 +3,7 @@ Defines a Menu class for managing menu items, cycling through options, and
 handling user input using a game controller.
 """
 
+from abc import ABC
 from collections.abc import Callable
 from dataclasses import dataclass
 from enum import Enum, auto
@@ -16,10 +17,10 @@ from sdl2 import (SDL_CONTROLLER_BUTTON_B, SDL_CONTROLLER_BUTTON_DPAD_DOWN,
                   SDL_CONTROLLER_BUTTON_LEFTSHOULDER,
                   SDL_CONTROLLER_BUTTON_RIGHTSHOULDER, SDL_Event)
 
-from constants import RUNNING_ON_TSP
 from input.controller import Controller
-from model.menu_action import MenuAction
-from model.menu_item import MenuItem
+from model.menu_item_base import MenuItemBase
+from model.menu_item_multi import MenuItemMulti
+from model.menu_item_single import MenuItemSingle
 from model.side_pane import SidePane
 from util import clamp
 
@@ -35,7 +36,7 @@ class _MenuPos(Enum):
     TOP = auto()
 
 
-class BaseMenu:
+class BaseMenu(ABC):
     """
     Manages menu items, their selection, and input navigation.
     """
@@ -112,7 +113,7 @@ class BaseMenu:
     def __init__(
         self,
         breadcrumb: str,
-        items: list[MenuItem],
+        items: list[MenuItemBase],
         side_pane: SidePane | None = None
     ) -> None:
         """
@@ -121,23 +122,24 @@ class BaseMenu:
         super().__init__()
         self.side_pane: SidePane | None = side_pane
         self.breadcrumb: str = breadcrumb
-        self.items: list[MenuItem] = items
+        self.items: list[MenuItemBase] = items
         self.meta = self._MenuState(len(self.items))
 
-    def get_sidepane(self) -> SidePane | None:
+    def _get_selected(self) -> MenuItemBase:
+        """
+        Retrieves the currently selected menu item based on the selection
+        index.
+        """
+        return self.items[self.meta.selected]
+
+    def get_side_pane(self) -> SidePane | None:
         """
         Returns the side pane to be displayed based on the current selection.
-
-        Checks for side panes from the selected menu item, action, or the menu
-        itself.
         """
-        item: MenuItem = self.items[self.meta.selected]
-        action: MenuAction = item.actions[item.action_index]
-        if action.side_pane:
-            return action.side_pane
-        if item.side_pane:
-            return item.side_pane
-        return self.side_pane
+        return SidePane.merge(
+            self._get_selected().get_side_pane(),
+            self.side_pane
+        )
 
     def get_breadcrumb(self) -> str:
         """
@@ -147,11 +149,10 @@ class BaseMenu:
 
     def add_item(
         self,
-        actions: list[MenuAction]
+        item: MenuItemBase
     ) -> None:
         """Add a new menu item."""
-        menu_item = MenuItem(actions)
-        self.items.append(menu_item)
+        self.items.append(item)
         self.meta.total = len(self.items)
 
     def remove_item(self, index: int) -> None:
@@ -167,17 +168,17 @@ class BaseMenu:
     def update_item(
         self,
         index: int,
-        actions: list[MenuAction]
+        new_item: MenuItemBase
     ) -> None:
         """Update an existing menu item."""
         if 0 <= index < len(self.items):
-            self.items[index] = MenuItem(actions)
+            self.items[index] = new_item
 
     def clear_items(self) -> None:
         """Clear all menu items."""
         self.items.clear()
         self.meta.selected = 0
-        self.meta.total = len(self.items)
+        self.meta.total = 0
 
     def _cycle_items(self, records: int, recycle: bool = True) -> None:
         """Cycles through menu options, changing the selected option."""
@@ -199,13 +200,6 @@ class BaseMenu:
         self.meta.start = clamp(new_index, 0, self.meta.clamp)
         if (not self.meta.selected_in_slice or records < 0):
             self.meta.selected = self.meta.start
-
-    def _cycle_actions(self, records: int) -> None:
-        """Cycles through actions for the selected menu item."""
-        item: MenuItem = self.items[self.meta.selected]
-        item.action_index = (item.action_index + records) % len(item.actions)
-        if len(item.actions) > 1:
-            self._perform_action()
 
     def _next_page(self) -> None:
         """Cycles to the next menu page."""
@@ -229,20 +223,21 @@ class BaseMenu:
 
     def _next_item_action(self) -> None:
         """Cycles to the next action for the selected menu item."""
-        self._cycle_actions(1)
+        item: MenuItemBase = self._get_selected()
+        if isinstance(item, MenuItemMulti):
+            item.next_action()
 
     def _prev_item_action(self) -> None:
         """Cycles to the previous action for the selected menu item."""
-        self._cycle_actions(-1)
+        item: MenuItemBase = self._get_selected()
+        if isinstance(item, MenuItemMulti):
+            item.next_action()
 
-    def _perform_action(self) -> None:
+    def _perform_single_action(self) -> None:
         """Executes the currently selected action."""
-        item: MenuItem = self.items[self.meta.selected]
-        action: MenuAction = item.actions[item.action_index]
-        if action.non_tsp_skip and not RUNNING_ON_TSP:
-            return
-        if run_action := action.action:
-            run_action()
+        item: MenuItemBase = self._get_selected()
+        if isinstance(item, MenuItemSingle):
+            item.run_action()
 
     def handle_input(self, event: SDL_Event) -> bool:
         """Handle input events for this menu."""
@@ -253,7 +248,7 @@ class BaseMenu:
             SDL_CONTROLLER_BUTTON_LEFTSHOULDER: self._prev_page,
             SDL_CONTROLLER_BUTTON_DPAD_RIGHT: self._next_item_action,
             SDL_CONTROLLER_BUTTON_DPAD_LEFT: self._prev_item_action,
-            SDL_CONTROLLER_BUTTON_B: self._perform_action
+            SDL_CONTROLLER_BUTTON_B: self._perform_single_action
         }
         for button, action in button_actions.items():
             if Controller.button_press(event, button):
@@ -261,7 +256,7 @@ class BaseMenu:
                 return True
         return False
 
-    def _get_slice(self) -> list[MenuItem]:
+    def _get_slice(self) -> list[MenuItemBase]:
         """
         Returns the current slice of menu items for rendering.
         """
@@ -283,7 +278,7 @@ class BaseMenu:
         self.meta.start = min(self.meta.start, self.meta.total - self.meta.max)
         return self.items[self.meta.start:self.meta.end]
 
-    def update(self) -> list[MenuItem]:
+    def update(self) -> list[MenuItemBase]:
         """
         Update the selection state of menu items and return renderable items.
         """
@@ -292,18 +287,16 @@ class BaseMenu:
         return self._get_slice()
 
     @staticmethod  # type: ignore
-    def nested_menu_item(
+    def create_sub_menu(
         menu: "BaseMenu",
         stack_push: Callable[["BaseMenu"], Any],
         side_pane: SidePane | None = None
-    ) -> MenuItem:
+    ) -> MenuItemSingle:
         """
-        Create a nested menu item that links to another menu.
-
-        This allows for submenus to be pushed onto a menu stack, with an
-        optional side pane associated with the nested item.
+        Create a single menu item that pushes a submenu onto the menu stack.
         """
-        return MenuItem(
-            [MenuAction(menu.get_breadcrumb(), partial(stack_push, menu))],
+        return MenuItemSingle(
+            menu.get_breadcrumb(),
+            partial(stack_push, menu),
             side_pane=side_pane
         )
