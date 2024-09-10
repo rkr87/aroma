@@ -32,6 +32,7 @@ class MenuStack:
         Removes the top menu from the stack, if more than one menu exists.
         """
         if len(self.menus) > 1:
+            self.menus[-1].select.state.reset()
             self.menus.pop()
 
     def clear(self) -> None:
@@ -40,7 +41,7 @@ class MenuStack:
         """
         self.menus.clear()
 
-    def get_current(self, update_req: bool = False) -> CurrentMenu | None:
+    def get_current(self, update_required: bool = False) -> CurrentMenu | None:
         """
         Retrieves the current menu state.
         """
@@ -49,5 +50,5 @@ class MenuStack:
         return CurrentMenu(
             self.menus[-1],
             [x.breadcrumb for x in self.menus],
-            update_req
+            update_required
         )
