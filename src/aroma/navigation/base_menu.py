@@ -16,6 +16,7 @@ from sdl2 import (SDL_CONTROLLER_BUTTON_B, SDL_CONTROLLER_BUTTON_DPAD_DOWN,
                   SDL_CONTROLLER_BUTTON_LEFTSHOULDER,
                   SDL_CONTROLLER_BUTTON_RIGHTSHOULDER, SDL_Event)
 
+from constants import RUNNING_ON_TSP
 from input.controller import Controller
 from model.menu_action import MenuAction
 from model.menu_item import MenuItem
@@ -237,8 +238,11 @@ class BaseMenu:
     def _perform_action(self) -> None:
         """Executes the currently selected action."""
         item: MenuItem = self.items[self.meta.selected]
-        if action := item.actions[item.action_index].action:
-            action()
+        action: MenuAction = item.actions[item.action_index]
+        if action.non_tsp_skip and not RUNNING_ON_TSP:
+            return
+        if run_action := action.action:
+            run_action()
 
     def handle_input(self, event: SDL_Event) -> bool:
         """Handle input events for this menu."""
