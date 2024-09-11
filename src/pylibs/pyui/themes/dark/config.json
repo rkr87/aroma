@@ -1,0 +1,196 @@
+{
+    "name": "Dark",
+    "background": [48, 50, 51],
+    "fonts": {
+        "default": {
+            "file": "dejavu/DejaVuSans.ttf",
+            "size": 16
+        },
+        "bold": {
+            "file": "dejavu/DejaVuSans-Bold.ttf",
+            "size": 16
+        }
+    },
+    "env": {
+        "stack": {
+            "spacing": 10
+        },
+        "text": {
+        },
+        "icon": {
+            "font_size": 16
+        },
+        "button": {
+            "spacing": 5,
+            "padding": [5, 20, 5, 20]
+        },
+        "checkbox": {
+            "size": [16, 16]
+        },
+        "toggle": {
+            "spacing": 6,
+            "font_size": 15
+        },
+        "textfield": {
+            "padding": [5, 10, 5, 10]
+        },
+        "tabview": {
+            "background": [79, 81, 81],
+            "padding": [20]
+        },
+        "list": {
+            "background": [30, 32, 33],
+            "spacing": 0
+        },
+        "menu": {
+            "padding": [10, 3, 10, 3],
+            "spacing": 1
+        },
+        "menuitem": {
+            "padding": [3, 20, 3, 20],
+            "font_size": 15
+        }
+    },
+    "assets": {
+        "focus": {
+            "file": "assets/focus.png",
+            "slice": [[12, 12], [1, 1]]
+        },
+        "button": {
+            "file": "assets/button.png",
+            "slice": [[12, 12], [1, 1]]
+        },
+        "button.pressed": {
+            "file": "assets/button_pressed.png",
+            "slice": [[12, 12], [1, 1]]
+        },
+        "button.primary": {
+            "file": "assets/button_primary.png",
+            "slice": [[12, 12], [1, 1]]
+        },
+        "button.primary.pressed": {
+            "file": "assets/button_primary_pressed.png",
+            "slice": [[12, 12], [1, 1]]
+        },
+        "segment.single": {
+            "file": "assets/button.png",
+            "slice": [[12, 12], [1, 1]]
+        },
+        "segment.single.pressed": {
+            "file": "assets/button_pressed.png",
+            "slice": [[12, 12], [1, 1]]
+        },
+        "segment.single.selected": {
+            "file": "assets/button_primary.png",
+            "slice": [[12, 12], [1, 1]]
+        },
+        "segment.single.selected.pressed": {
+            "file": "assets/button_primary_pressed.png",
+            "slice": [[12, 12], [1, 1]]
+        },
+        "segment.left": {
+            "file": "assets/segment_left.png",
+            "slice": [[12, 12], [1, 1]]
+        },
+        "segment.left.pressed": {
+            "file": "assets/segment_left_pressed.png",
+            "slice": [[12, 12], [1, 1]]
+        },
+        "segment.left.selected": {
+            "file": "assets/segment_left_selected.png",
+            "slice": [[12, 12], [1, 1]]
+        },
+        "segment.left.selected.pressed": {
+            "file": "assets/segment_left_selected.png",
+            "slice": [[12, 12], [1, 1]]
+        },
+        "segment.center": {
+            "file": "assets/segment_center.png",
+            "slice": [[1, 12], [1, 1]]
+        },
+        "segment.center.pressed": {
+            "file": "assets/segment_center_pressed.png",
+            "slice": [[1, 12], [1, 1]]
+        },
+        "segment.center.selected": {
+            "file": "assets/segment_center_selected.png",
+            "slice": [[1, 12], [1, 1]]
+        },
+        "segment.center.selected.pressed": {
+            "file": "assets/segment_center_selected.png",
+            "slice": [[1, 12], [1, 1]]
+        },
+        "segment.right": {
+            "file": "assets/segment_right.png",
+            "slice": [[1, 12], [1, 1]]
+        },
+        "segment.right.pressed": {
+            "file": "assets/segment_right_pressed.png",
+            "slice": [[1, 12], [1, 1]]
+        },
+        "segment.right.selected": {
+            "file": "assets/segment_right_selected.png",
+            "slice": [[1, 12], [1, 1]]
+        },
+        "segment.right.selected.pressed": {
+            "file": "assets/segment_right_selected.png",
+            "slice": [[1, 12], [1, 1]]
+        },
+        "slider.track": {
+            "file": "assets/slider_track.png",
+            "slice": [[6, 6], [2, 2]]
+        },
+        "slider.knob": {
+            "file": "assets/slider_knob.png",
+            "slice": [[20, 20], [0, 0]]
+        },
+        "progress.track": {
+            "file": "assets/progress_track.png",
+            "slice": [[6, 6], [2, 2]]
+        },
+        "progress.bar": {
+            "file": "assets/progress_bar.png",
+            "slice": [[6, 6], [2, 2]]
+        },
+        "textfield": {
+            "file": "assets/textfield.png",
+            "slice": [[12, 12], [1, 1]]
+        },
+        "scroll.horizontal.track": {
+            "file": "assets/hscroll_track.png",
+            "slice": [[2, 2], [1, 1]]
+        },
+        "scroll.vertical.track": {
+            "file": "assets/vscroll_track.png",
+            "slice": [[2, 2], [1, 1]]
+        },
+        "scroll.knob": {
+            "file": "assets/scroll_knob.png",
+            "slice": [[11, 11], [1, 1]]
+        },
+        "scroll.corner": {
+            "file": "assets/scroll_corner.png",
+            "slice": [[1, 1], [1, 1]]
+        },
+        "checkbox": {
+            "file": "assets/checkbox.png",
+            "slice": [[12, 12], [1, 1]]
+        },
+        "checkbox.pressed": {
+            "file": "assets/checkbox_pressed.png",
+            "slice": [[12, 12], [1, 1]]
+        },
+        "checkbox.checked": {
+            "file": "assets/checkbox_checked.png",
+            "slice": [[12, 12], [1, 1]]
+        },
+        "checkbox.checked.pressed": {
+            "file": "assets/checkbox_checked_pressed.png",
+            "slice": [[12, 12], [1, 1]]
+        },
+        "menu": {
+            "file": "assets/menu.png",
+            "slice": [[12, 12], [1, 1]]
+        }
+    }
+}
