@@ -10,6 +10,7 @@ selection state.
 from dataclasses import dataclass
 from enum import Enum, auto
 
+from base.class_base import ClassBase
 from constants import MAX_ITEMS_PER_PAGE
 from util import clamp
 
@@ -22,7 +23,7 @@ class _MenuPos(Enum):
     TOP = auto()
 
 
-class SelectionManager:
+class SelectionManager(ClassBase):
     """Manages selection and pagination for menu items."""
 
     @dataclass

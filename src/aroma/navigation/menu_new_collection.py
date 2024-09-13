@@ -3,9 +3,9 @@ Defines a menu for creating a new collection, including options to add
 templates and customize the collection.
 """
 
-from model.menu_item_base import MenuItemBase
-from model.menu_item_single import MenuItemSingle
-from navigation.menu_base import MenuBase
+from menu.menu_base import MenuBase
+from menu.menu_item_base import MenuItemBase
+from menu.menu_item_single import MenuItemSingle
 
 
 class MenuNewCollection(MenuBase):

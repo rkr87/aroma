@@ -4,9 +4,11 @@ and content.
 """
 from dataclasses import dataclass
 
+from base.class_base import ClassBase
+
 
 @dataclass
-class SidePane:
+class SidePane(ClassBase):
     """
     Represents a side pane with an optional header and content, allowing for
     merging of multiple panes.

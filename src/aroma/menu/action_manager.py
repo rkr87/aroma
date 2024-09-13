@@ -1,16 +1,15 @@
 """
 Module for managing actions related to menu items in a navigation system.
 """
-from abc import ABC
+from base.class_base import ClassBase
+from menu.content_manager import ContentManager
+from menu.menu_item_base import MenuItemBase
+from menu.menu_item_multi import MenuItemMulti
+from menu.menu_item_single import MenuItemSingle
+from menu.selection_manager import SelectionManager
 
-from model.menu_item_base import MenuItemBase
-from model.menu_item_multi import MenuItemMulti
-from model.menu_item_single import MenuItemSingle
-from navigation.content_manager import ContentManager
-from navigation.selection_manager import SelectionManager
 
-
-class ActionManager(ABC):
+class ActionManager(ClassBase):
     """
     Manages actions for selected menu items, including navigating through
     multi-actions.

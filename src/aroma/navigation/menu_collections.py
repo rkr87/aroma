@@ -3,10 +3,10 @@ Defines a menu for managing collections, including adding new collections
 and displaying existing ones.
 """
 
-from model.menu_item_base import MenuItemBase
-from model.menu_stack import MenuStack
-from navigation.menu_base import MenuBase
+from menu.menu_base import MenuBase
+from menu.menu_item_base import MenuItemBase
 from navigation.menu_new_collection import MenuNewCollection
+from navigation.menu_stack import MenuStack
 
 
 class MenuCollections(MenuBase):
@@ -15,17 +15,13 @@ class MenuCollections(MenuBase):
     or select from existing ones.
     """
 
-    def __init__(
-        self,
-        menu_stack: MenuStack,
-        new_collection_menu: MenuNewCollection
-    ) -> None:
+    def __init__(self) -> None:
         """
         Initializes the MenuCollections with a menu stack for navigation and
         a menu for creating new collections.
         """
-        self.menu_stack: MenuStack = menu_stack
-        self.new_collection_menu: MenuNewCollection = new_collection_menu
+        self.menu_stack: MenuStack = MenuStack()
+        self.new_collection_menu: MenuNewCollection = MenuNewCollection()
         super().__init__("COLLECTIONS", self._build_menu())
 
     def _build_menu(self) -> list[MenuItemBase]:
@@ -34,7 +30,7 @@ class MenuCollections(MenuBase):
         and selecting existing ones.
         """
         return [
-            self.create_sub_menu(
+            self.sub_menu(
                 self.new_collection_menu,
                 self.menu_stack.push
             )

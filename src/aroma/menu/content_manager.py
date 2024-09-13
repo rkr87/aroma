@@ -7,12 +7,13 @@ visible slice of items for rendering. It also manages the side pane content
 based on the current selection.
 """
 
-from model.menu_item_base import MenuItemBase
+from base.class_base import ClassBase
+from menu.menu_item_base import MenuItemBase
+from menu.selection_manager import SelectionManager
 from model.side_pane import SidePane
-from navigation.selection_manager import SelectionManager
 
 
-class ContentManager:
+class ContentManager(ClassBase):
     """Handles content management for menu items and side panes."""
 
     def __init__(

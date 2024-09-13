@@ -5,8 +5,10 @@ from sdl2 import (SDL_CONTROLLERBUTTONDOWN, SDL_Event, SDL_GameController,
                   SDL_GameControllerClose, SDL_GameControllerOpen,
                   SDL_IsGameController, SDL_NumJoysticks)
 
+from base.class_singleton import ClassSingleton
 
-class Controller:
+
+class Controller(ClassSingleton):
     """
     Manages game controller input and initialization.
     """

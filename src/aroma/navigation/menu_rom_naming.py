@@ -5,11 +5,11 @@ TODO
 import os
 
 from constants import RESOURCES, RUNNING_ON_TSP
-from model.menu_action import MenuAction
-from model.menu_item_base import MenuItemBase
-from model.menu_item_multi import MenuItemMulti
+from menu.menu_action import MenuAction
+from menu.menu_base import MenuBase
+from menu.menu_item_base import MenuItemBase
+from menu.menu_item_multi import MenuItemMulti
 from model.side_pane import SidePane
-from navigation.menu_base import MenuBase
 from util import check_crc, extract_from_zip
 
 

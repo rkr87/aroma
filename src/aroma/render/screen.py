@@ -9,19 +9,20 @@ from sdl2 import (SDL_CreateTextureFromSurface, SDL_DestroyTexture, SDL_Rect,
                   SDL_Surface, SDL_Texture)
 from sdl2.ext import Color, Renderer, Window, load_image
 
+from base.class_singleton import ClassSingleton
 from constants import (APP_NAME, BG_COLOR, RESOURCES, SCREEN_HEIGHT,
                        SCREEN_WIDTH, SECONDARY_COLOR)
+from menu.menu_base import MenuBase
+from menu.menu_item_base import MenuItemBase
+from menu.menu_item_multi import MenuItemMulti
+from menu.menu_item_single import MenuItemSingle
 from model.current_menu import CurrentMenu
-from model.menu_item_base import MenuItemBase
-from model.menu_item_multi import MenuItemMulti
-from model.menu_item_single import MenuItemSingle
 from model.side_pane import SidePane
-from navigation.menu_base import MenuBase
 from render.text_generator import Style, TextGenerator
 from util import tuple_to_sdl_color
 
 
-class Screen:
+class Screen(ClassSingleton):
     """
     Manages the screen rendering process, including menus, backgrounds, and
     breadcrumbs.
@@ -31,7 +32,7 @@ class Screen:
     PADDING = 40
     SPLIT_PANE = int((SCREEN_WIDTH / 7 * 3) + PADDING + SPACING)
 
-    def __init__(self, text_generator: TextGenerator) -> None:
+    def __init__(self) -> None:
         """
         Initializes the screen with a window, renderer, and text generator.
         """
@@ -39,7 +40,7 @@ class Screen:
         self.window = Window(APP_NAME, size=(SCREEN_WIDTH, SCREEN_HEIGHT))
         self.window.show()
         self.renderer = Renderer(self.window)
-        self.text_gen: TextGenerator = text_generator
+        self.text_gen: TextGenerator = TextGenerator()
 
     @property
     def _side_pane_line_pos(self) -> int:

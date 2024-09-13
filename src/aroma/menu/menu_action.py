@@ -5,12 +5,13 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Any
 
+from base.class_base import ClassBase
 from constants import RUNNING_ON_TSP
 from model.side_pane import SidePane
 
 
 @dataclass
-class MenuAction:  # type: ignore
+class MenuAction(ClassBase):  # type: ignore[misc]
     """
     Represents a menu action with associated text, an optional action to be
     executed, and optional side pane behavior. Skips the action if conditions
