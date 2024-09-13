@@ -25,8 +25,8 @@ class MenuItemMulti(MenuItemBase):
         """
         super().__init__(side_pane=side_pane)
         self.prefix: str = prefix
-        self.actions = actions
-        self.action_index = action_index
+        self.actions: list[MenuAction] = actions
+        self.action_index: int = action_index
 
     def get_actions(self) -> list[MenuAction]:
         return self.actions
@@ -37,6 +37,7 @@ class MenuItemMulti(MenuItemBase):
     def run_action(self) -> None:
         if self.selected and self.actions:
             current_action = self.actions[self.action_index]
+            self._logger.debug("Running action: %s", current_action.text)
             current_action.run()
 
     def get_text(self) -> str:
@@ -49,11 +50,13 @@ class MenuItemMulti(MenuItemBase):
     def next_action(self) -> None:
         """Cycle to the next action in the list and execute it."""
         self.action_index = (self.action_index + 1) % len(self.actions)
+        self._logger.debug("Cycling to next action: %d", self.action_index)
         self.run_action()
 
     def prev_action(self) -> None:
         """Cycle to the previous action in the list and execute it."""
         self.action_index = (self.action_index - 1) % len(self.actions)
+        self._logger.debug("Cycling to previous action: %d", self.action_index)
         self.run_action()
 
     def _get_action_side_pane(self) -> SidePane | None:

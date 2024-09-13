@@ -26,6 +26,8 @@ class MenuNewCollection(MenuBase):
         Builds the menu with options for creating a new collection, including
         custom and template-based options.
         """
+        logger = MenuNewCollection.get_static_logger()
+        logger.debug("Building New Collection menu options.")
         return [
             MenuItemSingle("< Custom >", None),
             MenuItemSingle("Add All Templates", None),

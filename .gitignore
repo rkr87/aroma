@@ -4,6 +4,7 @@
 todo
 TEMPLATE_SETUP.bat
 local_git_clean.bat
+pylog.txt
 
 
 # Byte-compiled / optimized / DLL files

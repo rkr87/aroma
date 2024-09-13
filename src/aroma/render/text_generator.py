@@ -3,7 +3,6 @@ Defines color constants, styles for text rendering, and a class for generating
 styled text surfaces.
 """
 
-import logging
 from enum import StrEnum
 
 from sdl2 import (SDL_BlitSurface, SDL_CreateRGBSurface, SDL_Rect, SDL_Surface,
@@ -51,6 +50,7 @@ class TextGenerator(ClassSingleton):
         self.font.add_style(Style.BUTTON_HELP_TEXT.value, 25, color)
         self.font.add_style(Style.SIDEPANE_HEADING.value, 30, selected)
         self.font.add_style(Style.SIDEPANE_CONTENT.value, 21, color)
+        self._logger.info("TextGenerator initialized with font %s", font_path)
 
     def get_selectable(
         self,
@@ -73,11 +73,12 @@ class TextGenerator(ClassSingleton):
         SDL_Surface.
         """
         if not text:
+            self._logger.warning("Empty text provided for style %s", style)
             return None
-        text_surface: SDL_Surface | None = \
-            self.font.render_text(text, style.value)
-        if text_surface is None:
-            logging.error("Failed to render text to surface.")
+        if (text_surface := self.font.render_text(text, style.value)) is None:
+            self._logger.error(
+                "Failed to render text to surface for style %s", style
+            )
         return text_surface
 
     @staticmethod
@@ -112,12 +113,11 @@ class TextGenerator(ClassSingleton):
         specified width.
         """
         lines: list[str] = []
-        current_line: str = ''
+        current_line = ''
         words = paragraph.split(' ')
         for word in words:
-            test_line: str = f"{current_line} {word}".strip()
-            text_surface: SDL_Surface | None = \
-                self.get_text(test_line, style)
+            test_line = f"{current_line} {word}".strip()
+            text_surface = self.get_text(test_line, style)
             if text_surface and text_surface.w > max_width:
                 if current_line:
                     lines.append(current_line)
@@ -126,6 +126,7 @@ class TextGenerator(ClassSingleton):
                 current_line = test_line
         if current_line:
             lines.append(current_line)
+        self._logger.debug("Processed paragraph into lines: %s", lines)
         return lines
 
     def _get_wrapped_lines(
@@ -141,14 +142,19 @@ class TextGenerator(ClassSingleton):
         """
         lines: list[str] = []
         blocks = text.split('\n\n')
-        for block_index, block in enumerate(blocks):
-            for paragraph in block.split('\n'):
+        for block in enumerate(blocks):
+            for paragraph in block[1].split('\n'):
                 lines.extend(
                     self._process_paragraph(paragraph, max_width, style)
                 )
-            if block_index < len(blocks) - 1:
+            if block[0] < len(blocks) - 1:
                 lines.append(' ')
-        return [s for l in lines if (s := self.get_text(l, style))]
+        wrapped_lines = [s for l in lines if (s := self.get_text(l, style))]
+        self._logger.debug(
+            "Wrapped text into SDL_Surfaces: %d surfaces created",
+            len(wrapped_lines)
+        )
+        return wrapped_lines
 
     def get_wrapped_text(
         self,
@@ -161,6 +167,11 @@ class TextGenerator(ClassSingleton):
         containing the wrapped text.
         """
         if not (lines := self._get_wrapped_lines(text, max_width, style)):
+            self._logger.warning(
+                "No text surfaces created for the given width %d and style %s",
+                max_width,
+                style
+            )
             return None
 
         total_height = sum(surface.h for surface in lines)
@@ -176,4 +187,9 @@ class TextGenerator(ClassSingleton):
             )
             y_offset += surface.h
 
+        self._logger.debug(
+            "Final wrapped text surface created with size %dx%d",
+            max_width,
+            total_height
+        )
         return final_surface

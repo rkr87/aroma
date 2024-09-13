@@ -27,19 +27,36 @@ class ActionManager(ClassBase):
 
     def run_next(self) -> None:
         """Run the next action for a multi-action menu item."""
-        if isinstance(item := self._get_current_item(), MenuItemMulti):
+        item = self._get_current_item()
+        if isinstance(item, MenuItemMulti):
+            self._logger.debug(
+                "Running next action for item %s", item
+            )
             item.next_action()
 
     def run_prev(self) -> None:
         """Run the previous action for a multi-action menu item."""
-        if isinstance(item := self._get_current_item(), MenuItemMulti):
+        item = self._get_current_item()
+        if isinstance(item, MenuItemMulti):
+            self._logger.debug(
+                "Running previous action for item %s", item
+            )
             item.prev_action()
 
     def run_selected(self) -> None:
         """Run the selected action for a single-action menu item."""
-        if isinstance(item := self._get_current_item(), MenuItemSingle):
+        item = self._get_current_item()
+        if isinstance(item, MenuItemSingle):
+            self._logger.debug(
+                "Running selected action for item %s", item
+            )
             item.run_action()
 
     def _get_current_item(self) -> MenuItemBase:
         """Retrieve the currently selected menu item."""
-        return self.content.items[self.select.state.selected]
+        selected_index = self.select.state.selected
+        item = self.content.items[selected_index]
+        self._logger.debug(
+            "Retrieved current item %s at index %d", item, selected_index
+        )
+        return item
