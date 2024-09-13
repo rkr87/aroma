@@ -1,4 +1,6 @@
-"""TODO"""
+"""
+Module for handling single-action menu items.
+"""
 from collections.abc import Callable
 from typing import Any
 
