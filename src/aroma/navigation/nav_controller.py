@@ -13,17 +13,14 @@ from sdl2 import (SDL_CONTROLLER_BUTTON_A, SDL_CONTROLLER_BUTTON_B,
                   SDL_CONTROLLER_BUTTON_LEFTSHOULDER,
                   SDL_CONTROLLER_BUTTON_RIGHTSHOULDER, SDL_Event)
 
+from base.class_singleton import ClassSingleton
 from input.controller import Controller
 from model.current_menu import CurrentMenu
 from model.menu_stack import MenuStack
-from navigation.menu_collections import MenuCollections
 from navigation.menu_main import MenuMain
-from navigation.menu_new_collection import MenuNewCollection
-from navigation.menu_options import MenuOptions
-from navigation.menu_rom_naming import MenuRomNaming
 
 
-class NavController:
+class NavController(ClassSingleton):
     """
     Manages the navigation between different menus in the application using a
     stack-based approach.
@@ -36,22 +33,7 @@ class NavController:
         """
         super().__init__()
         self.menu_stack: MenuStack = MenuStack()
-        self.main: MenuMain = self._init_menus()
-
-    def _init_menus(self) -> MenuMain:
-        """
-        Initializes the main menu and its submenus, returning the main menu
-        instance.
-        """
-        return MenuMain(
-            self.menu_stack,
-            MenuCollections(
-                self.menu_stack,
-                MenuNewCollection()
-            ),
-            MenuRomNaming(),
-            MenuOptions()
-        )
+        self.main: MenuMain = MenuMain()
 
     def _current_menu(self, force_update: bool = False) -> CurrentMenu:
         """

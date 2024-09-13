@@ -8,6 +8,7 @@ from collections.abc import Callable
 from functools import partial
 from typing import Any
 
+from base.class_singleton import ClassSingleton
 from model.menu_item_base import MenuItemBase
 from model.menu_item_single import MenuItemSingle
 from model.side_pane import SidePane
@@ -16,7 +17,7 @@ from navigation.content_manager import ContentManager
 from navigation.selection_manager import SelectionManager
 
 
-class MenuBase(ABC):
+class MenuBase(ClassSingleton, ABC):
     """
     Base class for managing menu items, navigation, and user actions.
     """
@@ -46,7 +47,7 @@ class MenuBase(ABC):
         return self.content.get_slice()
 
     @staticmethod  # type: ignore
-    def create_sub_menu(
+    def sub_menu(
         menu: "MenuBase",
         stack_push: Callable[["MenuBase"], Any],
         side_pane: SidePane | None = None

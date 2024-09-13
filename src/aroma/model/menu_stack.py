@@ -4,12 +4,13 @@ history.
 """
 from dataclasses import dataclass, field
 
+from base.class_singleton import ClassSingleton
 from model.current_menu import CurrentMenu
 from navigation.menu_base import MenuBase
 
 
 @dataclass
-class MenuStack:
+class MenuStack(ClassSingleton):
     """
     Manages a stack of menus and provides methods to navigate through them.
     """

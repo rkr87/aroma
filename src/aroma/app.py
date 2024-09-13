@@ -11,15 +11,14 @@ from sdl2 import (SDL_CONTROLLER_BUTTON_GUIDE, SDL_INIT_GAMECONTROLLER,
                   SDL_Quit)
 from sdl2.ext import quit as ext_quit
 
-from constants import RESOURCES
+from base.class_base import ClassBase
 from input.controller import Controller
 from model.current_menu import CurrentMenu
 from navigation.nav_controller import NavController
 from render.screen import Screen
-from render.text_generator import TextGenerator
 
 
-class App:
+class App(ClassBase):
     """
     Main application class for initializing and running the system.
     Manages the controller, rendering, and navigation between menus.
@@ -34,8 +33,7 @@ class App:
         if SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER) != 0:
             sys.exit(1)
         self.controller = Controller()
-        text_generator = TextGenerator(f"{RESOURCES}/ui/DejaVuSans.ttf")
-        self.screen = Screen(text_generator)
+        self.screen = Screen()
         self.navigator = NavController()
         self.running = True
 

@@ -9,7 +9,8 @@ from enum import StrEnum
 from sdl2 import (SDL_BlitSurface, SDL_CreateRGBSurface, SDL_Rect, SDL_Surface,
                   ext)
 
-from constants import PRIMARY_COLOR, SECONDARY_COLOR
+from base.class_singleton import ClassSingleton
+from constants import PRIMARY_COLOR, RESOURCES, SECONDARY_COLOR
 from util import tuple_to_sdl_color
 
 
@@ -27,20 +28,22 @@ class Style(StrEnum):
     SIDEPANE_CONTENT = "sidepane_content"
 
 
-class TextGenerator:
+class TextGenerator(ClassSingleton):
     """
     A class to handle text rendering with different styles based on user
     selection.
     """
 
-    def __init__(self, font_path: str) -> None:
+    _DEFAULT_FONT = f"{RESOURCES}/ui/DejaVuSans.ttf"
+
+    def __init__(self, font_path: str | None = None) -> None:
         """
         Initializes the TextGenerator with a font and adds different styles.
         """
         super().__init__()
         color = tuple_to_sdl_color(PRIMARY_COLOR)
         selected = tuple_to_sdl_color(SECONDARY_COLOR)
-        self.font = ext.FontTTF(font_path, 30, color)
+        self.font = ext.FontTTF(font_path or self._DEFAULT_FONT, 30, color)
         self.font.add_style(Style.SELECTED.value, 30, selected)
         self.font.add_style(Style.BOTTOM.value, 20, selected)
         self.font.add_style(Style.BREADCRUMB.value, 20, selected)

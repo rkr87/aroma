@@ -19,21 +19,15 @@ class MenuMain(MenuBase):
     options menus.
     """
 
-    def __init__(
-        self,
-        menu_stack: MenuStack,
-        collections_menu: MenuCollections,
-        rom_naming_menu: MenuRomNaming,
-        options_menu: MenuOptions
-    ) -> None:
+    def __init__(self) -> None:
         """
         Initializes the MenuMain with navigation to collections and options
         menus.
         """
-        self.menu_stack = menu_stack
-        self.collections_menu: MenuCollections = collections_menu
-        self.options_menu: MenuOptions = options_menu
-        self.rom_naming_menu: MenuRomNaming = rom_naming_menu
+        self.menu_stack = MenuStack()
+        self.collections_menu: MenuCollections = MenuCollections()
+        self.options_menu: MenuOptions = MenuOptions()
+        self.rom_naming_menu: MenuRomNaming = MenuRomNaming()
         side_pane: SidePane = SidePane(
             "Header Test",
             (
@@ -51,7 +45,7 @@ class MenuMain(MenuBase):
         options.
         """
         return [
-            self.create_sub_menu(self.collections_menu, self.menu_stack.push),
-            self.create_sub_menu(self.rom_naming_menu, self.menu_stack.push),
-            self.create_sub_menu(self.options_menu, self.menu_stack.push)
+            self.sub_menu(self.collections_menu, self.menu_stack.push),
+            self.sub_menu(self.rom_naming_menu, self.menu_stack.push),
+            self.sub_menu(self.options_menu, self.menu_stack.push)
         ]
