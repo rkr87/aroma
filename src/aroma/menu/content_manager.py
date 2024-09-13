@@ -34,20 +34,28 @@ class ContentManager(ClassBase):
     def add_item(self, item: MenuItemBase) -> None:
         """Add a menu item to the list."""
         self.items.append(item)
+        self._logger.debug("Added item %s to list", item)
 
     def remove_item(self, index: int) -> None:
         """Remove a menu item by index."""
         if 0 <= index < len(self.items):
-            del self.items[index]
+            removed_item = self.items.pop(index)
+            self._logger.debug("Removed item %s from list", removed_item)
 
     def update_item(self, index: int, new_item: MenuItemBase) -> None:
         """Update a menu item at a given index."""
         if 0 <= index < len(self.items):
+            old_item = self.items[index]
             self.items[index] = new_item
+            self._logger.debug(
+                "Updated item at index %d from %s to %s",
+                index, old_item, new_item
+            )
 
     def clear_items(self) -> None:
         """Clear all menu items."""
         self.items.clear()
+        self._logger.debug("Cleared all menu items")
 
     def get_slice(self) -> list[MenuItemBase]:
         """Retrieve the current slice of visible menu items."""
@@ -56,16 +64,24 @@ class ContentManager(ClassBase):
 
         start = self.select.state.start
         end = self.select.state.end
-        return self.items[start:end]
+        item_slice = self.items[start:end]
+        self._logger.debug(
+            "Retrieved slice from index %d to %d", start, end
+        )
+        return item_slice
 
     @property
     def side_pane(self) -> SidePane | None:
         """Retrieve the merged side pane for the current selection."""
-        return SidePane.merge(
+        merged_pane = SidePane.merge(
             self._get_current_item().side_pane,
             self._side_pane
         )
+        self._logger.debug("Merged side pane: %s", merged_pane)
+        return merged_pane
 
     def _get_current_item(self) -> MenuItemBase:
         """Retrieve the currently selected menu item."""
-        return self.items[self.select.state.selected]
+        selected_item = self.items[self.select.state.selected]
+        self._logger.debug("Retrieved current item: %s", selected_item)
+        return selected_item

@@ -30,6 +30,8 @@ class MenuCollections(MenuBase):
         Builds the initial menu with options for adding a new collection
         and selecting existing ones.
         """
+        logger = MenuNewCollection.get_static_logger()
+        logger.debug("Building Collections menu options.")
         return [
             self.sub_menu(
                 self.new_collection_menu,

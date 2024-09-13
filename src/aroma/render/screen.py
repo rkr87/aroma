@@ -41,6 +41,7 @@ class Screen(ClassSingleton):
         self.window.show()
         self.renderer = Renderer(self.window)
         self.text_gen: TextGenerator = TextGenerator()
+        self._logger.info("Screen initialised")
 
     @property
     def _side_pane_line_pos(self) -> int:
@@ -72,6 +73,9 @@ class Screen(ClassSingleton):
             x[0] + x[1],
             y[0] + y[1]
         )
+        self._logger.debug(
+            "Drawn line from %s to %s with color %s", x, y, color
+        )
 
     def _render_surface(
         self,
@@ -88,6 +92,7 @@ class Screen(ClassSingleton):
         texture: SDL_Texture | None = \
             SDL_CreateTextureFromSurface(self.renderer.sdlrenderer, surface)
         if texture is None:
+            self._logger.error("Failed to create texture from surface")
             return
 
         if isinstance(surface, ctypes.POINTER(SDL_Surface)):
@@ -100,6 +105,7 @@ class Screen(ClassSingleton):
         dstrect = SDL_Rect(x, y, surface_width, surface_height)
         SDL_RenderCopy(self.renderer.sdlrenderer, texture, None, dstrect)
         SDL_DestroyTexture(texture)
+        self._logger.debug("Rendered surface at (%d, %d)", x, y)
 
     def _render_background(self) -> None:
         """
@@ -114,20 +120,19 @@ class Screen(ClassSingleton):
 
         y: int = SCREEN_HEIGHT - self.SPACING
         x: int = SCREEN_WIDTH - self.SPACING
-        for button in reversed(buttons):
-            image_path: str = button[0]
-            text: str = button[1]
-            y_adj: int = 0
-            if surface := load_image(image_path):
+        for img, text in reversed(buttons):
+            if surface := load_image(img):
                 text_surface: SDL_Surface | None = \
                     self.text_gen.get_text(text, Style.BUTTON_HELP_TEXT)
                 if text_surface:
                     x -= text_surface.w
-                    y_adj = surface.h - (int((surface.h - text_surface.h) / 2))
+                    y_adj: int = \
+                        surface.h - (int((surface.h - text_surface.h) / 2))
                     self._render_surface(text_surface, x, y - y_adj)
                     x -= surface.w + self.SPACING
                 self._render_surface(surface, x, y - surface.h)
                 x -= 25
+        self._logger.debug("Rendered background with button icons")
 
     def _render_breadcrumbs(self, breadcrumbs: list[str]) -> None:
         """
@@ -143,11 +148,13 @@ class Screen(ClassSingleton):
                 crumb_offset = trail_text.w
         breadcrumb_text: SDL_Surface | None = \
             self.text_gen.get_text(breadcrumbs[-1], Style.BREADCRUMB)
-        self._render_surface(
-            breadcrumb_text,
-            self.SPACING + crumb_offset,
-            self.SPACING
-        )
+        if breadcrumb_text:
+            self._render_surface(
+                breadcrumb_text,
+                self.SPACING + crumb_offset,
+                self.SPACING
+            )
+        self._logger.debug("Rendered breadcrumbs: %s", breadcrumbs)
 
     def _render_menu(self, menu: MenuBase) -> None:
         """Renders the current menu's items."""
@@ -158,6 +165,7 @@ class Screen(ClassSingleton):
             if text_surface:
                 y_adj: int = i * (text_surface.h + self.SPACING)
                 self._render_item(text_surface, multi_val, chevron, y_adj)
+        self._logger.debug("Rendered menu items")
 
     def _get_menu_surfaces(
         self,
@@ -199,6 +207,7 @@ class Screen(ClassSingleton):
                 self.SPLIT_PANE - chevron.w - self.PADDING,
                 self.PADDING + self.SPACING + y_adj
             )
+        self._logger.debug("Rendered item at y-offset %d", y_adj)
 
     def _render_sidepane(self, side_pane: SidePane | None) -> None:
         """Render the side pane with header and content."""
@@ -217,6 +226,7 @@ class Screen(ClassSingleton):
                 self.SPLIT_PANE,
                 self.PADDING + self.SPACING + y_adj
             )
+        self._logger.debug("Rendered side pane")
 
     def _get_header_surface(
         self,
@@ -261,3 +271,4 @@ class Screen(ClassSingleton):
             self._render_sidepane(current.menu.content.side_pane)
             self.renderer.present()
             current.update_required = False
+            self._logger.debug("Rendered screen for current menu")

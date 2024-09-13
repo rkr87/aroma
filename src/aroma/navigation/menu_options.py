@@ -20,15 +20,14 @@ class MenuOptions(MenuBase):
         Initializes the MenuOptions with a title and menu options for
         configuring settings.
         """
-        super().__init__(
-            Strings().options,
-            self._build_menu()
-        )
+        super().__init__(Strings().options, self._build_menu())
 
     def _build_menu(self) -> list[MenuItemBase]:  # pylint: disable=no-self-use
         """
         Builds the options menu with predefined settings choices.
         """
+        logger = MenuOptions.get_static_logger()
+        logger.debug("Building Options menu options.")
         return [
             MenuItemMulti(
                 "Option",

@@ -32,10 +32,13 @@ class MenuBase(ClassSingleton, ABC):
         Initialize the menu with breadcrumb, items, and optional side pane.
         """
         super().__init__()
-        self.breadcrumb = breadcrumb
-        self.select = SelectionManager(len(items))
-        self.content = ContentManager(items, self.select, side_pane)
-        self.action = ActionManager(self.select, self.content)
+        self.breadcrumb: str = breadcrumb
+        self.select: SelectionManager = SelectionManager(len(items))
+        self.content: ContentManager = ContentManager(
+            items, self.select, side_pane
+        )
+        self.action: ActionManager = ActionManager(self.select, self.content)
+        self._logger.info("Initialised %s menu", breadcrumb)
 
     def update(self) -> list[MenuItemBase]:
         """
@@ -43,7 +46,9 @@ class MenuBase(ClassSingleton, ABC):
         """
         for i, item in enumerate(self.content.items):
             item.selected = i == self.select.state.selected
-
+        self._logger.debug(
+            "Updated menu with selected index: %d", self.select.state.selected
+        )
         return self.content.get_slice()
 
     @staticmethod  # type: ignore

@@ -44,6 +44,8 @@ class MenuMain(MenuBase):
         Builds the main menu with options to navigate to collections and
         options.
         """
+        logger = MenuRomNaming.get_static_logger()
+        logger.debug("Building Main menu options.")
         return [
             self.sub_menu(self.collections_menu, self.menu_stack.push),
             self.sub_menu(self.rom_naming_menu, self.menu_stack.push),

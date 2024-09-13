@@ -15,9 +15,9 @@ for d in path_dirs:
     path: Path = Path(__file__).parent / d
     sys.path.insert(0, str(path))
 
-
-from aroma import (  # pylint: disable=wrong-import-position # type: ignore # nopep8
-    app, constants)
+# pylint: disable=wrong-import-position
+from aroma.app import App  # type: ignore # nopep8
+from aroma.constants import PATH_PREFIX  # type: ignore # nopep8
 
 
 def init() -> None:
@@ -25,10 +25,10 @@ def init() -> None:
     Initializes and starts the application.
     """
     logging.config.fileConfig(
-        f"{constants.PATH_PREFIX}/aroma/config/logging.conf"
+        f"{PATH_PREFIX}/aroma/config/logging.conf"
     )
-    init: app.App = app.App()
-    init.start()
+    app: App = App()  # type: ignore
+    app.start()
 
 
 if __name__ == "__main__":

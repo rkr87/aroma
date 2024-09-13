@@ -32,6 +32,7 @@ class MenuItemSingle(MenuItemBase):
 
     def run_action(self) -> None:
         if self.selected:
+            self._logger.debug("Running action: %s", self.action.text)
             self.action.run()
 
     def get_text(self) -> str:

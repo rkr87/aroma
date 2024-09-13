@@ -26,7 +26,10 @@ class MenuAction(ClassBase):  # type: ignore[misc]
         """
         Executes the associated action if not skipped and an action is defined.
         """
+        logger = MenuAction.get_static_logger()
         if not RUNNING_ON_TSP and self.non_tsp_skip:
+            logger.info("Skipping action for non-TSP system")
             return
         if self.action:
+            logger.info("Executing action %s", self.text)
             self.action()

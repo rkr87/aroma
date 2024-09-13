@@ -81,22 +81,38 @@ class SelectionManager(ClassBase):
         else:
             self.state.selected = clamp(new_index, 0, total_items - 1)
 
+        self._logger.debug(
+            "Cycled to item index: %d", self.state.selected
+        )
+
     def next_page(self) -> None:
         """Move to the next page of items."""
         self.cycle_items(self.state.max, self.state.total, False)
         self.state.pos = _MenuPos.TOP
+        self._logger.debug(
+            "Moved to next page. Current position: %s", self.state.pos
+        )
 
     def prev_page(self) -> None:
         """Move to the previous page of items."""
         self.cycle_items(-self.state.max, self.state.total, False)
         self.state.pos = _MenuPos.TOP
+        self._logger.debug(
+            "Moved to previous page. Current position: %s", self.state.pos
+        )
 
     def next_item(self) -> None:
         """Select the next menu item."""
         self.cycle_items(1, self.state.total)
         self.state.pos = _MenuPos.BOTTOM
+        self._logger.debug(
+            "Selected next item. Current position: %s", self.state.pos
+        )
 
     def prev_item(self) -> None:
         """Select the previous menu item."""
         self.cycle_items(-1, self.state.total)
         self.state.pos = _MenuPos.TOP
+        self._logger.debug(
+            "Selected previous item. Current position: %s", self.state.pos
+        )

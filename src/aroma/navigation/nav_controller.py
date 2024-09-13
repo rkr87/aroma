@@ -34,6 +34,7 @@ class NavController(ClassSingleton):
         super().__init__()
         self.menu_stack: MenuStack = MenuStack()
         self.main: MenuMain = MenuMain()
+        self._logger.debug("NavController initialized with main menu")
 
     def _current_menu(self, force_update: bool = False) -> CurrentMenu:
         """
@@ -42,6 +43,7 @@ class NavController(ClassSingleton):
         """
         if current := self.menu_stack.get_current(force_update):
             return current
+        self._logger.info("Menu stack is empty, pushing main menu")
         return self.menu_stack.push(self.main)
 
     def handle_events(
@@ -55,10 +57,14 @@ class NavController(ClassSingleton):
         the current menu and returns it.
         """
         if event is None:
+            self._logger.debug("No event passed, updating current menu")
             return self._current_menu(True)
+
         if Controller.button_press(event, SDL_CONTROLLER_BUTTON_A):
+            self._logger.debug("A button pressed, popping menu")
             self.menu_stack.pop()
             return self._current_menu(True)
+
         current: CurrentMenu = self._current_menu()
         button_actions: dict[int, Callable[..., None]] = {
             SDL_CONTROLLER_BUTTON_DPAD_DOWN: current.menu.select.next_item,
@@ -69,8 +75,12 @@ class NavController(ClassSingleton):
             SDL_CONTROLLER_BUTTON_DPAD_LEFT: current.menu.action.run_prev,
             SDL_CONTROLLER_BUTTON_B: current.menu.action.run_selected
         }
+
         for button, action in button_actions.items():
             if Controller.button_press(event, button):
+                self._logger.debug(
+                    "Button %s pressed, executing action", button
+                )
                 action()
                 return self._current_menu(True)
         return current

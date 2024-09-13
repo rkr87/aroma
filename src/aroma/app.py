@@ -3,7 +3,6 @@ Main application class that manages SDL initialization, event handling, and the
 application lifecycle.
 """
 
-import logging
 import sys
 
 from sdl2 import (SDL_CONTROLLER_BUTTON_GUIDE, SDL_INIT_GAMECONTROLLER,
@@ -12,7 +11,7 @@ from sdl2 import (SDL_CONTROLLER_BUTTON_GUIDE, SDL_INIT_GAMECONTROLLER,
 from sdl2.ext import quit as ext_quit
 
 from base.class_base import ClassBase
-from constants import RESOURCES
+from constants import APP_NAME, RESOURCES
 from input.controller import Controller
 from model.current_menu import CurrentMenu
 from model.strings import Strings
@@ -32,19 +31,23 @@ class App(ClassBase):
         navigator.
         """
         super().__init__()
+        self._logger.info("Initialising %s", APP_NAME)
         if SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER) != 0:
+            self._logger.error("Failed to initialize SDL")
             sys.exit(1)
         Strings.from_file(f"{RESOURCES}/strings/en.json")
         self.controller = Controller()
         self.screen = Screen()
         self.navigator = NavController()
         self.running = True
+        self._logger.info("SDL and game controller initialised successfully.")
 
     def stop(self) -> None:
         """
         Cleans up resources and exits the application.
         Stops the event loop and closes SDL subsystems.
         """
+        self._logger.info("Stopping application.")
         self.running = False
         self.controller.cleanup()
         ext_quit()
@@ -56,11 +59,12 @@ class App(ClassBase):
         Handles individual SDL events, including quitting and rendering
         updates.
         """
-        logging.info("Event type: %s", event.type)
         if event.type == SDL_QUIT:
+            self._logger.info("SDL_QUIT event received.")
             self.stop()
             return
         if self.controller.button_press(event, SDL_CONTROLLER_BUTTON_GUIDE):
+            self._logger.info("Controller guide button pressed.")
             self.stop()
             return
 
@@ -72,16 +76,19 @@ class App(ClassBase):
         Polls and processes SDL events continuously until the application is
         stopped.
         """
+        self._logger.info("Event polling started.")
         while self.running:  # pylint: disable=while-used
             event = SDL_Event()
             if SDL_PollEvent(event):
                 self.handle_event(event)
+        self._logger.info("Event polling stopped.")
 
     def start(self) -> None:
         """
         Starts the application, rendering the initial screen and entering the
         event polling loop.
         """
+        self._logger.info("Application starting.")
         menu: CurrentMenu = self.navigator.handle_events()
         self.screen.render_screen(menu)
         self.poll_event()
