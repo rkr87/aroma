@@ -5,6 +5,7 @@ and displaying existing ones.
 
 from menu.menu_base import MenuBase
 from menu.menu_item_base import MenuItemBase
+from model.strings import Strings
 from navigation.menu_new_collection import MenuNewCollection
 from navigation.menu_stack import MenuStack
 
@@ -22,7 +23,7 @@ class MenuCollections(MenuBase):
         """
         self.menu_stack: MenuStack = MenuStack()
         self.new_collection_menu: MenuNewCollection = MenuNewCollection()
-        super().__init__("COLLECTIONS", self._build_menu())
+        super().__init__(Strings().collections, self._build_menu())
 
     def _build_menu(self) -> list[MenuItemBase]:
         """
