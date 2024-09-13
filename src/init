@@ -5,6 +5,7 @@ Sets up the Python path and starts the main app.
 """
 
 
+import logging.config
 import sys
 from pathlib import Path
 
@@ -15,16 +16,19 @@ for d in path_dirs:
     sys.path.insert(0, str(path))
 
 
-from aroma.app import \
-    App  # pylint: disable=wrong-import-position # type: ignore # nopep8
+from aroma import (  # pylint: disable=wrong-import-position # type: ignore # nopep8
+    app, constants)
 
 
 def init() -> None:
     """
     Initializes and starts the application.
     """
-    app: App = App()
-    app.start()
+    logging.config.fileConfig(
+        f"{constants.PATH_PREFIX}/aroma/config/logging.conf"
+    )
+    init: app.App = app.App()
+    init.start()
 
 
 if __name__ == "__main__":
