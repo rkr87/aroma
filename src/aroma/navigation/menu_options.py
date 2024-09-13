@@ -6,6 +6,7 @@ from menu.menu_action import MenuAction
 from menu.menu_base import MenuBase
 from menu.menu_item_base import MenuItemBase
 from menu.menu_item_multi import MenuItemMulti
+from model.strings import Strings
 
 
 class MenuOptions(MenuBase):
@@ -20,7 +21,7 @@ class MenuOptions(MenuBase):
         configuring settings.
         """
         super().__init__(
-            "OPTIONS",
+            Strings().options,
             self._build_menu()
         )
 

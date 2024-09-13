@@ -10,6 +10,7 @@ from menu.menu_base import MenuBase
 from menu.menu_item_base import MenuItemBase
 from menu.menu_item_multi import MenuItemMulti
 from model.side_pane import SidePane
+from model.strings import Strings
 from util import check_crc, extract_from_zip
 
 
@@ -29,7 +30,7 @@ class MenuRomNaming(MenuBase):
         """
         Initialize the ROM naming menu with arcade ROM naming options.
         """
-        super().__init__("ROM NAMING", self._build_menu())
+        super().__init__(Strings().rom_naming, self._build_menu())
 
     def _build_menu(self) -> list[MenuItemBase]:
         """
@@ -50,54 +51,33 @@ class MenuRomNaming(MenuBase):
             installed = check_crc(f"{self.LIBRARY_PATH}/{self.LIBRARY_NAME}")
         current: int = 1 if installed == self.CUSTOM_LIBRARY_CRC else 0
         return MenuItemMulti(
-            "ARCADE ROM NAMING",
+            Strings().arcade_rom_naming,
             [
                 MenuAction(
-                    "STOCK",
+                    Strings().stock,
                     self._install_stock_arcade_library,
                     SidePane(
-                        content=(
-                            "WARNING: CHANGING THIS SETTING WILL FORCE REBOOT!"
-                            "\n\n"
-                            f"You are currently using: STOCK ({installed})\n\n"
-                            "Stock arcade ROM naming uses a hard-coded list of"
-                            " file names to determine display names in the UI."
-                            "\n\n"
-                            "The stock name list is incomplete, inaccurate "
-                            "and not editable."
-                            "\n\n"
-                            "RECOMMENDATION: Switch to custom naming library."
-                        )
+                        content=Strings().arcade_rom_naming_stock(installed)
                     ),
                     True
                 ),
                 MenuAction(
-                    "CUSTOM",
+                    Strings().custom,
                     self._install_custom_arcade_library,
                     SidePane(
-                        content=(
-                            "WARNING: CHANGING THIS SETTING WILL FORCE REBOOT!"
-                            "\n\n"
-                            "WARNING: REVERTING TO STOCK WILL REMOVE ANY "
-                            f"CUSTOM NAMES ADDED TO '{self.ARCADE_NAMES_FILE}'"
-                            "\n\n"
-                            f"You are currently using: CUSTOM ({installed})"
-                            "\n\n"
-                            "Custom arcade ROM naming uses a configurable list"
-                            " of ROM file names to determine display names in "
-                            "the UI.\n\n"
-                            f"REPLACED:\n{self.LIBRARY_PATH}/"
-                            f"{self.LIBRARY_NAME}\n\n"
-                            f"ADDED:\n{self.ARCADE_NAMES_PATH}/"
-                            f"{self.ARCADE_NAMES_FILE}\n\n"
-                            f"CREDITS:\n Nevrdid - custom {self.LIBRARY_NAME}"
+                        content=Strings().arcade_rom_naming_custom(
+                            installed,
+                            self.LIBRARY_PATH,
+                            self.LIBRARY_NAME,
+                            self.ARCADE_NAMES_PATH,
+                            self.ARCADE_NAMES_FILE
                         )
                     ),
                     True
                 )
             ],
             current,
-            SidePane(header="ARCADE ROM NAMING")
+            SidePane(header=Strings().arcade_rom_naming)
         )
 
     def _install_stock_arcade_library(self) -> None:

@@ -12,8 +12,10 @@ from sdl2 import (SDL_CONTROLLER_BUTTON_GUIDE, SDL_INIT_GAMECONTROLLER,
 from sdl2.ext import quit as ext_quit
 
 from base.class_base import ClassBase
+from constants import RESOURCES
 from input.controller import Controller
 from model.current_menu import CurrentMenu
+from model.strings import Strings
 from navigation.nav_controller import NavController
 from render.screen import Screen
 
@@ -32,6 +34,7 @@ class App(ClassBase):
         super().__init__()
         if SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER) != 0:
             sys.exit(1)
+        Strings.from_file(f"{RESOURCES}/strings/en.json")
         self.controller = Controller()
         self.screen = Screen()
         self.navigator = NavController()
