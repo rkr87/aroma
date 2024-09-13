@@ -16,8 +16,8 @@ from sdl2 import (SDL_CONTROLLER_BUTTON_A, SDL_CONTROLLER_BUTTON_B,
 from base.class_singleton import ClassSingleton
 from input.controller import Controller
 from model.current_menu import CurrentMenu
-from model.menu_stack import MenuStack
 from navigation.menu_main import MenuMain
+from navigation.menu_stack import MenuStack
 
 
 class NavController(ClassSingleton):

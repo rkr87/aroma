@@ -4,7 +4,7 @@ navigation history.
 """
 from dataclasses import dataclass
 
-from navigation.menu_base import MenuBase
+from menu.menu_base import MenuBase
 
 
 @dataclass

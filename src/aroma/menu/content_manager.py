@@ -8,9 +8,9 @@ based on the current selection.
 """
 
 from base.class_base import ClassBase
-from model.menu_item_base import MenuItemBase
+from menu.menu_item_base import MenuItemBase
+from menu.selection_manager import SelectionManager
 from model.side_pane import SidePane
-from navigation.selection_manager import SelectionManager
 
 
 class ContentManager(ClassBase):

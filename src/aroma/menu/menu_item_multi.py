@@ -1,8 +1,8 @@
 """
 Module for handling multi-action menu items.
 """
-from model.menu_action import MenuAction
-from model.menu_item_base import MenuItemBase
+from menu.menu_action import MenuAction
+from menu.menu_item_base import MenuItemBase
 from model.side_pane import SidePane
 
 

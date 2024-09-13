@@ -4,13 +4,13 @@ to access collections and settings.
 """
 
 from constants import APP_NAME
-from model.menu_item_base import MenuItemBase
-from model.menu_stack import MenuStack
+from menu.menu_base import MenuBase
+from menu.menu_item_base import MenuItemBase
 from model.side_pane import SidePane
-from navigation.menu_base import MenuBase
 from navigation.menu_collections import MenuCollections
 from navigation.menu_options import MenuOptions
 from navigation.menu_rom_naming import MenuRomNaming
+from navigation.menu_stack import MenuStack
 
 
 class MenuMain(MenuBase):

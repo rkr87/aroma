@@ -9,12 +9,12 @@ from functools import partial
 from typing import Any
 
 from base.class_singleton import ClassSingleton
-from model.menu_item_base import MenuItemBase
-from model.menu_item_single import MenuItemSingle
+from menu.action_manager import ActionManager
+from menu.content_manager import ContentManager
+from menu.menu_item_base import MenuItemBase
+from menu.menu_item_single import MenuItemSingle
+from menu.selection_manager import SelectionManager
 from model.side_pane import SidePane
-from navigation.action_manager import ActionManager
-from navigation.content_manager import ContentManager
-from navigation.selection_manager import SelectionManager
 
 
 class MenuBase(ClassSingleton, ABC):

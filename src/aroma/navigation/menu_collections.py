@@ -3,10 +3,10 @@ Defines a menu for managing collections, including adding new collections
 and displaying existing ones.
 """
 
-from model.menu_item_base import MenuItemBase
-from model.menu_stack import MenuStack
-from navigation.menu_base import MenuBase
+from menu.menu_base import MenuBase
+from menu.menu_item_base import MenuItemBase
 from navigation.menu_new_collection import MenuNewCollection
+from navigation.menu_stack import MenuStack
 
 
 class MenuCollections(MenuBase):

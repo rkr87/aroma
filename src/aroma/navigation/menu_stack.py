@@ -5,8 +5,8 @@ history.
 from dataclasses import dataclass, field
 
 from base.class_singleton import ClassSingleton
+from menu.menu_base import MenuBase
 from model.current_menu import CurrentMenu
-from navigation.menu_base import MenuBase
 
 
 @dataclass

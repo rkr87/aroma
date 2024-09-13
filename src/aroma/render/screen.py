@@ -12,12 +12,12 @@ from sdl2.ext import Color, Renderer, Window, load_image
 from base.class_singleton import ClassSingleton
 from constants import (APP_NAME, BG_COLOR, RESOURCES, SCREEN_HEIGHT,
                        SCREEN_WIDTH, SECONDARY_COLOR)
+from menu.menu_base import MenuBase
+from menu.menu_item_base import MenuItemBase
+from menu.menu_item_multi import MenuItemMulti
+from menu.menu_item_single import MenuItemSingle
 from model.current_menu import CurrentMenu
-from model.menu_item_base import MenuItemBase
-from model.menu_item_multi import MenuItemMulti
-from model.menu_item_single import MenuItemSingle
 from model.side_pane import SidePane
-from navigation.menu_base import MenuBase
 from render.text_generator import Style, TextGenerator
 from util import tuple_to_sdl_color
 

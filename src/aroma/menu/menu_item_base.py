@@ -6,7 +6,7 @@ handling actions, text, and side pane attributes.
 from abc import ABC, abstractmethod
 
 from base.class_base import ClassBase
-from model.menu_action import MenuAction
+from menu.menu_action import MenuAction
 from model.side_pane import SidePane
 
 

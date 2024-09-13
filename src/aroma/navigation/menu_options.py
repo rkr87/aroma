@@ -2,10 +2,10 @@
 Defines a menu for configuring options, including various settings and choices.
 """
 
-from model.menu_action import MenuAction
-from model.menu_item_base import MenuItemBase
-from model.menu_item_multi import MenuItemMulti
-from navigation.menu_base import MenuBase
+from menu.menu_action import MenuAction
+from menu.menu_base import MenuBase
+from menu.menu_item_base import MenuItemBase
+from menu.menu_item_multi import MenuItemMulti
 
 
 class MenuOptions(MenuBase):
