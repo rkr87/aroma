@@ -5,6 +5,7 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Any
 
+import util
 from base.class_base import ClassBase
 from constants import RUNNING_ON_TSP
 from model.side_pane import SidePane
@@ -31,5 +32,9 @@ class MenuAction(ClassBase):  # type: ignore[misc]
             logger.info("Skipping action for non-TSP system")
             return
         if self.action:
-            logger.info("Executing action %s", self.text)
+            logger.info(
+                "Executing action %s(%s)",
+                util.get_callable_name(self.action),
+                self.text
+            )
             self.action()

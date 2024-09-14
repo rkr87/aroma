@@ -3,5 +3,7 @@
     "icon": "icon.png",
     "iconsel": "icon.png",
     "launch": "launch.sh",
-    "description": "aROMa"
+    "description": "aROMa",
+    "language": "english",
+    "logging_level": "INFO"
 }

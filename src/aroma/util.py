@@ -5,7 +5,9 @@ import binascii
 import logging
 import os
 import subprocess
-from typing import overload
+from collections.abc import Callable
+from functools import partial
+from typing import Any, overload
 from zipfile import ZIP_LZMA, ZipFile
 
 from sdl2.ext import Color
@@ -124,3 +126,11 @@ def rename_file(file: str, new_name: str) -> None:
         logging.error("Permission denied: %s", file)
     except OSError as e:
         logging.error("OS error occurred while renaming file %s: %s", file, e)
+
+
+def get_callable_name(func: Callable[..., Any]) -> str:
+    """
+    Returns the fully qualified name of a callable object.
+    """
+    func = func.func if isinstance(func, partial) else func
+    return f"{func.__module__}.{func.__name__}"

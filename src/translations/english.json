@@ -33,5 +33,17 @@
         "CREDITS:",
         "OnionOS/NevrDid - custom {library_name}"
     ],
-    "options": "OPTIONS"
+    "options": "OPTIONS",
+    "language": "LANGUAGE",
+    "language_desc": [
+        "Add descrition of options here"
+    ],
+    "logging_level": "LOGGING LEVEL",
+    "logging_desc": [
+        "Add descrition of options here"
+    ],
+    "logging_debug": "DEBUG",
+    "logging_info": "INFO",
+    "logging_warning": "WARNING",
+    "logging_error": "ERROR"
 }

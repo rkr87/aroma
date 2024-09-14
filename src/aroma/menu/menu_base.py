@@ -1,6 +1,5 @@
 """
-Defines a Menu class for managing menu items, cycling through options, and
-handling user input using a game controller.
+Defines a Menu class for managing menu items.
 """
 
 from abc import ABC
@@ -39,6 +38,15 @@ class MenuBase(ClassSingleton, ABC):
         )
         self.action: ActionManager = ActionManager(self.select, self.content)
         self._logger.info("Initialised %s menu", breadcrumb)
+
+    def rebuild(self, *args: Any, **kwargs: Any) -> None:
+        """
+        Rebuild the menu with new arguments and restore the previously selected
+        item.
+        """
+        selected = self.select.state.selected
+        self.reset_instance(*args, **kwargs)
+        self.select.state.selected = selected
 
     def update(self) -> list[MenuItemBase]:
         """

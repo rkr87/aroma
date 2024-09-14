@@ -12,7 +12,7 @@ from menu.menu_base import MenuBase
 from menu.menu_item_base import MenuItemBase
 from menu.menu_item_multi import MenuItemMulti
 from model.side_pane import SidePane
-from model.strings import Strings
+from strings import Strings
 
 
 class MenuRomNaming(MenuBase):
