@@ -2,7 +2,8 @@
 Main application class that manages SDL initialization, event handling, and the
 application lifecycle.
 """
-
+import logging
+import logging.config
 import sys
 
 from sdl2 import (SDL_CONTROLLER_BUTTON_GUIDE, SDL_INIT_GAMECONTROLLER,
@@ -10,7 +11,8 @@ from sdl2 import (SDL_CONTROLLER_BUTTON_GUIDE, SDL_INIT_GAMECONTROLLER,
                   SDL_Quit)
 from sdl2.ext import quit as ext_quit
 
-from base.class_base import ClassBase
+from app_config import AppConfig
+from base.class_singleton import ClassSingleton
 from constants import APP_NAME, PATH_PREFIX
 from input.controller import Controller
 from model.current_menu import CurrentMenu
@@ -19,7 +21,7 @@ from render.screen import Screen
 from strings import Strings
 
 
-class App(ClassBase):
+class App(ClassSingleton):
     """
     Main application class for initializing and running the system.
     Manages the controller, rendering, and navigation between menus.
@@ -30,12 +32,18 @@ class App(ClassBase):
         Initializes the SDL system, game controller, screen, and menu
         navigator.
         """
+        config = AppConfig.load(f"{PATH_PREFIX}/config.json")
+        logging.config.fileConfig(
+            f"{PATH_PREFIX}/aroma/resources/config/logging.conf"
+        )
+        logging.getLogger().setLevel(config.logging_level)
+        Strings.load(f"{PATH_PREFIX}/translations/{config.language}.json")
+
         super().__init__()
         self._logger.info("Initialising %s", APP_NAME)
         if SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER) != 0:
             self._logger.error("Failed to initialize SDL")
             sys.exit(1)
-        Strings.load(f"{PATH_PREFIX}/translations/english.json")
         self.controller = Controller()
         self.screen = Screen()
         self.navigator = NavController()

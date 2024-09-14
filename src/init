@@ -3,9 +3,6 @@
 Entry point for initialising and starting the application.
 Sets up the Python path and starts the main app.
 """
-
-
-import logging.config
 import sys
 from pathlib import Path
 
@@ -17,16 +14,12 @@ for d in path_dirs:
 
 # pylint: disable=wrong-import-position
 from aroma.app import App  # type: ignore # nopep8
-from aroma.constants import PATH_PREFIX  # type: ignore # nopep8
 
 
 def init() -> None:
     """
     Initializes and starts the application.
     """
-    logging.config.fileConfig(
-        f"{PATH_PREFIX}/aroma/config/logging.conf"
-    )
     app: App = App()  # type: ignore
     app.start()
 
