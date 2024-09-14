@@ -5,9 +5,9 @@ and displaying existing ones.
 
 from menu.menu_base import MenuBase
 from menu.menu_item_base import MenuItemBase
-from model.strings import Strings
 from navigation.menu_new_collection import MenuNewCollection
 from navigation.menu_stack import MenuStack
+from strings import Strings
 
 
 class MenuCollections(MenuBase):

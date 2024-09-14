@@ -11,12 +11,12 @@ from sdl2 import (SDL_CONTROLLER_BUTTON_GUIDE, SDL_INIT_GAMECONTROLLER,
 from sdl2.ext import quit as ext_quit
 
 from base.class_base import ClassBase
-from constants import APP_NAME, RESOURCES
+from constants import APP_NAME, PATH_PREFIX
 from input.controller import Controller
 from model.current_menu import CurrentMenu
-from model.strings import Strings
 from navigation.nav_controller import NavController
 from render.screen import Screen
+from strings import Strings
 
 
 class App(ClassBase):
@@ -35,7 +35,7 @@ class App(ClassBase):
         if SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER) != 0:
             self._logger.error("Failed to initialize SDL")
             sys.exit(1)
-        Strings.from_file(f"{RESOURCES}/strings/en.json")
+        Strings.load(f"{PATH_PREFIX}/translations/english.json")
         self.controller = Controller()
         self.screen = Screen()
         self.navigator = NavController()
