@@ -30,6 +30,13 @@ class MenuStack(ClassSingleton):
             True
         )
 
+    def rebuild_menu_stack(self) -> None:
+        """
+        Rebuilds all menus in the stack.
+        """
+        for menu in self.menus:
+            menu.rebuild()
+
     def pop(self) -> None:
         """
         Removes the top menu from the stack, if more than one menu exists.
