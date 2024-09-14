@@ -10,7 +10,7 @@ import sys
 from pathlib import Path
 
 # Add directories to the Python path for module imports
-path_dirs: list[str] = ["aroma", "pylibs", "exlibs"]
+path_dirs: list[str] = ["aroma", "libs"]
 for d in path_dirs:
     path: Path = Path(__file__).parent / d
     sys.path.insert(0, str(path))
