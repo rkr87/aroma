@@ -3,7 +3,9 @@ Defines a menu for configuring options, including various settings and choices.
 """
 
 import logging.config
+from collections import OrderedDict
 from collections.abc import Callable
+from enum import Enum, auto
 from functools import partial
 from pathlib import Path
 
@@ -33,6 +35,20 @@ class MenuOptions(MenuBase):
     LANG_FILE_SUFFIX = '.json'
     DEFAULT_LANG = 'english'
 
+    class _Options(Enum):
+        """
+        Defines the options available in this menu.
+        """
+        LANGUAGE = auto()
+        LOGGING = auto()
+
+    @property
+    def Option(self) -> type[_Options]:
+        """
+        Provides the enum class for this menu's options.
+        """
+        return self._Options
+
     def __init__(self) -> None:
         """
         Initializes the MenuOptions with a title and menu options for
@@ -41,16 +57,16 @@ class MenuOptions(MenuBase):
         self._config = AppConfig()
         super().__init__(Strings().options, self._build_menu())
 
-    def _build_menu(self) -> list[MenuItemBase]:  # pylint: disable=no-self-use
+    def _build_menu(self) -> OrderedDict[Enum, MenuItemBase]:  # pylint: disable=no-self-use
         """
         Builds the options menu with predefined settings choices.
         """
         logger = MenuOptions.get_static_logger()
         logger.debug("Building Options menu options.")
-        return [
-            self._language(),
-            self._logging_level()
-        ]
+        return OrderedDict([
+            (self.Option.LANGUAGE, self._language()),
+            (self.Option.LOGGING, self._logging_level())
+        ])
 
     def _language(self) -> MenuItemMulti:
         """

@@ -55,7 +55,8 @@ class ActionManager(ClassBase):
     def _get_current_item(self) -> MenuItemBase:
         """Retrieve the currently selected menu item."""
         selected_index = self.select.state.selected
-        item = self.content.items[selected_index]
+        item_list = list(self.content.items.values())
+        item = item_list[selected_index]
         self._logger.debug(
             "Retrieved current item %s at index %d", item, selected_index
         )

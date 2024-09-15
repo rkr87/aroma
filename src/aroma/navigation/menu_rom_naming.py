@@ -4,6 +4,8 @@ arcade ROM naming libraries.
 """
 
 import os
+from collections import OrderedDict
+from enum import Enum, auto
 
 import util
 from constants import RESOURCES, RUNNING_ON_TSP
@@ -27,20 +29,35 @@ class MenuRomNaming(MenuBase):
     ARCADE_NAMES_FILE = "arcade-rom-names.txt"
     NAMES_ZIP = f"{RESOURCES}/naming/names.zip"
 
+    class _Options(Enum):
+        """
+        Defines the options available in this menu.
+        """
+        ARCADE_NAMING = auto()
+
+    @property
+    def Option(self) -> type[_Options]:
+        """
+        Provides the enum class for this menu's options.
+        """
+        return self._Options
+
     def __init__(self) -> None:
         """
         Initialize the ROM naming menu with arcade ROM naming options.
         """
         super().__init__(Strings().rom_naming, self._build_menu())
 
-    def _build_menu(self) -> list[MenuItemBase]:
+    def _build_menu(self) -> OrderedDict[Enum, MenuItemBase]:
         """
         Build the menu for selecting between stock and custom arcade ROM
         naming libraries.
         """
         logger = MenuRomNaming.get_static_logger()
         logger.debug("Building Rom Naming menu options.")
-        return [self._arcade_rom_naming()]
+        return OrderedDict([
+            (self.Option.ARCADE_NAMING, self._arcade_rom_naming())
+        ])
 
     def _arcade_rom_naming(self) -> MenuItemMulti:
         """

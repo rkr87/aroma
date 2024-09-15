@@ -2,8 +2,10 @@
 Defines a Menu class for managing menu items.
 """
 
-from abc import ABC
+from abc import ABC, abstractmethod
+from collections import OrderedDict
 from collections.abc import Callable
+from enum import Enum
 from functools import partial
 from typing import Any
 
@@ -24,7 +26,7 @@ class MenuBase(ClassSingleton, ABC):
     def __init__(
         self,
         breadcrumb: str,
-        items: list[MenuItemBase],
+        items: OrderedDict[Enum, MenuItemBase],
         side_pane: SidePane | None = None
     ) -> None:
         """
@@ -39,6 +41,14 @@ class MenuBase(ClassSingleton, ABC):
         self.action: ActionManager = ActionManager(self.select, self.content)
         self._logger.info("Initialised %s menu", breadcrumb)
 
+    @property
+    @abstractmethod
+    def Option(self) -> type[Enum]:  # pylint: disable=invalid-name
+        """
+        Abstract property that must return the enum class for menu options.
+        Each subclass must define its own menu options.
+        """
+
     def rebuild(self, *args: Any, **kwargs: Any) -> None:
         """
         Rebuild the menu with new arguments and restore the previously selected
@@ -52,7 +62,7 @@ class MenuBase(ClassSingleton, ABC):
         """
         Update the menu's selection state and return visible items.
         """
-        for i, item in enumerate(self.content.items):
+        for i, item in enumerate(self.content.items.values()):
             item.selected = i == self.select.state.selected
         self._logger.debug(
             "Updated menu with selected index: %d", self.select.state.selected
