@@ -3,6 +3,23 @@
     "custom": "CUSTOM",
     "collections": "COLLECTIONS",
     "rom_naming": "ROM NAMING",
+    "naming_method": "NAMING METHOD",
+    "naming_method_desc": [
+        "Add description of options here"
+    ],
+    "console_naming": "CONSOLE NAMING",
+    "console_naming_desc": [
+        "Add description of options here"
+    ],
+    "name_format": "NAME FORMAT",
+    "name_format_desc": [
+        "Add description of options here"
+    ],
+    "name_format_none": "FULL TITLE",
+    "name_format_name_only": "NAME ONLY",
+    "name_format_name_region": "NAME (REGION)",
+    "name_format_name_region_disc": "NAME (REGION) [DISC]",
+    "name_format_name_disc": "NAME [DISC]",
     "arcade_rom_naming": "ARCADE ROM NAMING",
     "_arcade_rom_naming_stock": [
         "WARNING: CHANGING THIS SETTING WILL FORCE REBOOT!",
@@ -36,11 +53,11 @@
     "options": "OPTIONS",
     "language": "LANGUAGE",
     "language_desc": [
-        "Add descrition of options here"
+        "Add description of options here"
     ],
     "logging_level": "LOGGING LEVEL",
     "logging_desc": [
-        "Add descrition of options here"
+        "Add descrpition of options here"
     ],
     "logging_debug": "DEBUG",
     "logging_info": "INFO",
