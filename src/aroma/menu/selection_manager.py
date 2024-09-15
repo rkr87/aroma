@@ -70,16 +70,15 @@ class SelectionManager(ClassBase):
     def cycle_items(
         self,
         delta: int,
-        total_items: int,
         recycle: bool = True
     ) -> None:
         """Cycle through items, with optional recycling of indices."""
         new_index: int = self.state.selected + delta
 
         if recycle:
-            self.state.selected = new_index % total_items
+            self.state.selected = new_index % self.state.total
         else:
-            self.state.selected = clamp(new_index, 0, total_items - 1)
+            self.state.selected = clamp(new_index, 0, self.state.total - 1)
 
         self._logger.debug(
             "Cycled to item index: %d", self.state.selected
@@ -87,7 +86,7 @@ class SelectionManager(ClassBase):
 
     def next_page(self) -> None:
         """Move to the next page of items."""
-        self.cycle_items(self.state.max, self.state.total, False)
+        self.cycle_items(self.state.max, False)
         self.state.pos = _MenuPos.TOP
         self._logger.debug(
             "Moved to next page. Current position: %s", self.state.pos
@@ -95,7 +94,7 @@ class SelectionManager(ClassBase):
 
     def prev_page(self) -> None:
         """Move to the previous page of items."""
-        self.cycle_items(-self.state.max, self.state.total, False)
+        self.cycle_items(-self.state.max, False)
         self.state.pos = _MenuPos.TOP
         self._logger.debug(
             "Moved to previous page. Current position: %s", self.state.pos
@@ -103,7 +102,7 @@ class SelectionManager(ClassBase):
 
     def next_item(self) -> None:
         """Select the next menu item."""
-        self.cycle_items(1, self.state.total)
+        self.cycle_items(1)
         self.state.pos = _MenuPos.BOTTOM
         self._logger.debug(
             "Selected next item. Current position: %s", self.state.pos
@@ -111,7 +110,7 @@ class SelectionManager(ClassBase):
 
     def prev_item(self) -> None:
         """Select the previous menu item."""
-        self.cycle_items(-1, self.state.total)
+        self.cycle_items(-1)
         self.state.pos = _MenuPos.TOP
         self._logger.debug(
             "Selected previous item. Current position: %s", self.state.pos
