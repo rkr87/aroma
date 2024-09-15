@@ -9,7 +9,7 @@ from enum import Enum, auto
 from functools import partial
 from pathlib import Path
 
-from app_config import AppConfig
+from app_config import AppConfig, update_config
 from constants import PATH_PREFIX
 from menu.menu_action import MenuAction
 from menu.menu_base import MenuBase
@@ -17,13 +17,6 @@ from menu.menu_item_base import MenuItemBase
 from menu.menu_item_multi import MenuItemMulti
 from model.side_pane import SidePane
 from strings import Strings
-
-
-def _update_config(option: str, level: str) -> None:
-    """
-    Updates the configuration with the specified option and value.
-    """
-    AppConfig().update_value(option, level)
 
 
 class MenuOptions(MenuBase):
@@ -129,7 +122,7 @@ class MenuOptions(MenuBase):
     def _generate_config_actions(
         data: dict[str, str],
         config_attr: str,
-        function: Callable[[str, str], None] = _update_config,
+        function: Callable[[str, str], None] = update_config,
         default: int = 0
     ) -> tuple[list[MenuAction], int]:
         """
@@ -151,7 +144,7 @@ class MenuOptions(MenuBase):
         """
         Sets the logging level and updates the configuration.
         """
-        _update_config(config_attr, level)
+        update_config(config_attr, level)
         logging.getLogger().setLevel(level)
 
     @staticmethod
@@ -160,7 +153,7 @@ class MenuOptions(MenuBase):
         Sets the application language and updates the configuration. Reloads
         the strings and rebuilds menus.
         """
-        _update_config(config_attr, language)
+        update_config(config_attr, language)
         Strings.load(f"{PATH_PREFIX}/translations/{language}.json")
         for menu in reversed(MenuBase.get_children()):
             menu.rebuild()
