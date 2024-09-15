@@ -8,6 +8,7 @@ from collections import OrderedDict
 from enum import Enum, auto
 
 import util
+from app_config import AppConfig
 from constants import RESOURCES, RUNNING_ON_TSP
 from menu.menu_action import MenuAction
 from menu.menu_base import MenuBase
@@ -28,12 +29,17 @@ class MenuRomNaming(MenuBase):
     ARCADE_NAMES_PATH = "/mnt/SDCARD/BIOS/arcade_lists"
     ARCADE_NAMES_FILE = "arcade-rom-names.txt"
     NAMES_ZIP = f"{RESOURCES}/naming/names.zip"
+    STOCK_STR = "STOCK"
+    CUSTOM_STR = "CUSTOM"
 
     class _Options(Enum):
         """
         Defines the options available in this menu.
         """
         ARCADE_NAMING = auto()
+        NAMING_METHOD = auto()
+        CONSOLE_NAMING = auto()
+        NAME_FORMAT = auto()
 
     @property
     def Option(self) -> type[_Options]:
@@ -55,9 +61,80 @@ class MenuRomNaming(MenuBase):
         """
         logger = MenuRomNaming.get_static_logger()
         logger.debug("Building Rom Naming menu options.")
-        return OrderedDict([
-            (self.Option.ARCADE_NAMING, self._arcade_rom_naming())
+
+        options: OrderedDict[Enum, MenuItemBase] = OrderedDict([
+            (self.Option.NAMING_METHOD, self._naming_method())
         ])
+
+        if AppConfig().naming_method == self.STOCK_STR:
+            options[self.Option.ARCADE_NAMING] = self._arcade_rom_naming()
+            return options
+        options.update([
+            (self.Option.CONSOLE_NAMING, self._console_naming()),
+            (self.Option.NAME_FORMAT, self._name_format()),
+        ])
+        return options
+
+    def _naming_method(self) -> MenuItemMulti:
+        """
+        TODO
+        """
+        data: dict[str, str] = {
+            self.STOCK_STR: Strings().stock,
+            self.CUSTOM_STR: Strings().custom
+        }
+        actions, current = self._generate_config_actions(
+            data,
+            "naming_method",
+            self._rebuild_menu
+        )
+        return MenuItemMulti(
+            Strings().naming_method,
+            actions,
+            current,
+            SidePane(Strings().naming_method, Strings().naming_method_desc)
+        )
+
+    def _console_naming(self) -> MenuItemMulti:
+        """
+        TODO
+        """
+        data: dict[str, str] = {
+            self.STOCK_STR: Strings().stock,
+            self.CUSTOM_STR: Strings().custom
+        }
+        actions, current = self._generate_config_actions(
+            data,
+            "console_naming"
+        )
+        return MenuItemMulti(
+            Strings().console_naming,
+            actions,
+            current,
+            SidePane(Strings().console_naming, Strings().console_naming_desc)
+        )
+
+    def _name_format(self) -> MenuItemMulti:
+        """
+        TODO
+        """
+        data: dict[str, str] = {
+            "NONE": Strings().name_format_none,
+            "NAME": Strings().name_format_name_only,
+            "NAME_R": Strings().name_format_name_region,
+            "NAME_D": Strings().name_format_name_disc,
+            "NAME_R_D": Strings().name_format_name_region_disc
+        }
+        actions, current = self._generate_config_actions(
+            data,
+            "name_format"
+        )
+        return MenuItemMulti(
+            Strings().name_format,
+            actions,
+            current,
+            SidePane(Strings().name_format, Strings().name_format_desc)
+        )
 
     def _arcade_rom_naming(self) -> MenuItemMulti:
         """
@@ -99,6 +176,13 @@ class MenuRomNaming(MenuBase):
             current,
             SidePane(header=Strings().arcade_rom_naming)
         )
+
+    @staticmethod
+    def _rebuild_menu(method: str) -> None:
+        """TODO"""
+        logger = MenuRomNaming.get_static_logger()
+        logger.info("Rebuilding menu for %s naming method.", method)
+        MenuRomNaming().rebuild()
 
     def _install_stock_arcade_library(self) -> None:
         """
