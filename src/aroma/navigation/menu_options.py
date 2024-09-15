@@ -7,7 +7,7 @@ from collections import OrderedDict
 from enum import Enum, auto
 from pathlib import Path
 
-from app_config import AppConfig, update_config
+from app_config import AppConfig
 from constants import PATH_PREFIX
 from menu.menu_base import MenuBase
 from menu.menu_item_base import MenuItemBase
@@ -116,20 +116,18 @@ class MenuOptions(MenuBase):
         )
 
     @staticmethod
-    def _set_logging_level(config_attr: str, level: str) -> None:
+    def _set_logging_level(level: str) -> None:
         """
         Sets the logging level and updates the configuration.
         """
-        update_config(config_attr, level)
         logging.getLogger().setLevel(level)
 
     @staticmethod
-    def _set_language(config_attr: str, language: str) -> None:
+    def _set_language(language: str) -> None:
         """
         Sets the application language and updates the configuration. Reloads
         the strings and rebuilds menus.
         """
-        update_config(config_attr, language)
         Strings.load(f"{PATH_PREFIX}/translations/{language}.json")
         for menu in reversed(MenuBase.get_children()):
             menu.rebuild()

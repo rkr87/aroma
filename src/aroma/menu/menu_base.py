@@ -90,7 +90,7 @@ class MenuBase(ClassSingleton, ABC):
     def _generate_config_actions(
         data: dict[str, str],
         config_attr: str,
-        function: Callable[[str, str], None] = update_config,
+        function: Callable[[str], None] | None = None,
         default: int = 0,
         non_tsp_skip: bool = False
     ) -> tuple[list[MenuAction], int]:
@@ -98,18 +98,22 @@ class MenuBase(ClassSingleton, ABC):
         Generates a list of menu actions for configuring a specific option and
         determines the current selection.
         """
-        current = default
-        if (val := AppConfig().get_value(config_attr)) in data:
-            current = list(data).index(val)
+
+        def new_func(val: str) -> None:
+            update_config(config_attr, val)
+            if function:
+                function(val)
+
+        if (config := AppConfig().get_value(config_attr)) in data:
+            default = list(data).index(config)
 
         actions: list[MenuAction] = []
         for k, v in data.items():
             actions.append(
                 MenuAction(
                     v,
-                    partial(function, config_attr, k),
+                    partial(new_func, k),
                     non_tsp_skip=non_tsp_skip
                 )
             )
-
-        return actions, current
+        return actions, default
