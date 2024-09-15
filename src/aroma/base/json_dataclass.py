@@ -73,6 +73,9 @@ class JsonDataClass(ClassSingleton, ABC):
         Updates a specific attribute of the instance and saves the updated data
         to the JSON file.
         """
+        JsonDataClass.get_static_logger().info(
+            "Updating %s.%s=%s", self.__class__.__name__, attribute, value
+        )
         setattr(self, attribute, value)
         self.save()
 

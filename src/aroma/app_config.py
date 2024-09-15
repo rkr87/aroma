@@ -8,13 +8,6 @@ from dataclasses import dataclass
 from base.json_dataclass import JsonDataClass
 
 
-def update_config(option: str, level: str) -> None:
-    """
-    Updates the configuration with the specified option and value.
-    """
-    AppConfig().update_value(option, level)
-
-
 @dataclass
 class AppConfig(JsonDataClass):   # pylint: disable=too-many-instance-attributes
     """

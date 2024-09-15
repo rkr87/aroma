@@ -9,7 +9,8 @@ from enum import Enum
 from functools import partial
 from typing import Any
 
-from app_config import AppConfig, update_config
+import util
+from app_config import AppConfig
 from base.class_singleton import ClassSingleton
 from menu.action_manager import ActionManager
 from menu.content_manager import ContentManager
@@ -100,8 +101,14 @@ class MenuBase(ClassSingleton, ABC):
         """
 
         def new_func(val: str) -> None:
-            update_config(config_attr, val)
+            AppConfig().update_value(config_attr, val)
             if function:
+                logger = MenuBase.get_static_logger()
+                logger.info(
+                    "Executing action %s(%s)",
+                    util.get_callable_name(function),
+                    val
+                )
                 function(val)
 
         if (config := AppConfig().get_value(config_attr)) in data:
