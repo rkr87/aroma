@@ -28,8 +28,8 @@ class Screen(ClassSingleton):
     breadcrumbs.
     """
 
-    SPACING = 15
-    PADDING = 40
+    SPACING = 12
+    PADDING = 24
     SPLIT_PANE = int((SCREEN_WIDTH / 7 * 3) + PADDING + SPACING)
 
     def __init__(self) -> None:
@@ -70,8 +70,8 @@ class Screen(ClassSingleton):
             self.renderer.sdlrenderer,
             x[0],
             y[0],
-            x[0] + x[1],
-            y[0] + y[1]
+            x[1],
+            y[1]
         )
         self._logger.debug(
             "Drawn line from %s to %s with color %s", x, y, color
@@ -107,7 +107,7 @@ class Screen(ClassSingleton):
         SDL_DestroyTexture(texture)
         self._logger.debug("Rendered surface at (%d, %d)", x, y)
 
-    def _render_background(self) -> None:
+    def _render_background(self) -> int:
         """
         Renders the background with button icons and associated help text.
         """
@@ -120,6 +120,7 @@ class Screen(ClassSingleton):
 
         y: int = SCREEN_HEIGHT - self.SPACING
         x: int = SCREEN_WIDTH - self.SPACING
+        min_y: int = y
         for img, text in reversed(buttons):
             if surface := load_image(img):
                 text_surface: SDL_Surface | None = \
@@ -130,15 +131,19 @@ class Screen(ClassSingleton):
                         surface.h - (int((surface.h - text_surface.h) / 2))
                     self._render_surface(text_surface, x, y - y_adj)
                     x -= surface.w + self.SPACING
+                    min_y = min(min_y, y - y_adj)
                 self._render_surface(surface, x, y - surface.h)
+                min_y = min(min_y, y - surface.h)
                 x -= 25
         self._logger.debug("Rendered background with button icons")
+        return min_y
 
-    def _render_breadcrumbs(self, breadcrumbs: list[str]) -> None:
+    def _render_breadcrumbs(self, breadcrumbs: list[str]) -> int:
         """
         Renders the breadcrumb trail for the current menu.
         """
         crumb_offset = 0
+        max_y: int = 0
         if len(breadcrumbs) > 1:
             crumb_trail = f"{' › '.join(breadcrumbs[:-1])} › "
             trail_text: SDL_Surface | None = \
@@ -146,6 +151,7 @@ class Screen(ClassSingleton):
             if trail_text:
                 self._render_surface(trail_text, self.SPACING, self.SPACING)
                 crumb_offset = trail_text.w
+                max_y = max(max_y, trail_text.h + self.SPACING)
         breadcrumb_text: SDL_Surface | None = \
             self.text_gen.get_text(breadcrumbs[-1], Style.BREADCRUMB)
         if breadcrumb_text:
@@ -154,17 +160,19 @@ class Screen(ClassSingleton):
                 self.SPACING + crumb_offset,
                 self.SPACING
             )
+            max_y = max(max_y, breadcrumb_text.h + self.SPACING)
         self._logger.debug("Rendered breadcrumbs: %s", breadcrumbs)
+        return max_y
 
-    def _render_menu(self, menu: MenuBase) -> None:
+    def _render_menu(self, menu: MenuBase, y_start: int) -> None:
         """Renders the current menu's items."""
         items: list[MenuItemBase] = menu.update()
 
         for i, item in enumerate(items):
             text_surface, multi_val, chevron = self._get_menu_surfaces(item)
             if text_surface:
-                y_adj: int = i * (text_surface.h + self.SPACING)
-                self._render_item(text_surface, multi_val, chevron, y_adj)
+                y: int = i * (text_surface.h + self.SPACING) + y_start
+                self._render_item(text_surface, multi_val, chevron, y)
         self._logger.debug("Rendered menu items")
 
     def _get_menu_surfaces(
@@ -178,7 +186,7 @@ class Screen(ClassSingleton):
             return select_surface, None, None
         if isinstance(item, MenuItemMulti):
             pfx_surface = self.text_gen.get_text(item.get_prefix_text())
-            chevron_surface = self.text_gen.get_text("›")
+            chevron_surface = self.text_gen.get_selectable("›", item.selected)
             return pfx_surface, select_surface, chevron_surface
         return None, None, None
 
@@ -187,29 +195,29 @@ class Screen(ClassSingleton):
         text_surface: SDL_Surface,
         multi_val: SDL_Surface | None,
         chevron: SDL_Surface | None,
-        y_adj: int
+        y: int
     ) -> None:
         """Renders the item and its associated surfaces."""
         self._render_surface(
             text_surface,
             self.PADDING,
-            self.PADDING + self.SPACING + y_adj
+            y
         )
         if multi_val:
             self._render_surface(
                 multi_val,
                 self.PADDING + text_surface.w + self.SPACING,
-                self.PADDING + self.SPACING + y_adj
+                y
             )
         if chevron:
             self._render_surface(
                 chevron,
                 self.SPLIT_PANE - chevron.w - self.PADDING,
-                self.PADDING + self.SPACING + y_adj
+                y
             )
-        self._logger.debug("Rendered item at y-offset %d", y_adj)
+        self._logger.debug("Rendered item at y-offset %d", y)
 
-    def _render_sidepane(self, side_pane: SidePane | None) -> None:
+    def _render_sidepane(self, side_pane: SidePane | None, y: int) -> None:
         """Render the side pane with header and content."""
         if not side_pane:
             return
@@ -217,14 +225,14 @@ class Screen(ClassSingleton):
             self._render_surface(
                 header,
                 self.SPLIT_PANE,
-                self.PADDING + self.SPACING
+                y
             )
         if content := self._get_content_surface(side_pane.content):
-            y_adj = 0 if not header else header.h + self.SPACING
+            y += 0 if not header else header.h + self.SPACING
             self._render_surface(
                 content,
                 self.SPLIT_PANE,
-                self.PADDING + self.SPACING + y_adj
+                y
             )
         self._logger.debug("Rendered side pane")
 
@@ -259,16 +267,17 @@ class Screen(ClassSingleton):
         side pane.
         """
         if current.update_required:
-            self._render_background()
-            self._render_breadcrumbs(current.breadcrumbs)
-            self._render_menu(current.menu)
-            line_y = self.SPACING + self.PADDING
+            help_h = self._render_background()
+            crumb_h = self._render_breadcrumbs(current.breadcrumbs)
+            self._render_menu(current.menu, crumb_h + self.SPACING)
             self._draw_line(
                 tuple_to_sdl_color(SECONDARY_COLOR),
-                (self._side_pane_line_pos, 0),
-                (line_y, SCREEN_HEIGHT - line_y * 2)
+                (self._side_pane_line_pos, self._side_pane_line_pos),
+                (crumb_h + self.SPACING, help_h - self.SPACING)
             )
-            self._render_sidepane(current.menu.content.side_pane)
+            self._render_sidepane(
+                current.menu.content.side_pane, crumb_h + self.SPACING
+            )
             self.renderer.present()
             current.update_required = False
             self._logger.debug("Rendered screen for current menu")
