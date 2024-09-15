@@ -9,9 +9,11 @@ from enum import Enum
 from functools import partial
 from typing import Any
 
+from app_config import AppConfig, update_config
 from base.class_singleton import ClassSingleton
 from menu.action_manager import ActionManager
 from menu.content_manager import ContentManager
+from menu.menu_action import MenuAction
 from menu.menu_item_base import MenuItemBase
 from menu.menu_item_single import MenuItemSingle
 from menu.selection_manager import SelectionManager
@@ -83,3 +85,24 @@ class MenuBase(ClassSingleton, ABC):
             partial(stack_push, menu),
             side_pane=side_pane
         )
+
+    @staticmethod
+    def _generate_config_actions(
+        data: dict[str, str],
+        config_attr: str,
+        function: Callable[[str, str], None] = update_config,
+        default: int = 0
+    ) -> tuple[list[MenuAction], int]:
+        """
+        Generates a list of menu actions for configuring a specific option and
+        determines the current selection.
+        """
+        current = default
+        if (val := AppConfig().get_value(config_attr)) in data:
+            current = list(data).index(val)
+
+        actions = [
+            MenuAction(v, partial(function, config_attr, k))
+            for k, v in data.items()
+        ]
+        return actions, current

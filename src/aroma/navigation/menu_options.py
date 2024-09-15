@@ -4,14 +4,11 @@ Defines a menu for configuring options, including various settings and choices.
 
 import logging.config
 from collections import OrderedDict
-from collections.abc import Callable
 from enum import Enum, auto
-from functools import partial
 from pathlib import Path
 
 from app_config import AppConfig, update_config
 from constants import PATH_PREFIX
-from menu.menu_action import MenuAction
 from menu.menu_base import MenuBase
 from menu.menu_item_base import MenuItemBase
 from menu.menu_item_multi import MenuItemMulti
@@ -117,27 +114,6 @@ class MenuOptions(MenuBase):
                 Strings().logging_desc
             )
         )
-
-    @staticmethod
-    def _generate_config_actions(
-        data: dict[str, str],
-        config_attr: str,
-        function: Callable[[str, str], None] = update_config,
-        default: int = 0
-    ) -> tuple[list[MenuAction], int]:
-        """
-        Generates a list of menu actions for configuring a specific option and
-        determines the current selection.
-        """
-        current = default
-        if (val := AppConfig().get_value(config_attr)) in data:
-            current = list(data).index(val)
-
-        actions = [
-            MenuAction(v, partial(function, config_attr, k))
-            for k, v in data.items()
-        ]
-        return actions, current
 
     @staticmethod
     def _set_logging_level(config_attr: str, level: str) -> None:
