@@ -5,9 +5,9 @@ arcade ROM naming libraries.
 import util
 from base.class_singleton import ClassSingleton
 from constants import (ARCADE_LIBRARY_APP_RESOURCE, ARCADE_LIBRARY_NAME,
-                       ARCADE_NAMES_APP_RESOURCE, ARCADE_NAMES_TARGET_FILE,
-                       CUSTOM_ARCADE_LIBRARY_CRC, CUSTOM_STR, RUNNING_ON_TSP,
-                       STOCK_STR, TSP_USER_LIBRARY_PATH)
+                       ARCADE_NAMES_TARGET_FILE, CUSTOM_ARCADE_LIBRARY_CRC,
+                       CUSTOM_STR, RUNNING_ON_TSP, STOCK_STR,
+                       TSP_USER_LIBRARY_PATH)
 from data.rom_manager import RomManager
 
 
@@ -64,8 +64,7 @@ class ActionRomNaming(ClassSingleton):
         logger = cls.get_static_logger()
         logger.info("Installing stock arcade naming library.")
         target_lib = TSP_USER_LIBRARY_PATH / ARCADE_LIBRARY_NAME
-        arcade_names = ARCADE_NAMES_TARGET_FILE
-        util.delete_file(arcade_names)
+        util.delete_file(ARCADE_NAMES_TARGET_FILE)
         util.delete_file(target_lib)
 
         if (backup := target_lib.with_suffix("stock")).is_file():
@@ -95,7 +94,7 @@ class ActionRomNaming(ClassSingleton):
             target_lib
         )
         util.extract_from_zip(
-            ARCADE_NAMES_APP_RESOURCE,
+            ARCADE_LIBRARY_APP_RESOURCE,
             ARCADE_NAMES_TARGET_FILE.name,
             ARCADE_NAMES_TARGET_FILE
         )
