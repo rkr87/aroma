@@ -5,10 +5,9 @@ Defines a menu for configuring options, including various settings and choices.
 import logging.config
 from collections import OrderedDict
 from enum import Enum, auto
-from pathlib import Path
 
 from app_config import AppConfig
-from constants import APP_PATH
+from constants import APP_TRANSLATION_PATH
 from menu.menu_base import MenuBase
 from menu.menu_item_base import MenuItemBase
 from menu.menu_item_multi import MenuItemMulti
@@ -62,11 +61,9 @@ class MenuOptions(MenuBase):
         """
         Creates a menu item for selecting the language from available options.
         """
-        directory = Path(f'{APP_PATH}/translations')
-
         data: dict[str, str] = {}
         default: int = 0
-        for i, f in enumerate(directory.iterdir()):
+        for i, f in enumerate(APP_TRANSLATION_PATH.iterdir()):
             if f.is_file() and f.suffix == self.LANG_FILE_SUFFIX:
                 data[f.stem] = f.stem.upper()
             if f.stem.lower() == self.DEFAULT_LANG:
@@ -128,6 +125,6 @@ class MenuOptions(MenuBase):
         Sets the application language and updates the configuration. Reloads
         the strings and rebuilds menus.
         """
-        Strings.load(f"{APP_PATH}/translations/{language}.json")
+        Strings.load(APP_TRANSLATION_PATH / f"{language}.json")
         for menu in reversed(MenuBase.get_children()):
             menu.rebuild()

@@ -13,7 +13,8 @@ from sdl2.ext import quit as ext_quit
 
 from app_config import AppConfig
 from base.class_singleton import ClassSingleton
-from constants import APP_NAME, APP_PATH
+from constants import (APP_CONFIG_PATH, APP_LOGGING_CONFIG_PATH, APP_NAME,
+                       APP_TRANSLATION_PATH)
 from input.controller import Controller
 from model.current_menu import CurrentMenu
 from navigation.nav_controller import NavController
@@ -32,12 +33,10 @@ class App(ClassSingleton):
         Initializes the SDL system, game controller, screen, and menu
         navigator.
         """
-        config = AppConfig.load(f"{APP_PATH}/config.json")
-        logging.config.fileConfig(
-            f"{APP_PATH}/aroma/resources/config/logging.conf"
-        )
+        config = AppConfig.load(APP_CONFIG_PATH)
+        logging.config.fileConfig(APP_LOGGING_CONFIG_PATH)
         logging.getLogger().setLevel(config.logging_level)
-        Strings.load(f"{APP_PATH}/translations/{config.language}.json")
+        Strings.load(APP_TRANSLATION_PATH / f"{config.language}.json")
 
         super().__init__()
         self._logger.info("Initialising %s", APP_NAME)

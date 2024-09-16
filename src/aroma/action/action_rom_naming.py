@@ -3,19 +3,12 @@ Defines the ROM naming preferences menu, allowing users to manage
 arcade ROM naming libraries.
 """
 
-import os
-
 import util
 from base.class_singleton import ClassSingleton
-from constants import CUSTOM_STR, RESOURCES, RUNNING_ON_TSP, STOCK_STR
-
-CUSTOM_LIBRARY_CRC = "0x8a1cae0"
-LIBRARY_PATH = "/usr/trimui/lib"
-LIBRARY_NAME = "libgamename.so"
-LIBRARY_ZIP = f"{RESOURCES}/naming/{LIBRARY_NAME}.zip"
-ARCADE_NAMES_PATH = "/mnt/SDCARD/BIOS/arcade_lists"
-ARCADE_NAMES_FILE = "arcade-rom-names.txt"
-NAMES_ZIP = f"{RESOURCES}/naming/names.zip"
+from constants import (ARCADE_LIBRARY_APP_RESOURCE, ARCADE_LIBRARY_NAME,
+                       ARCADE_NAMES_APP_RESOURCE, ARCADE_NAMES_TARGET_FILE,
+                       CUSTOM_ARCADE_LIBRARY_CRC, CUSTOM_STR, RUNNING_ON_TSP,
+                       STOCK_STR, TSP_USER_LIBRARY_PATH)
 
 
 class ActionRomNaming(ClassSingleton):
@@ -43,8 +36,9 @@ class ActionRomNaming(ClassSingleton):
         installed: str = "n/a"
         current: str = STOCK_STR
         if RUNNING_ON_TSP:
-            installed = util.check_crc(f"{LIBRARY_PATH}/{LIBRARY_NAME}")
-            if installed == CUSTOM_LIBRARY_CRC:
+            installed = \
+                util.check_crc(TSP_USER_LIBRARY_PATH / ARCADE_LIBRARY_NAME)
+            if installed == CUSTOM_ARCADE_LIBRARY_CRC:
                 current = CUSTOM_STR
         logger.debug("Current library installed: %s (%s)", current, installed)
         if current not in menu_options:
@@ -59,17 +53,17 @@ class ActionRomNaming(ClassSingleton):
         """
         logger = ActionRomNaming.get_static_logger()
         logger.info("Installing stock arcade naming library.")
-        target_lib = f"{LIBRARY_PATH}/{LIBRARY_NAME}"
-        arcade_names = f"{ARCADE_NAMES_PATH}/{ARCADE_NAMES_FILE}"
+        target_lib = TSP_USER_LIBRARY_PATH / ARCADE_LIBRARY_NAME
+        arcade_names = ARCADE_NAMES_TARGET_FILE
         util.delete_file(arcade_names)
         util.delete_file(target_lib)
 
-        if os.path.exists(f"{target_lib}.stock"):
-            util.rename_file(f"{target_lib}.stock", target_lib)
+        if (backup := target_lib.with_suffix(".stock")).is_file():
+            util.rename_file(backup, target_lib)
         else:
             util.extract_from_zip(
-                LIBRARY_ZIP,
-                f"{LIBRARY_NAME}.stock",
+                ARCADE_LIBRARY_APP_RESOURCE,
+                f"{ARCADE_LIBRARY_NAME}.stock",
                 target_lib
             )
 
@@ -81,17 +75,17 @@ class ActionRomNaming(ClassSingleton):
         """
         logger = ActionRomNaming.get_static_logger()
         logger.info("Installing custom arcade naming library.")
-        target_lib = f"{LIBRARY_PATH}/{LIBRARY_NAME}"
-        util.delete_file(f"{target_lib}.stock")
-        util.rename_file(target_lib, f"{target_lib}.stock")
+        target_lib = TSP_USER_LIBRARY_PATH / ARCADE_LIBRARY_NAME
+        util.delete_file(backup := target_lib.with_suffix(".stock"))
+        util.rename_file(target_lib, backup)
 
         util.extract_from_zip(
-            LIBRARY_ZIP,
-            f"{LIBRARY_NAME}.custom",
+            ARCADE_LIBRARY_APP_RESOURCE,
+            f"{ARCADE_LIBRARY_NAME}.custom",
             target_lib
         )
         util.extract_from_zip(
-            NAMES_ZIP,
-            ARCADE_NAMES_FILE,
-            f"{ARCADE_NAMES_PATH}/{ARCADE_NAMES_FILE}"
+            ARCADE_NAMES_APP_RESOURCE,
+            ARCADE_NAMES_TARGET_FILE.name,
+            ARCADE_NAMES_TARGET_FILE
         )
