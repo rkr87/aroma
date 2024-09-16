@@ -3,13 +3,13 @@ Defines the ROM naming preferences menu, allowing users to manage
 arcade ROM naming libraries.
 """
 
-import os
+
 from collections import OrderedDict
 from enum import Enum, auto
 
-import util
+from action.action_rom_naming import ActionRomNaming
 from app_config import AppConfig
-from constants import RESOURCES, RUNNING_ON_TSP
+from constants import CUSTOM_STR, STOCK_STR
 from menu.menu_action import MenuAction
 from menu.menu_base import MenuBase
 from menu.menu_item_base import MenuItemBase
@@ -22,15 +22,6 @@ class MenuRomNaming(MenuBase):
     """
     A menu for managing ROM naming preferences.
     """
-    CUSTOM_LIBRARY_CRC = "0x8a1cae0"
-    LIBRARY_PATH = "/usr/trimui/lib"
-    LIBRARY_NAME = "libgamename.so"
-    LIBRARY_ZIP = f"{RESOURCES}/naming/{LIBRARY_NAME}.zip"
-    ARCADE_NAMES_PATH = "/mnt/SDCARD/BIOS/arcade_lists"
-    ARCADE_NAMES_FILE = "arcade-rom-names.txt"
-    NAMES_ZIP = f"{RESOURCES}/naming/names.zip"
-    STOCK_STR = "STOCK"
-    CUSTOM_STR = "CUSTOM"
 
     class _Options(Enum):
         """
@@ -66,7 +57,7 @@ class MenuRomNaming(MenuBase):
             (self.Option.NAMING_METHOD, self._naming_method())
         ])
 
-        if AppConfig().naming_method == self.STOCK_STR:
+        if AppConfig().naming_method == STOCK_STR:
             options[self.Option.ARCADE_NAMING] = self._arcade_rom_naming()
             return options
 
@@ -74,18 +65,19 @@ class MenuRomNaming(MenuBase):
         options[self.Option.NAME_FORMAT] = self._name_format()
         return options
 
-    def _naming_method(self) -> MenuItemMulti:
+    @staticmethod
+    def _naming_method() -> MenuItemMulti:
         """
         TODO
         """
         data: dict[str, str] = {
-            self.STOCK_STR: Strings().stock,
-            self.CUSTOM_STR: Strings().custom
+            STOCK_STR: Strings().stock,
+            CUSTOM_STR: Strings().custom
         }
-        actions, current = self._generate_config_actions(
+        actions, current = MenuBase._generate_config_actions(
             data,
             "naming_method",
-            self._rebuild_menu
+            MenuRomNaming._rebuild_menu
         )
         return MenuItemMulti(
             Strings().naming_method,
@@ -94,15 +86,16 @@ class MenuRomNaming(MenuBase):
             SidePane(Strings().naming_method, Strings().naming_method_desc)
         )
 
-    def _console_naming(self) -> MenuItemMulti:
+    @staticmethod
+    def _console_naming() -> MenuItemMulti:
         """
         TODO
         """
         data: dict[str, str] = {
-            self.STOCK_STR: Strings().stock,
-            self.CUSTOM_STR: Strings().custom
+            STOCK_STR: Strings().stock,
+            CUSTOM_STR: Strings().custom
         }
-        actions, current = self._generate_config_actions(
+        actions, current = MenuBase._generate_config_actions(
             data,
             "console_naming"
         )
@@ -113,7 +106,8 @@ class MenuRomNaming(MenuBase):
             SidePane(Strings().console_naming, Strings().console_naming_desc)
         )
 
-    def _name_format(self) -> MenuItemMulti:
+    @staticmethod
+    def _name_format() -> MenuItemMulti:
         """
         TODO
         """
@@ -124,7 +118,7 @@ class MenuRomNaming(MenuBase):
             "NAME_D": Strings().name_format_name_disc,
             "NAME_R_D": Strings().name_format_name_region_disc
         }
-        actions, current = self._generate_config_actions(
+        actions, current = MenuBase._generate_config_actions(
             data,
             "name_format"
         )
@@ -135,45 +129,26 @@ class MenuRomNaming(MenuBase):
             SidePane(Strings().name_format, Strings().name_format_desc)
         )
 
-    def _arcade_rom_naming(self) -> MenuItemMulti:
+    @staticmethod
+    def _arcade_rom_naming() -> MenuItemMulti:
         """
         Create a menu item for selecting between stock and custom ROM naming
         libraries, showing their current installation state.
         """
-        logger = MenuRomNaming.get_static_logger()
-        installed: str = "n/a"
-        if RUNNING_ON_TSP:
-            installed = \
-                util.check_crc(f"{self.LIBRARY_PATH}/{self.LIBRARY_NAME}")
-        current: int = 1 if installed == self.CUSTOM_LIBRARY_CRC else 0
-        logger.debug("Current library installed: %s", installed)
-
+        data: dict[str, str] = {
+            STOCK_STR: Strings().stock,
+            CUSTOM_STR: Strings().custom
+        }
+        actions: list[MenuAction] = MenuBase._generate_actions(
+            data,
+            ActionRomNaming.install_arcade_library,
+            True
+        )
         return MenuItemMulti(
-            Strings().arcade_rom_naming,
-            [
-                MenuAction(
-                    Strings().stock,
-                    self._install_stock_arcade_library,
-                    SidePane(
-                        content=Strings().arcade_rom_naming_stock(installed)
-                    ),
-                    True
-                ),
-                MenuAction(
-                    Strings().custom,
-                    self._install_custom_arcade_library,
-                    SidePane(content=Strings().arcade_rom_naming_custom(
-                        installed,
-                        self.LIBRARY_PATH,
-                        self.LIBRARY_NAME,
-                        self.ARCADE_NAMES_PATH,
-                        self.ARCADE_NAMES_FILE
-                    )),
-                    True
-                )
-            ],
-            current,
-            SidePane(header=Strings().arcade_rom_naming)
+            Strings().arcade_naming,
+            actions,
+            ActionRomNaming.get_arcade_library_status(data),
+            SidePane(Strings().arcade_naming, Strings().arcade_naming_desc)
         )
 
     @staticmethod
@@ -182,50 +157,3 @@ class MenuRomNaming(MenuBase):
         logger = MenuRomNaming.get_static_logger()
         logger.info("Rebuilding menu for %s naming method.", method)
         MenuRomNaming().rebuild()
-
-    def _install_stock_arcade_library(self) -> None:
-        """
-        Install the stock arcade ROM naming library by replacing any custom
-        library and removing custom arcade name lists.
-        """
-        logger = MenuRomNaming.get_static_logger()
-        logger.info("Installing stock arcade naming library.")
-        target_lib = f"{self.LIBRARY_PATH}/{self.LIBRARY_NAME}"
-        arcade_names = f"{self.ARCADE_NAMES_PATH}/{self.ARCADE_NAMES_FILE}"
-        util.delete_file(arcade_names)
-        util.delete_file(target_lib)
-
-        if os.path.exists(f"{target_lib}.stock"):
-            util.rename_file(f"{target_lib}.stock", target_lib)
-        else:
-            util.extract_from_zip(
-                self.LIBRARY_ZIP,
-                f"{self.LIBRARY_NAME}.stock",
-                target_lib
-            )
-        # TODO - uncomment this # pylint: disable=fixme
-        # reboot()
-
-    def _install_custom_arcade_library(self) -> None:
-        """
-        Install the custom arcade ROM naming library by backing up the stock
-        library and adding a configurable list of arcade ROM names.
-        """
-        logger = MenuRomNaming.get_static_logger()
-        logger.info("Installing custom arcade naming library.")
-        target_lib = f"{self.LIBRARY_PATH}/{self.LIBRARY_NAME}"
-        util.delete_file(f"{target_lib}.stock")
-        util.rename_file(target_lib, f"{target_lib}.stock")
-
-        util.extract_from_zip(
-            self.LIBRARY_ZIP,
-            f"{self.LIBRARY_NAME}.custom",
-            target_lib
-        )
-        util.extract_from_zip(
-            self.NAMES_ZIP,
-            self.ARCADE_NAMES_FILE,
-            f"{self.ARCADE_NAMES_PATH}/{self.ARCADE_NAMES_FILE}"
-        )
-        # TODO - uncomment this # pylint: disable=fixme
-        # reboot()

@@ -20,9 +20,8 @@ class Strings(JsonDataClass):  # pylint: disable=too-many-instance-attributes
     naming_method_desc: str = ""
     console_naming: str = ""
     console_naming_desc: str = ""
-    arcade_rom_naming: str = ""
-    _arcade_rom_naming_stock: str = ""
-    _arcade_rom_naming_custom: str = ""
+    arcade_naming: str = ""
+    arcade_naming_desc: str = ""
     name_format: str = ""
     name_format_desc: str = ""
     name_format_none: str = ""
@@ -40,39 +39,3 @@ class Strings(JsonDataClass):  # pylint: disable=too-many-instance-attributes
     logging_error: str = ""
     language: str = ""
     language_desc: str = ""
-
-    def arcade_rom_naming_stock(self, installed: str) -> str:
-        """
-        Format arcade ROM naming stock string with provided installation info.
-        """
-        self._logger.debug(
-            "Formatting stock arcade ROM naming with: %s", installed
-        )
-        return self._arcade_rom_naming_stock.format(installed=installed)
-
-    def arcade_rom_naming_custom(
-        self,
-        installed: str,
-        library_path: str,
-        library_name: str,
-        arcade_names_path: str,
-        arcade_names_file: str
-    ) -> str:
-        """
-        Format arcade ROM naming custom string with provided details.
-        """
-        self._logger.debug((
-            "Formatting custom arcade ROM naming with installed: %s, "
-            "library_path: %s, library_name: %s, arcade_names_path: %s, "
-            "arcade_names_file: %s"
-        ),
-            installed, library_path, library_name, arcade_names_path,
-            arcade_names_file
-        )
-        return self._arcade_rom_naming_custom.format(
-            installed=installed,
-            library_path=library_path,
-            library_name=library_name,
-            arcade_names_path=arcade_names_path,
-            arcade_names_file=arcade_names_file
-        )

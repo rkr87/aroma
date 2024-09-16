@@ -100,7 +100,7 @@ class MenuBase(ClassSingleton, ABC):
         determines the current selection.
         """
 
-        def new_func(val: str) -> None:
+        def config_func(val: str) -> None:
             AppConfig().update_value(config_attr, val)
             if function:
                 logger = MenuBase.get_static_logger()
@@ -114,13 +114,29 @@ class MenuBase(ClassSingleton, ABC):
         if (config := AppConfig().get_value(config_attr)) in data:
             default = list(data).index(config)
 
+        actions: list[MenuAction] = MenuBase._generate_actions(
+            data,
+            config_func,
+            non_tsp_skip
+        )
+        return actions, default
+
+    @staticmethod
+    def _generate_actions(
+        data: dict[str, str],
+        function: Callable[[str], None] | None = None,
+        non_tsp_skip: bool = False
+    ) -> list[MenuAction]:
+        """
+        TODO
+        """
         actions: list[MenuAction] = []
         for k, v in data.items():
             actions.append(
                 MenuAction(
                     v,
-                    partial(new_func, k),
+                    None if not function else partial(function, k),
                     non_tsp_skip=non_tsp_skip
                 )
             )
-        return actions, default
+        return actions
