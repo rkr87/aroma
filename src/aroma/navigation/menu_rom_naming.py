@@ -69,10 +69,9 @@ class MenuRomNaming(MenuBase):
         if AppConfig().naming_method == self.STOCK_STR:
             options[self.Option.ARCADE_NAMING] = self._arcade_rom_naming()
             return options
-        options.update([
-            (self.Option.CONSOLE_NAMING, self._console_naming()),
-            (self.Option.NAME_FORMAT, self._name_format()),
-        ])
+
+        options[self.Option.CONSOLE_NAMING] = self._console_naming()
+        options[self.Option.NAME_FORMAT] = self._name_format()
         return options
 
     def _naming_method(self) -> MenuItemMulti:
