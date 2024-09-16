@@ -22,7 +22,7 @@ TSP_USER_LIBRARY_PATH: Path = Path("/usr/trimui/lib")
 SCREEN_WIDTH: int = 1280
 SCREEN_HEIGHT: int = 720
 
-APP_ROM_DB_PATH: Path = APP_PATH / "test.json"
+APP_ROM_DB_PATH: Path = APP_PATH / "rom_db.json"
 
 ARCADE_NAMES_TARGET_FILE: Path = \
     Path("/mnt/SDCARD/BIOS/arcade_lists/arcade-rom-names.txt")

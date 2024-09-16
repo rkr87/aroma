@@ -5,6 +5,7 @@ todo
 TEMPLATE_SETUP.bat
 local_git_clean.bat
 pylog.txt
+rom_db.json
 
 
 # Byte-compiled / optimized / DLL files
