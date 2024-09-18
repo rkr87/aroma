@@ -140,3 +140,9 @@ class MenuBase(ClassSingleton, ABC):
                 )
             )
         return actions
+
+    def _rebuild_menu(self, method: str) -> None:
+        """TODO"""
+        logger = MenuBase.get_static_logger()
+        logger.info("Rebuilding menu for %s naming method.", method)
+        self.rebuild()

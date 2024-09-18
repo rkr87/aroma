@@ -2,36 +2,26 @@
 Defines the ROM naming preferences menu, allowing users to manage
 arcade ROM naming libraries.
 """
+
 import util
 from base.class_singleton import ClassSingleton
 from constants import (ARCADE_LIBRARY_APP_RESOURCE, ARCADE_LIBRARY_NAME,
                        ARCADE_NAMES_TARGET_FILE, CUSTOM_ARCADE_LIBRARY_CRC,
                        CUSTOM_STR, RUNNING_ON_TSP, STOCK_STR,
                        TSP_USER_LIBRARY_PATH)
-from data.rom_manager import RomManager
 
 
-class ActionRomNaming(ClassSingleton):
+class LibraryManager(ClassSingleton):
     """
     TODO
     """
 
-    def __init__(self) -> None:
-        super().__init__()
-        self._rom_manager = RomManager()
-
-    def update_rom_db(self) -> None:
+    @staticmethod
+    def get_arcade_library_status(menu_options: dict[str, str]) -> int:
         """
         TODO
         """
-        self._rom_manager.update()
-
-    @classmethod
-    def get_arcade_library_status(cls, menu_options: dict[str, str]) -> int:
-        """
-        TODO
-        """
-        logger = cls.get_static_logger()
+        logger = LibraryManager.get_static_logger()
         installed: str = "n/a"
         current: str = STOCK_STR
         if RUNNING_ON_TSP:
@@ -55,13 +45,13 @@ class ActionRomNaming(ClassSingleton):
         cls._install_custom_arcade_library()
         return
 
-    @classmethod
-    def _install_stock_arcade_library(cls) -> None:
+    @staticmethod
+    def _install_stock_arcade_library() -> None:
         """
         Install the stock arcade ROM naming library by replacing any custom
         library and removing custom arcade name lists.
         """
-        logger = cls.get_static_logger()
+        logger = LibraryManager.get_static_logger()
         logger.info("Installing stock arcade naming library.")
         target_lib = TSP_USER_LIBRARY_PATH / ARCADE_LIBRARY_NAME
         util.delete_file(ARCADE_NAMES_TARGET_FILE)
@@ -76,13 +66,13 @@ class ActionRomNaming(ClassSingleton):
                 target_lib
             )
 
-    @classmethod
-    def _install_custom_arcade_library(cls) -> None:
+    @staticmethod
+    def _install_custom_arcade_library() -> None:
         """
         Install the custom arcade ROM naming library by backing up the stock
         library and adding a configurable list of arcade ROM names.
         """
-        logger = cls.get_static_logger()
+        logger = LibraryManager.get_static_logger()
         logger.info("Installing custom arcade naming library.")
         target_lib = TSP_USER_LIBRARY_PATH / ARCADE_LIBRARY_NAME
         util.delete_file(backup := target_lib.with_suffix(".stock"))

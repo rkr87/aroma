@@ -7,7 +7,6 @@ arcade ROM naming libraries.
 from collections import OrderedDict
 from enum import Enum, auto
 
-from action.action_rom_naming import ActionRomNaming
 from app_config import AppConfig
 from constants import CUSTOM_STR, STOCK_STR
 from menu.menu_action import MenuAction
@@ -16,6 +15,7 @@ from menu.menu_item_base import MenuItemBase
 from menu.menu_item_multi import MenuItemMulti
 from model.side_pane import SidePane
 from strings import Strings
+from tool.library_manager import LibraryManager
 
 
 class MenuRomNaming(MenuBase):
@@ -65,8 +65,7 @@ class MenuRomNaming(MenuBase):
         options[self.Option.NAME_FORMAT] = self._name_format()
         return options
 
-    @staticmethod
-    def _naming_method() -> MenuItemMulti:
+    def _naming_method(self) -> MenuItemMulti:
         """
         TODO
         """
@@ -77,7 +76,7 @@ class MenuRomNaming(MenuBase):
         actions, current = MenuBase._generate_config_actions(
             data,
             "naming_method",
-            MenuRomNaming._rebuild_menu
+            self._rebuild_menu
         )
         return MenuItemMulti(
             Strings().naming_method,
@@ -141,19 +140,12 @@ class MenuRomNaming(MenuBase):
         }
         actions: list[MenuAction] = MenuBase._generate_actions(
             data,
-            ActionRomNaming.install_arcade_library,
+            LibraryManager.install_arcade_library,
             True
         )
         return MenuItemMulti(
             Strings().arcade_naming,
             actions,
-            ActionRomNaming.get_arcade_library_status(data),
+            LibraryManager.get_arcade_library_status(data),
             SidePane(Strings().arcade_naming, Strings().arcade_naming_desc)
         )
-
-    @staticmethod
-    def _rebuild_menu(method: str) -> None:
-        """TODO"""
-        logger = MenuRomNaming.get_static_logger()
-        logger.info("Rebuilding menu for %s naming method.", method)
-        MenuRomNaming().rebuild()
