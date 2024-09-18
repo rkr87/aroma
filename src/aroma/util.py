@@ -4,6 +4,7 @@ Utility functions.
 import binascii
 import json
 import logging
+import re
 import subprocess
 from collections.abc import Callable
 from functools import partial
@@ -221,3 +222,9 @@ def load_simple_json(path: Path) -> dict[str, Any]:
         logging.error("JSON decoding error: %s", e)
         data = {}
     return data
+
+
+def remove_loop(text: str, pattern: re.Pattern[str]) -> str:
+    """Recursively removes text matching the pattern."""
+    new_text, n = re.subn(pattern, '', text)
+    return remove_loop(new_text, pattern) if n > 0 else new_text.strip()
