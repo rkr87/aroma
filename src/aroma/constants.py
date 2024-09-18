@@ -27,11 +27,21 @@ APP_ROM_DB_PATH: Path = APP_PATH / "rom_db.json"
 ARCADE_NAMES_TARGET_FILE: Path = \
     Path("/mnt/SDCARD/BIOS/arcade_lists/arcade-rom-names.txt")
 ARCADE_LIBRARY_NAME = "libgamename.so"
-CUSTOM_ARCADE_LIBRARY_CRC = "0x8a1cae0"
+CUSTOM_ARCADE_LIBRARY_CRC = "08a1cae0"
 ARCADE_LIBRARY_APP_RESOURCE = \
     RESOURCES / "naming" / f"{ARCADE_LIBRARY_NAME}.zip"
-ARCADE_NAMES_APP_RESOURCE = RESOURCES / "naming" / "names.zip"
-
+NAMES_APP_RESOURCE = RESOURCES / "naming" / "names.zip"
+NAMING_DISC_KEYWORDS = {"disc", "disk", "side", "tape", "set"}
+NAMING_FORMAT_KEYWORDS = {"pal", "ntsc", "secam"}
+ARCADE_ID_METHOD = "file_stem"
+ARCADE_NAMING_SYSTEMS = [
+    "MAME2003PLUS", "FBNEO", "CPS1", "CPS2", "CPS3", "NEOGEO", "ATOMISWAVE",
+    "CANNONBALL", "NAOMI", "PGM", "MAME", "MAME2010", "DAPHNE"
+]
+NAMING_EXCLUDE_SYSTEMS = [
+    "PS", "SEGACD", "PCECD", "NEOCD", "SATURN", "DC", "PANASONIC", "PCFX",
+    "SFX", "PORTS"
+]
 
 PRIMARY_COLOR = (217, 217, 217)
 SECONDARY_COLOR = (23, 147, 209)
@@ -41,6 +51,6 @@ MAX_ITEMS_PER_PAGE = 12
 STOCK_STR = "STOCK"
 CUSTOM_STR = "CUSTOM"
 
-IGNORE_EXT = {"srm", "sav", "db"}
-IGNORE_WORDS = {"\u00b0"}
+ROM_DB_IGNORE_EXT = {"srm", "sav", "db", 'png'}
+ROM_DB_IGNORE_WORDS = {"\u00b0"}
 EMU_EXT_KEY = "extlist"

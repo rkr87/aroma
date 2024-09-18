@@ -1,10 +1,12 @@
 """TODO"""
 
+
 from pathlib import Path
 
 import util
 from base.class_singleton import ClassSingleton
-from constants import EMU_EXT_KEY, EMU_PATH, IGNORE_EXT, IGNORE_WORDS, ROM_PATH
+from constants import (EMU_EXT_KEY, EMU_PATH, ROM_DB_IGNORE_EXT,
+                       ROM_DB_IGNORE_WORDS, ROM_PATH)
 
 
 class RomValidator(ClassSingleton):
@@ -13,11 +15,6 @@ class RomValidator(ClassSingleton):
     def __init__(self) -> None:
         super().__init__()
         self._system_exts: dict[str, list[str]] = {}
-
-    @staticmethod
-    def get_rom_name(path: Path) -> str:
-        """TODO"""
-        return path.stem
 
     @staticmethod
     def _get_valid_emu_ext(system: str) -> list[str]:
@@ -34,20 +31,15 @@ class RomValidator(ClassSingleton):
         return not any(part.startswith(".") for part in path.parts)
 
     @staticmethod
-    def _is_file(path: Path) -> bool:
-        """TODO"""
-        return path.is_file()
-
-    @staticmethod
     def _is_not_ignored_ext(path: Path) -> bool:
         """TODO"""
         ext = path.suffix.lstrip(".").lower()
-        return ext not in IGNORE_EXT
+        return ext not in ROM_DB_IGNORE_EXT
 
     @staticmethod
     def _is_not_ignored_word(path: Path) -> bool:
         """TODO"""
-        return not any(word in path.stem for word in IGNORE_WORDS)
+        return not any(word in path.stem for word in ROM_DB_IGNORE_WORDS)
 
     @staticmethod
     def _has_valid_relative_path(path: Path) -> bool:
@@ -62,7 +54,7 @@ class RomValidator(ClassSingleton):
         system = relative_path.parts[0]
         return (EMU_PATH / system).is_dir()
 
-    def _has_valid_extension(self, path: Path) -> bool:
+    def has_valid_ext(self, path: Path) -> bool:
         """TODO"""
         relative_path = path.relative_to(ROM_PATH)
         if (system := relative_path.parts[0]) not in self._system_exts:
@@ -72,13 +64,14 @@ class RomValidator(ClassSingleton):
 
     def check_path(self, path: Path) -> bool:
         """TODO"""
+        if not path.is_file():
+            return False
         checks = [
             self._is_not_hidden,
-            self._is_file,
             self._is_not_ignored_ext,
             self._is_not_ignored_word,
             self._has_valid_relative_path,
             self._has_valid_system_directory,
-            self._has_valid_extension,
+            self.has_valid_ext,
         ]
         return all(check(path) for check in checks)
