@@ -9,9 +9,12 @@ from collections.abc import Callable
 from functools import partial
 from pathlib import Path
 from typing import Any, TypeVar
-from zipfile import ZIP_LZMA, ZipFile
+from zipfile import ZIP_LZMA, ZipFile, ZipInfo
 
+from py7zr import FileInfo, SevenZipFile
 from sdl2.ext import Color
+
+from model.file_crc import FileCrc
 
 T = TypeVar('T', int, float)
 
@@ -78,17 +81,83 @@ def extract_from_zip(
             )
 
 
-def check_crc(file_path: Path) -> str:
+def bytes_from_zip(
+    zip_path: Path,
+    file_name: str
+) -> bytes | None:
+    """
+    TODO
+    """
+    buffer = None
+    logging.info("Extracting %s from %s", file_name, zip_path)
+    with ZipFile(zip_path, 'r') as zipf:
+        if file_name in zipf.namelist():
+            with zipf.open(file_name) as source_file:
+                buffer = source_file.read()
+                logging.info(
+                    "Extracted %s", file_name
+                )
+        else:
+            logging.error(
+                "File %s not found in zip archive %s", file_name, zip_path
+            )
+    return buffer
+
+
+def get_zip_info(
+    zip_path: Path,
+) -> list[FileCrc]:
+    """
+    TODO
+    """
+    with ZipFile(zip_path, 'r') as archive:
+        file_list: list[ZipInfo] = archive.filelist
+    return [
+        FileCrc(zf.filename, f"{zf.CRC:08x}")
+        for zf in file_list
+    ]
+
+
+def get_7z_info(
+    archive_path: Path,
+) -> list[FileCrc]:
+    """
+    TODO
+    """
+    with SevenZipFile(archive_path, mode='r') as archive:
+        file_list: list[FileInfo] = archive.list()
+    return [
+        FileCrc(zf.filename, f"{zf.crc32:08x}")
+        for zf in file_list
+    ]
+
+
+def get_archive_info(
+    archive_path: Path,
+) -> list[FileCrc]:
+    """
+    TODO
+    """
+    extractors: dict[str, Callable[[Path], list[FileCrc]]] = {
+        ".7z": get_7z_info,
+        ".zip": get_zip_info
+    }
+    if x := extractors.get(archive_path.suffix):
+        return x(archive_path)
+    return []
+
+
+def check_crc(data: Path | bytes) -> str:
     """
     Calculates and returns the CRC32 checksum of a file.
     """
-    logging.info("Calculating CRC32 checksum for file: %s", file_path)
-    with open(file_path, "rb") as f:
-        file_data: bytes = f.read()
-        crc: int = binascii.crc32(file_data)
-    checksum = hex(crc)
-    logging.info("CRC32 checksum for file %s: %s", file_path, checksum)
-    return checksum
+    logging.info("Calculating CRC32 checksum for file: %s", data)
+    if isinstance(data, Path):
+        with open(data, "rb") as f:
+            data = f.read()
+    crc: int = binascii.crc32(data) & 0xFFFFFFFF
+    logging.info("CRC32 checksum: %s", crc)
+    return f"{crc:08x}"
 
 
 def reboot() -> None:
@@ -139,7 +208,7 @@ def get_callable_name(func: Callable[..., Any]) -> str:
     return f"{func.__module__}.{func.__name__}"
 
 
-def load_simple_json(path: Path) -> dict[str, str]:
+def load_simple_json(path: Path) -> dict[str, Any]:
     """
     Loads a simple JSON file as a dictionary of strings.
     """
@@ -147,7 +216,7 @@ def load_simple_json(path: Path) -> dict[str, str]:
         return {}
     try:
         with path.open("r", encoding="utf8") as file:
-            data: dict[str, str] = json.load(file)
+            data: dict[str, Any] = json.load(file)
     except json.JSONDecodeError as e:
         logging.error("JSON decoding error: %s", e)
         data = {}
