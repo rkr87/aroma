@@ -9,6 +9,7 @@ from base.class_singleton import ClassSingleton
 from constants import (ARCADE_ID_METHOD, ARCADE_NAMING_SYSTEMS,
                        NAMES_APP_RESOURCE, NAMING_EXCLUDE_SYSTEMS, ROM_PATH)
 from model.rom_detail import RomDetail
+from tool.filename_parser import FilenameParser
 from tool.rom_validator import RomValidator
 
 
@@ -20,6 +21,7 @@ class RomNamer(ClassSingleton):
         self._validator: RomValidator = RomValidator()
         self._arcade_names: dict[str, RomDetail] | None = None
         self._console_names: dict[str, RomDetail] | None = None
+        self._parser: FilenameParser = FilenameParser()
 
     @staticmethod
     def _get_names(file_name: str) -> dict[str, RomDetail]:
@@ -46,7 +48,7 @@ class RomNamer(ClassSingleton):
     def _check_arcade_roms(
         self,
         path: Path,
-        current: RomDetail | None = None
+        current: RomDetail | None
     ) -> RomDetail | None:
         """TODO"""
         if path.parts[0] not in ARCADE_NAMING_SYSTEMS:
@@ -58,7 +60,7 @@ class RomNamer(ClassSingleton):
     def _check_archived_roms(
         self,
         path: Path,
-        current: RomDetail | None = None
+        current: RomDetail | None
     ) -> RomDetail | None:
         """TODO"""
         valid: list[str] = [
@@ -78,7 +80,7 @@ class RomNamer(ClassSingleton):
     def _check_console_roms(
         self,
         path: Path,
-        current: RomDetail | None = None
+        current: RomDetail | None
     ) -> RomDetail | None:
         """TODO"""
         if path.parts[0] in NAMING_EXCLUDE_SYSTEMS + ARCADE_NAMING_SYSTEMS:
@@ -92,10 +94,6 @@ class RomNamer(ClassSingleton):
             detail = self._get_console_names().get(file_crc)
         return detail
 
-    def _parse_file_name(self, path: Path) -> RomDetail:  # pylint: disable=no-self-use
-        """TODO"""
-        return RomDetail(path.stem, path.stem, "FileName")
-
     def get_rom_details(
         self,
         path: Path,
@@ -106,4 +104,6 @@ class RomNamer(ClassSingleton):
             return arcade
         if (console := self._check_console_roms(path, current)):
             return console
-        return self._parse_file_name(path)
+        if current:
+            return current
+        return self._parser.parse(path)
