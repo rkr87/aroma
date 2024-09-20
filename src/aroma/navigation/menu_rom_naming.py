@@ -16,6 +16,7 @@ from menu.menu_item_multi import MenuItemMulti
 from model.side_pane import SidePane
 from strings import Strings
 from tool.library_manager import LibraryManager
+from tool.rom_db import RomDB
 
 
 class MenuRomNaming(MenuBase):
@@ -96,7 +97,8 @@ class MenuRomNaming(MenuBase):
         }
         actions, current = MenuBase._generate_config_actions(
             data,
-            "console_naming"
+            "console_naming",
+            RomDB().set_rebuild_required
         )
         return MenuItemMulti(
             Strings().console_naming,
