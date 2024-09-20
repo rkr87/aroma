@@ -3,6 +3,10 @@
     "custom": "CUSTOM",
     "collections": "COLLECTIONS",
     "rom_naming": "ROM NAMING",
+    "refresh_roms": "REFRESH ROMS",
+    "refresh_roms_desc": [
+        "Add description of options here"
+    ],
     "naming_method": "NAMING METHOD",
     "naming_method_desc": [
         "Add description of options here"
