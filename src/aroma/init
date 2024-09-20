@@ -1,8 +1,5 @@
 #!/usr/bin/env python3
-"""
-Entry point for initialising and starting the application.
-Sets up the Python path and starts the main app.
-"""
+"""Entry point for initialising and starting the application."""
 
 import argparse
 import logging
@@ -17,32 +14,28 @@ for d in path_dirs:
     sys.path.insert(0, str(path))
 
 # pylint: disable=wrong-import-position
-from aroma_app import AromaApp  # nopep8
-import constants  # nopep8
-from data.database.name_db import NameDB  # nopep8
-from data.database.rom_db import RomDB  # nopep8
-from model.app_config import AppConfig  # nopep8
-from model.strings import Strings  # nopep8
+import constants  # noqa: E402
+from aroma_app import AromaApp  # noqa: E402
+from data.database.name_db import NameDB  # noqa: E402
+from data.database.rom_db import RomDB  # noqa: E402
+from model.app_config import AppConfig  # noqa: E402
+from model.strings import Strings  # noqa: E402
 
 
 def parse_args() -> argparse.Namespace:
-    """
-    Parses command-line arguments.
-    """
+    """Parse command-line arguments."""
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "-r", "--refresh",
+        "-r",
+        "--refresh",
         action="store_true",
-        help="Refresh ROM DB and system cache."
+        help="Refresh ROM DB and system cache.",
     )
     return parser.parse_args()
 
 
 def init() -> None:
-    """
-    Initializes the app by loading the configuration, setting up logging,
-    and loading translations.
-    """
+    """Initialise core app components."""
     config = AppConfig.load(constants.APP_CONFIG_PATH)
     logging.config.fileConfig(constants.APP_LOGGING_CONFIG_PATH)
     logging.getLogger().setLevel(config.logging_level)
@@ -50,10 +43,7 @@ def init() -> None:
 
 
 def refresh_roms() -> None:
-    """
-    Refreshes the ROM database and system cache by scanning directories
-    and updating the stored ROM data.
-    """
+    """Refresh the ROM database and system cache."""
     logging.info("Refreshing ROM database and system cache...")
     RomDB().update_db()
     NameDB().remove_db()
@@ -61,10 +51,8 @@ def refresh_roms() -> None:
 
 
 def launch_aroma() -> None:
-    """
-    Initializes and starts the application.
-    """
-    logging.info("Launching the Aroma app.")
+    """Initialise and starts the aroma."""
+    logging.info("Launching aROMa.")
     app: AromaApp = AromaApp()
     app.start()
 

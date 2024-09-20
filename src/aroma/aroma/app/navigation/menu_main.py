@@ -1,7 +1,4 @@
-"""
-Defines the main menu of the application, providing navigation options
-to access collections and settings.
-"""
+"""Defines the main menu of the application."""
 
 from collections import OrderedDict
 from enum import Enum, auto
@@ -20,32 +17,22 @@ from model.strings import Strings
 
 
 class MenuMain(MenuBase):
-    """
-    Manages the main menu, allowing users to navigate to collections and
-    options menus.
-    """
+    """Manages the main menu."""
 
     class _Options(Enum):
-        """
-        Defines the options available in this menu.
-        """
+        """Defines the options available in this menu."""
+
         COLLECTIONS = auto()
         ROM_NAMING = auto()
         OPTIONS = auto()
         REFRESH = auto()
 
     @property
-    def Option(self) -> type[_Options]:
-        """
-        Provides the enum class for this menu's options.
-        """
+    def option(self) -> type[_Options]:
+        """Provides the enum class for this menu's options."""
         return self._Options
 
     def __init__(self) -> None:
-        """
-        Initializes the MenuMain with navigation to collections and options
-        menus.
-        """
         side_pane: SidePane = SidePane(
             "Header Test",
             (
@@ -53,40 +40,37 @@ class MenuMain(MenuBase):
                 "side pane also need to do some nested side pane testing by "
                 "applying a different side pane to each menu item and actions"
                 "\n\nthis side pane is generated at the menu level"
-            )
+            ),
         )
         super().__init__(APP_NAME, self._build_menu(), side_pane)
 
     def _build_menu(self) -> OrderedDict[Enum, MenuItemBase]:
-        """
-        Builds the main menu with options to navigate to collections and
-        options.
-        """
+        """Build the initial main menu."""
         logger = self.get_static_logger()
         logger.debug("Building Main menu options.")
-        return OrderedDict([
-            (
-                self.Option.COLLECTIONS,
-                self.sub_menu(MenuCollections(), MenuStack().push)
-            ),
-            (
-                self.Option.ROM_NAMING,
-                self.sub_menu(MenuRomNaming(), MenuStack().push)
-            ),
-            (
-                self.Option.OPTIONS,
-                self.sub_menu(MenuOptions(), MenuStack().push)
-            ),
-            (self.Option.REFRESH, self._refresh_roms())
-        ])
+        return OrderedDict(
+            [
+                (
+                    self.option.COLLECTIONS,
+                    self.sub_menu(MenuCollections(), MenuStack().push),
+                ),
+                (
+                    self.option.ROM_NAMING,
+                    self.sub_menu(MenuRomNaming(), MenuStack().push),
+                ),
+                (
+                    self.option.OPTIONS,
+                    self.sub_menu(MenuOptions(), MenuStack().push),
+                ),
+                (self.option.REFRESH, self._refresh_roms()),
+            ],
+        )
 
     @staticmethod
     def _refresh_roms() -> MenuItemSingle:
-        """
-        Creates a menu item that refreshes the ROM database.
-        """
+        """Create a menu item that refreshes the ROM database."""
         return MenuItemSingle(
             Strings().refresh_roms,
             RomDB().update_db,
-            SidePane(Strings().refresh_roms, Strings.refresh_roms_desc)
+            SidePane(Strings().refresh_roms, Strings.refresh_roms_desc),
         )

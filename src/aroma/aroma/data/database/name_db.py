@@ -4,7 +4,6 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 import apsw
-
 from classes.base.class_singleton import ClassSingleton
 from classes.base.db_result import DBResult
 from constants import ARCADE_NAMES_DB, CONSOLE_NAMES_DB, NAMES_APP_RESOURCE
@@ -13,7 +12,7 @@ from tools import util
 
 DB_ID_METHOD = {
     ARCADE_NAMES_DB: "file_stem",
-    CONSOLE_NAMES_DB: "crc"
+    CONSOLE_NAMES_DB: "crc",
 }
 
 
@@ -23,6 +22,7 @@ class NameDB(ClassSingleton):
     @dataclass
     class _RomResult(DBResult):  # pylint: disable=too-many-instance-attributes
         """Represents a result from the ROM table in the database."""
+
         row_id: int
         title: str
         name: str
@@ -32,12 +32,14 @@ class NameDB(ClassSingleton):
     @dataclass
     class _SubtableResult(DBResult):
         """Represents a result from subtables."""
+
         row_id: int
         name: str
 
     @dataclass
     class _QueryResult:  # pylint: disable=too-many-instance-attributes
         """Holds the results of a query."""
+
         query: dict[str, list[str]] = field(default_factory=dict)
         roms: list["NameDB._RomResult"] = field(default_factory=list)
         region: dict[int, list[str]] = field(default_factory=dict)
@@ -63,10 +65,7 @@ class NameDB(ClassSingleton):
 
     @staticmethod
     def _get_db(db: Path) -> None:
-        """
-        Ensure the database file exists by extracting it from a resource if
-        necessary.
-        """
+        """Ensure the database file exists by extracting it from a resource."""
         if db.is_file():
             return
         util.extract_from_zip(NAMES_APP_RESOURCE, db.name, db)
@@ -81,22 +80,20 @@ class NameDB(ClassSingleton):
     @staticmethod
     def _query_subtables(
         cursor: apsw.Cursor,
-        result: _QueryResult
+        result: _QueryResult,
     ) -> None:
-        """
-        Query a subtable for the provided ROM IDs and update the results.
-        """
+        """Query a subtable for the provided ROM IDs and update the results."""
         table_map = {
             "region": result.region,
             "disc": result.disc,
-            "format": result.format
+            "format": result.format,
         }
         for table, target in table_map.items():
             query = f"""
                 SELECT rom_id, name
                 FROM {table}
                 WHERE rom_id IN ({', '.join('?' for _ in result.row_ids)})
-            """
+            """  # noqa: S608
             cursor.execute(query, result.row_ids)
             if not (results := cursor.fetchall()):
                 continue
@@ -106,25 +103,24 @@ class NameDB(ClassSingleton):
     @staticmethod
     def _fetch_rom_details(
         cursor: apsw.Cursor,
-        query_vals: set[str]
+        query_vals: set[str],
     ) -> list["NameDB._RomResult"]:
-        """
-        Fetch ROM details from the main database table for the provided query
-        values.
-        """
+        """Fetch ROM details from database for provided query values."""
+        if not query_vals:
+            return []  # Safeguard against empty query values
+        placeholders = ", ".join("?" for _ in query_vals)
+
         query = f"""
             SELECT id, title, name, source, val
             FROM rom
-            WHERE val IN ({', '.join('?' for _ in query_vals)})
-        """
+            WHERE val IN ({placeholders})
+        """  # noqa: S608
         cursor.execute(query, list(query_vals))
         return [NameDB._RomResult.factory(r) for r in cursor.fetchall()]
 
     @staticmethod
     def _check_result(result: _QueryResult, rom_id: str, path: str) -> bool:
-        """
-        Check if a result is valid for processing based on ROM ID and path.
-        """
+        """Check if a rom result is valid for processing."""
         if rom_id not in result.rom_vals:
             return False
         if path in result.black_list:
@@ -141,12 +137,9 @@ class NameDB(ClassSingleton):
         result: _QueryResult,
         rom_id: str,
         path: str,
-        id_method: str
+        id_method: str,
     ) -> None:
-        """
-        Process the result for a given ROM ID and path, updating the processed
-        results.
-        """
+        """Process the result for a given ROM ID and path."""
         if not cls._check_result(result, rom_id, path):
             return
         rom = result.roms[result.rom_vals.index(rom_id)]
@@ -158,20 +151,16 @@ class NameDB(ClassSingleton):
             id_method=id_method,
             region=result.region.get(rom.row_id, []),
             disc=result.disc.get(rom.row_id, []),
-            format=result.format.get(rom.row_id, [])
+            format=result.format.get(rom.row_id, []),
         )
 
     @classmethod
     def query_vals(
         cls,
         db: Path,
-        query_vals: dict[str, list[str]]
+        query_vals: dict[str, list[str]],
     ) -> dict[str, RomDetail]:
-        """
-        Query ROM details from the database based on the provided query values.
-        Returns a dictionary mapping file paths to their corresponding ROM
-        details.
-        """
+        """Query ROM details from database based on provided query values."""
         if not query_vals:
             return {}
         NameDB._get_db(db)

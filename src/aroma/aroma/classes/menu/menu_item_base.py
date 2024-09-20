@@ -1,7 +1,4 @@
-"""
-Defines the abstract base class for menu items, including methods for
-handling actions, text, and side pane attributes.
-"""
+"""Defines the abstract base class for menu items."""
 
 from abc import ABC, abstractmethod
 
@@ -11,20 +8,14 @@ from model.side_pane import SidePane
 
 
 class MenuItemBase(ClassBase, ABC):
-    """
-    Abstract base class for menu items. Defines the interface and common
-    attributes for menu items, including selection state and side pane
-    handling.
-    """
+    """Abstract base class for menu items."""
 
     def __init__(
         self,
+        side_pane: SidePane | None = None,
+        *,
         selected: bool = False,
-        side_pane: SidePane | None = None
     ) -> None:
-        """
-        Initialize the menu item with optional selection state and side pane.
-        """
         super().__init__()
         self.selected: bool = selected
         self._side_pane: SidePane | None = side_pane
@@ -43,18 +34,15 @@ class MenuItemBase(ClassBase, ABC):
 
     @abstractmethod
     def get_text(self) -> str:
-        """Return selectable option text"""
+        """Return selectable option text."""
 
     @abstractmethod
     def get_prefix_text(self) -> str | None:
-        """Return option prefix text"""
+        """Return option prefix text."""
 
     @property
     def side_pane(self) -> SidePane | None:
-        """
-        Return the merged side pane for the menu item, combining action and
-        item panes.
-        """
+        """Return menu item side pane, combining action and item panes."""
         return SidePane.merge(self._get_action_side_pane(), self._side_pane)
 
     @abstractmethod

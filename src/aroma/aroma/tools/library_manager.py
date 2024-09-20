@@ -1,13 +1,16 @@
-"""
-Defines the ROM naming preferences menu, allowing users to manage
-arcade ROM naming libraries.
-"""
+"""TODO."""
 
 from classes.base.class_singleton import ClassSingleton
-from constants import (ARCADE_LIBRARY_APP_RESOURCE, ARCADE_LIBRARY_NAME,
-                       ARCADE_NAMES_TARGET_FILE, CUSTOM_ARCADE_LIBRARY_CRC,
-                       CUSTOM_STR, RUNNING_ON_TSP, STOCK_STR,
-                       TSP_USER_LIBRARY_PATH)
+from constants import (
+    ARCADE_LIBRARY_APP_RESOURCE,
+    ARCADE_LIBRARY_NAME,
+    ARCADE_NAMES_TARGET_FILE,
+    CUSTOM_ARCADE_LIBRARY_CRC,
+    CUSTOM_STR,
+    RUNNING_ON_TSP,
+    STOCK_STR,
+    TSP_USER_LIBRARY_PATH,
+)
 from tools import util
 
 
@@ -16,16 +19,14 @@ class LibraryManager(ClassSingleton):
 
     @staticmethod
     def get_arcade_library_status(menu_options: dict[str, str]) -> int:
-        """
-        Retrieves the status of the installed arcade library and determines
-        the index of the current naming method in the provided menu options.
-        """
+        """Retrieve the status of the installed arcade library."""
         logger = LibraryManager.get_static_logger()
         installed: str = "n/a"
         current: str = STOCK_STR
         if RUNNING_ON_TSP:
-            installed = \
-                util.check_crc(TSP_USER_LIBRARY_PATH / ARCADE_LIBRARY_NAME)
+            installed = util.check_crc(
+                TSP_USER_LIBRARY_PATH / ARCADE_LIBRARY_NAME,
+            )
             if installed == CUSTOM_ARCADE_LIBRARY_CRC:
                 current = CUSTOM_STR
         logger.debug("Current library installed: %s (%s)", current, installed)
@@ -35,10 +36,7 @@ class LibraryManager(ClassSingleton):
 
     @classmethod
     def install_arcade_library(cls, value: str) -> None:
-        """
-        Installs the specified arcade ROM naming library (stock or custom)
-        based on the provided value.
-        """
+        """Install the specified arcade ROM naming library."""
         if value == STOCK_STR:
             cls._install_stock_arcade_library()
             return
@@ -46,10 +44,7 @@ class LibraryManager(ClassSingleton):
 
     @staticmethod
     def _install_stock_arcade_library() -> None:
-        """
-        Installs the stock arcade ROM naming library by replacing any custom
-        library and removing custom arcade name lists.
-        """
+        """Install the stock arcade ROM naming library."""
         logger = LibraryManager.get_static_logger()
         logger.info("Installing stock arcade naming library.")
         target_lib = TSP_USER_LIBRARY_PATH / ARCADE_LIBRARY_NAME
@@ -62,15 +57,12 @@ class LibraryManager(ClassSingleton):
             util.extract_from_zip(
                 ARCADE_LIBRARY_APP_RESOURCE,
                 f"{ARCADE_LIBRARY_NAME}.stock",
-                target_lib
+                target_lib,
             )
 
     @staticmethod
     def _install_custom_arcade_library() -> None:
-        """
-        Installs the custom arcade ROM naming library by backing up the stock
-        library and adding a configurable list of arcade ROM names.
-        """
+        """Install the custom arcade ROM naming library."""
         logger = LibraryManager.get_static_logger()
         logger.info("Installing custom arcade naming library.")
         target_lib = TSP_USER_LIBRARY_PATH / ARCADE_LIBRARY_NAME
@@ -80,10 +72,10 @@ class LibraryManager(ClassSingleton):
         util.extract_from_zip(
             ARCADE_LIBRARY_APP_RESOURCE,
             f"{ARCADE_LIBRARY_NAME}.custom",
-            target_lib
+            target_lib,
         )
         util.extract_from_zip(
             ARCADE_LIBRARY_APP_RESOURCE,
             ARCADE_NAMES_TARGET_FILE.name,
-            ARCADE_NAMES_TARGET_FILE
+            ARCADE_NAMES_TARGET_FILE,
         )

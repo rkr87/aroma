@@ -1,13 +1,7 @@
-"""
-Main application class that manages SDL initialization, event handling, and the
-application lifecycle.
-"""
-import sys
+"""Main application class."""
 
-from sdl2 import (SDL_CONTROLLER_BUTTON_GUIDE, SDL_INIT_GAMECONTROLLER,
-                  SDL_INIT_VIDEO, SDL_QUIT, SDL_Event, SDL_Init, SDL_PollEvent,
-                  SDL_Quit)
-from sdl2.ext import quit as ext_quit
+import sys
+from typing import TYPE_CHECKING
 
 from app.input.controller import Controller
 from app.navigation.nav_controller import NavController
@@ -15,20 +9,26 @@ from app.render.screen import Screen
 from classes.base.class_singleton import ClassSingleton
 from constants import APP_NAME
 from data.database.name_db import NameDB
-from model.current_menu import CurrentMenu
+from sdl2 import (
+    SDL_CONTROLLER_BUTTON_GUIDE,
+    SDL_INIT_GAMECONTROLLER,
+    SDL_INIT_VIDEO,
+    SDL_QUIT,
+    SDL_Event,
+    SDL_Init,
+    SDL_PollEvent,
+    SDL_Quit,
+)
+from sdl2.ext import quit as ext_quit
+
+if TYPE_CHECKING:
+    from model.current_menu import CurrentMenu
 
 
 class AromaApp(ClassSingleton):
-    """
-    Main application class for initializing and running the system.
-    Manages the controller, rendering, and navigation between menus.
-    """
+    """Main application class for initialising and running the system."""
 
     def __init__(self) -> None:
-        """
-        Initializes the SDL system, game controller, screen, and menu
-        navigator.
-        """
         super().__init__()
         self._logger.info("Initialising %s", APP_NAME)
         if SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER) != 0:
@@ -41,10 +41,7 @@ class AromaApp(ClassSingleton):
         self._logger.info("SDL and game controller initialised successfully.")
 
     def stop(self) -> None:
-        """
-        Cleans up resources and exits the application.
-        Stops the event loop and closes SDL subsystems.
-        """
+        """Clean up resources and exits the application."""
         self._logger.info("Stopping application.")
         self.running = False
         NameDB().remove_db()
@@ -54,10 +51,7 @@ class AromaApp(ClassSingleton):
         sys.exit()
 
     def handle_event(self, event: SDL_Event) -> None:
-        """
-        Handles individual SDL events, including quitting and rendering
-        updates.
-        """
+        """Handle individual SDL events."""
         if event.type == SDL_QUIT:
             self._logger.info("SDL_QUIT event received.")
             self.stop()
@@ -71,10 +65,7 @@ class AromaApp(ClassSingleton):
         self.screen.render_screen(menu)
 
     def poll_event(self) -> None:
-        """
-        Polls and processes SDL events continuously until the application is
-        stopped.
-        """
+        """Poll and process SDL events."""
         self._logger.info("Event polling started.")
         while self.running:  # pylint: disable=while-used
             event = SDL_Event()
@@ -83,10 +74,7 @@ class AromaApp(ClassSingleton):
         self._logger.info("Event polling stopped.")
 
     def start(self) -> None:
-        """
-        Starts the application, rendering the initial screen and entering the
-        event polling loop.
-        """
+        """Start the application."""
         self._logger.info("Application starting.")
         menu: CurrentMenu = self.navigator.handle_events()
         self.screen.render_screen(menu)

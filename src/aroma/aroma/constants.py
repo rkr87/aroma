@@ -1,6 +1,5 @@
-"""
-Defines constants.
-"""
+"""Defines constants."""
+
 import os
 import re
 from pathlib import Path
@@ -25,31 +24,53 @@ SCREEN_HEIGHT = 720
 
 APP_ROM_DB_PATH = APP_PATH / "rom_db.json"
 
-ARCADE_NAMES_TARGET_FILE = \
+ARCADE_NAMES_TARGET_FILE = (
     SD_PATH / "BIOS" / "arcade_lists" / "arcade-rom-names.txt"
+)
 ARCADE_LIBRARY_NAME = "libgamename.so"
 CUSTOM_ARCADE_LIBRARY_CRC = "08a1cae0"
-ARCADE_LIBRARY_APP_RESOURCE = \
+ARCADE_LIBRARY_APP_RESOURCE = (
     RESOURCES / "naming" / f"{ARCADE_LIBRARY_NAME}.zip"
+)
 NAMES_APP_RESOURCE = RESOURCES / "naming" / "names.zip"
 ARCADE_NAMES_DB = RESOURCES / "naming" / "arcade.db"
 CONSOLE_NAMES_DB = RESOURCES / "naming" / "console.db"
 ARCADE_ID_METHOD = "file_stem"
 ARCADE_NAMING_SYSTEMS = [
-    "MAME2003PLUS", "FBNEO", "CPS1", "CPS2", "CPS3", "NEOGEO", "ATOMISWAVE",
-    "CANNONBALL", "NAOMI", "PGM", "MAME", "MAME2010", "DAPHNE"
+    "MAME2003PLUS",
+    "FBNEO",
+    "CPS1",
+    "CPS2",
+    "CPS3",
+    "NEOGEO",
+    "ATOMISWAVE",
+    "CANNONBALL",
+    "NAOMI",
+    "PGM",
+    "MAME",
+    "MAME2010",
+    "DAPHNE",
 ]
 NAMING_EXCLUDE_SYSTEMS = [
-    "PS", "SEGACD", "PCECD", "NEOCD", "SATURN", "DC", "PANASONIC", "PCFX",
-    "SFX", "PORTS"
+    "PS",
+    "SEGACD",
+    "PCECD",
+    "NEOCD",
+    "SATURN",
+    "DC",
+    "PANASONIC",
+    "PCFX",
+    "SFX",
+    "PORTS",
 ]
 NAMING_REGION_RESOURCE = RESOURCES / "naming" / "regions.json"
-NAMING_DISC_PATTERN = \
-    re.compile(r'\b(side|disk|disc|tape|set)[ \-](\w|\d{1,})\b', re.IGNORECASE)
-NAMING_FORMAT_PATTERN = \
-    re.compile(r'\b(pal|ntsc|secam)\b', re.IGNORECASE)
-NAMING_SEARCH_PATTERN = re.compile(r'\((.*?)\)')
-NAMING_REMOVE_PATTERN = re.compile(r'{[^{}]*}|\[[^][]*]|\([^()]*\)')
+NAMING_DISC_PATTERN = re.compile(
+    r"\b(side|disk|disc|tape|set)[ \-](\w|\d{1,})\b",
+    re.IGNORECASE,
+)
+NAMING_FORMAT_PATTERN = re.compile(r"\b(pal|ntsc|secam)\b", re.IGNORECASE)
+NAMING_SEARCH_PATTERN = re.compile(r"\((.*?)\)")
+NAMING_REMOVE_PATTERN = re.compile(r"{[^{}]*}|\[[^][]*]|\([^()]*\)")
 
 PRIMARY_COLOR = (217, 217, 217)
 SECONDARY_COLOR = (23, 147, 209)
@@ -59,6 +80,6 @@ MAX_ITEMS_PER_PAGE = 12
 STOCK_STR = "STOCK"
 CUSTOM_STR = "CUSTOM"
 
-ROM_DB_IGNORE_EXT = {"srm", "sav", "db", 'png'}
+ROM_DB_IGNORE_EXT = {"srm", "sav", "db", "png"}
 ROM_DB_IGNORE_WORDS = {"\u00b0"}
 EMU_EXT_KEY = "extlist"

@@ -1,14 +1,12 @@
-"""
-Represents detailed information about a ROM file.
-"""
+"""Represents detailed information about a ROM file."""
+
 from dataclasses import dataclass, field
 
 
 @dataclass
 class RomDetail:  # pylint: disable=too-many-instance-attributes
-    """
-    Data class for storing information about a ROM.
-    """
+    """Data class for storing information about a ROM."""
+
     title: str
     name: str
     source: str

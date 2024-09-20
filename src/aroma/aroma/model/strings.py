@@ -1,7 +1,6 @@
 # pylint: disable=too-many-arguments
-"""
-Module for handling string translations.
-"""
+"""Module for handling string translations."""
+
 from dataclasses import dataclass
 
 from classes.base.json_dataclass import JsonDataClass
@@ -9,9 +8,8 @@ from classes.base.json_dataclass import JsonDataClass
 
 @dataclass
 class Strings(JsonDataClass):  # pylint: disable=too-many-instance-attributes
-    """
-    Singleton class for managing various string translations.
-    """
+    """Singleton class for managing various string translations."""
+
     stock: str = ""
     custom: str = ""
     collections: str = ""

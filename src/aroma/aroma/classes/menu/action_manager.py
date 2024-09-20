@@ -1,6 +1,5 @@
-"""
-Module for managing actions related to menu items in a navigation system.
-"""
+"""Module for managing actions related to menu items."""
+
 from classes.base.class_base import ClassBase
 from classes.menu.content_manager import ContentManager
 from classes.menu.menu_item_base import MenuItemBase
@@ -10,17 +9,13 @@ from classes.menu.selection_manager import SelectionManager
 
 
 class ActionManager(ClassBase):
-    """
-    Manages actions for selected menu items, including navigating through
-    multi-actions.
-    """
+    """Manages actions for selected menu items."""
 
     def __init__(
         self,
         selection_manager: SelectionManager,
-        content_manager: ContentManager
+        content_manager: ContentManager,
     ) -> None:
-        """Initialize with selection and content managers."""
         super().__init__()
         self.select: SelectionManager = selection_manager
         self.content: ContentManager = content_manager
@@ -30,7 +25,8 @@ class ActionManager(ClassBase):
         item = self._get_current_item()
         if isinstance(item, MenuItemMulti):
             self._logger.debug(
-                "Running next action for item %s", item
+                "Running next action for item %s",
+                item,
             )
             item.next_action()
 
@@ -39,7 +35,8 @@ class ActionManager(ClassBase):
         item = self._get_current_item()
         if isinstance(item, MenuItemMulti):
             self._logger.debug(
-                "Running previous action for item %s", item
+                "Running previous action for item %s",
+                item,
             )
             item.prev_action()
 
@@ -48,7 +45,8 @@ class ActionManager(ClassBase):
         item = self._get_current_item()
         if isinstance(item, MenuItemSingle):
             self._logger.debug(
-                "Running selected action for item %s", item
+                "Running selected action for item %s",
+                item,
             )
             item.run_action()
 
@@ -58,6 +56,8 @@ class ActionManager(ClassBase):
         item_list = list(self.content.items.values())
         item = item_list[selected_index]
         self._logger.debug(
-            "Retrieved current item %s at index %d", item, selected_index
+            "Retrieved current item %s at index %d",
+            item,
+            selected_index,
         )
         return item

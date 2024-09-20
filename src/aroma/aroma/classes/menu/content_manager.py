@@ -1,5 +1,4 @@
-"""
-Manages the content of menu items and side panes in the navigation system.
+"""Manages the content of menu items and side panes in the navigation system.
 
 This module defines the `ContentManager` class, which is responsible for
 managing the menu items, handling updates, and retrieving the currently
@@ -25,10 +24,6 @@ class ContentManager(ClassBase):
         selection_manager: SelectionManager,
         side_pane: SidePane | None = None,
     ) -> None:
-        """
-        Initialize with menu items, a selection manager, and an optional side
-        pane.
-        """
         super().__init__()
         self.items: OrderedDict[Enum, MenuItemBase] = items
         self.select: SelectionManager = selection_manager
@@ -60,7 +55,9 @@ class ContentManager(ClassBase):
         end = self.select.state.end
         item_slice = item_list[start:end]
         self._logger.debug(
-            "Retrieved slice from index %d to %d", start, end
+            "Retrieved slice from index %d to %d",
+            start,
+            end,
         )
         return item_slice
 
@@ -69,7 +66,7 @@ class ContentManager(ClassBase):
         """Retrieve the merged side pane for the current selection."""
         merged_pane = SidePane.merge(
             self._get_current_item().side_pane,
-            self._side_pane
+            self._side_pane,
         )
         self._logger.debug("Merged side pane: %s", merged_pane)
         return merged_pane

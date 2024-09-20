@@ -1,7 +1,5 @@
 # pylint: disable=too-many-arguments
-"""
-Module for defining application configuration settings.
-"""
+"""Module for defining application configuration settings."""
 
 from dataclasses import dataclass
 
@@ -9,10 +7,9 @@ from classes.base.json_dataclass import JsonDataClass
 
 
 @dataclass
-class AppConfig(JsonDataClass):   # pylint: disable=too-many-instance-attributes
-    """
-    Represents configuration settings for the application.
-    """
+class AppConfig(JsonDataClass):  # pylint: disable=too-many-instance-attributes
+    """Represents configuration settings for the application."""
+
     label: str = ""
     icon: str = ""
     iconsel: str = ""
@@ -27,11 +24,9 @@ class AppConfig(JsonDataClass):   # pylint: disable=too-many-instance-attributes
 
     @staticmethod
     def set_db_rebuild_required(reason: str) -> None:
-        """
-        Set a flag indicating that a rebuild of the ROM database is
-        required.
-        """
+        """Set ROM DB rebuild required flag."""
         AppConfig.get_static_logger().info(
-            "Force full rebuild of RomDB: %s", reason
+            "Force full rebuild of RomDB: %s",
+            reason,
         )
         AppConfig().update_value("db_rebuild_req", reason)

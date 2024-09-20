@@ -1,14 +1,18 @@
-"""
-Defines the ROM naming preferences menu, allowing users to manage
-arcade ROM naming libraries.
-"""
+"""Defines the ROM naming preferences menu."""
+
 import json
 from pathlib import Path
 
 from classes.base.class_singleton import ClassSingleton
-from constants import (APP_ROM_DB_PATH, ARCADE_ID_METHOD, ARCADE_NAMES_DB,
-                       ARCADE_NAMING_SYSTEMS, CONSOLE_NAMES_DB,
-                       NAMING_EXCLUDE_SYSTEMS, ROM_PATH)
+from constants import (
+    APP_ROM_DB_PATH,
+    ARCADE_ID_METHOD,
+    ARCADE_NAMES_DB,
+    ARCADE_NAMING_SYSTEMS,
+    CONSOLE_NAMES_DB,
+    NAMING_EXCLUDE_SYSTEMS,
+    ROM_PATH,
+)
 from data.database.name_db import NameDB
 from data.encoder.dataclass_encoder import DataclassEncoder
 from data.parser.filename_parser import FilenameParser
@@ -20,9 +24,9 @@ from tools import util
 
 
 class RomDB(ClassSingleton):
-    """
-    A singleton class to manage ROM details and naming preferences.
-    It handles loading, updating, and saving ROM data, as well as processing
+    """A singleton class to manage ROM details and naming preferences.
+
+    Handles loading, updating, and saving ROM data, as well as processing
     arcade and console ROMs based on naming conventions.
     """
 
@@ -38,11 +42,8 @@ class RomDB(ClassSingleton):
         self._load_db()
         return self._db
 
-    def update_db(self, reset: bool = False) -> None:
-        """
-        Update the ROM database by scanning ROM_PATH for valid ROM files.
-        If reset is True or a rebuild is required, the database is cleared.
-        """
+    def update_db(self, *, reset: bool = False) -> None:
+        """Update the ROM database by scanning ROM_PATH for valid ROM files."""
         if reset or AppConfig().db_rebuild_req:
             self._db = {}
         else:
@@ -60,7 +61,7 @@ class RomDB(ClassSingleton):
 
     def _process_files(
         self,
-        files: list[tuple[Path, RomDetail | None]]
+        files: list[tuple[Path, RomDetail | None]],
     ) -> None:
         """Process the provided list of files and update the ROM database."""
         self._db = {}
@@ -82,7 +83,7 @@ class RomDB(ClassSingleton):
         self,
         path: Path,
         current: RomDetail | None,
-        arcade_roms: dict[str, list[str]]
+        arcade_roms: dict[str, list[str]],
     ) -> None:
         """Process an arcade ROM file and update the database accordingly."""
         key = "/".join(path.parts)
@@ -95,11 +96,9 @@ class RomDB(ClassSingleton):
         self,
         path: Path,
         current: RomDetail | None,
-        console_roms: dict[str, list[str]]
+        console_roms: dict[str, list[str]],
     ) -> None:
-        """
-        Process a console ROM file based on its type (compressed or regular).
-        """
+        """Process a console ROM file based on its type."""
         if AppConfig().console_naming == Strings().stock:
             return
         key = "/".join(path.parts)
@@ -113,7 +112,7 @@ class RomDB(ClassSingleton):
         path: Path,
         current: RomDetail | None,
         console_roms: dict[str, list[str]],
-        key: str
+        key: str,
     ) -> None:
         """Process ROMs that are contained in compressed archives."""
         file_crc = util.check_crc(ROM_PATH / path)
@@ -121,7 +120,8 @@ class RomDB(ClassSingleton):
             self._db[key] = current
             return
         valid = [
-            zf.crc for zf in util.get_archive_info(ROM_PATH / path)
+            zf.crc
+            for zf in util.get_archive_info(ROM_PATH / path)
             if self._validator.has_valid_ext(ROM_PATH / path / zf.filename)
         ]
         if current and len(valid) == 1 and current.id == valid[0]:
@@ -134,7 +134,7 @@ class RomDB(ClassSingleton):
         path: Path,
         current: RomDetail | None,
         console_roms: dict[str, list[str]],
-        key: str
+        key: str,
     ) -> None:
         """Process regular non-compressed ROM files and update the database."""
         file_crc = util.check_crc(ROM_PATH / path)
@@ -146,7 +146,7 @@ class RomDB(ClassSingleton):
     def _process_remaining_files(
         self,
         files: list[tuple[Path, RomDetail | None]],
-        all_roms: dict[str, list[str]]
+        all_roms: dict[str, list[str]],
     ) -> None:
         """Handle remaining files not present in the name databases."""
         for path, current in files:
@@ -161,10 +161,7 @@ class RomDB(ClassSingleton):
             self._db[key] = self._parser.parse(path, ids[0] if ids else None)
 
     def _load_db(self) -> None:
-        """
-        Load the ROM database from a JSON file and validate the paths.
-        Only valid entries will be included in the database.
-        """
+        """Load the ROM database from a JSON file and validate the paths."""
         if not self._db:
             self._db = {
                 k: RomDetail(**v)
@@ -174,5 +171,5 @@ class RomDB(ClassSingleton):
 
     def save_db(self) -> None:
         """Save the current ROM database to a JSON file."""
-        with open(APP_ROM_DB_PATH, "w", encoding="utf8") as file:
+        with Path.open(APP_ROM_DB_PATH, "w", encoding="utf8") as file:
             json.dump(self._db, file, indent=4, cls=DataclassEncoder)

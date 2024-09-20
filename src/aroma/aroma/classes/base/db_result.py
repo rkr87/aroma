@@ -1,9 +1,10 @@
 """Database result handling module."""
 
 from dataclasses import dataclass
-from typing import Self
+from typing import TYPE_CHECKING, Self
 
-import apsw
+if TYPE_CHECKING:
+    import apsw
 
 
 @dataclass
@@ -13,7 +14,7 @@ class DBResult:
     @classmethod
     def factory(
         cls,
-        row: tuple["apsw.SQLiteValue", ...]
+        row: tuple["apsw.SQLiteValue", ...],
     ) -> Self:
-        """Creates a DBResult instance from a database row."""
+        """Create a DBResult instance from a database row."""
         return cls(*row)

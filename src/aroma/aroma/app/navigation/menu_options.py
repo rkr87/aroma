@@ -1,6 +1,4 @@
-"""
-Defines a menu for configuring options, including various settings and choices.
-"""
+"""Defines a menu for configuring options."""
 
 import logging.config
 from collections import OrderedDict
@@ -16,51 +14,39 @@ from model.strings import Strings
 
 
 class MenuOptions(MenuBase):
-    """
-    Manages the menu for configuring options, providing various settings and
-    choices.
-    """
+    """Manages the menu for configuring options choices."""
 
-    LANG_FILE_SUFFIX = '.json'
-    DEFAULT_LANG = 'english'
+    LANG_FILE_SUFFIX = ".json"
+    DEFAULT_LANG = "english"
 
     class _Options(Enum):
-        """
-        Defines the options available in this menu.
-        """
+        """Defines the options available in this menu."""
+
         LANGUAGE = auto()
         LOGGING = auto()
 
     @property
-    def Option(self) -> type[_Options]:
-        """
-        Provides the enum class for this menu's options.
-        """
+    def option(self) -> type[_Options]:
+        """Provides the enum class for this menu's options."""
         return self._Options
 
     def __init__(self) -> None:
-        """
-        Initializes the MenuOptions with a title and menu options for
-        configuring settings.
-        """
         self._config = AppConfig()
         super().__init__(Strings().options, self._build_menu())
 
     def _build_menu(self) -> OrderedDict[Enum, MenuItemBase]:  # pylint: disable=no-self-use
-        """
-        Builds the options menu with predefined settings choices.
-        """
+        """Build the options menu with predefined settings choices."""
         logger = MenuOptions.get_static_logger()
         logger.debug("Building Options menu options.")
-        return OrderedDict([
-            (self.Option.LANGUAGE, self._language()),
-            (self.Option.LOGGING, self._logging_level())
-        ])
+        return OrderedDict(
+            [
+                (self.option.LANGUAGE, self._language()),
+                (self.option.LOGGING, self._logging_level()),
+            ],
+        )
 
     def _language(self) -> MenuItemMulti:
-        """
-        Creates a menu item for selecting the language from available options.
-        """
+        """Create menu item for selecting the language."""
         data: dict[str, str] = {}
         default: int = 0
         for i, f in enumerate(APP_TRANSLATION_PATH.iterdir()):
@@ -73,7 +59,7 @@ class MenuOptions(MenuBase):
             data,
             "language",
             self._set_language,
-            default=default
+            default=default,
         )
         return MenuItemMulti(
             Strings().language,
@@ -81,15 +67,12 @@ class MenuOptions(MenuBase):
             current,
             SidePane(
                 Strings().language,
-                Strings().language_desc
-            )
+                Strings().language_desc,
+            ),
         )
 
     def _logging_level(self) -> MenuItemMulti:
-        """
-        Creates a menu item for selecting the logging level from predefined
-        options.
-        """
+        """Create menu item for selecting the logging level."""
         data: dict[str, str] = {
             "DEBUG": Strings().logging_debug,
             "INFO": Strings().logging_info,
@@ -100,7 +83,7 @@ class MenuOptions(MenuBase):
             data,
             "logging_level",
             self._set_logging_level,
-            1
+            1,
         )
         return MenuItemMulti(
             Strings().logging_level,
@@ -108,23 +91,18 @@ class MenuOptions(MenuBase):
             current,
             SidePane(
                 Strings().logging_level,
-                Strings().logging_desc
-            )
+                Strings().logging_desc,
+            ),
         )
 
     @staticmethod
     def _set_logging_level(level: str) -> None:
-        """
-        Sets the logging level and updates the configuration.
-        """
+        """Set the logging level and update configuration."""
         logging.getLogger().setLevel(level)
 
     @staticmethod
     def _set_language(language: str) -> None:
-        """
-        Sets the application language and updates the configuration. Reloads
-        the strings and rebuilds menus.
-        """
+        """Set the application language and update configuration."""
         Strings.load(APP_TRANSLATION_PATH / f"{language}.json")
         for menu in reversed(MenuBase.get_children()):
             menu.rebuild()
