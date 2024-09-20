@@ -12,14 +12,13 @@ from constants import (ARCADE_LIBRARY_APP_RESOURCE, ARCADE_LIBRARY_NAME,
 
 
 class LibraryManager(ClassSingleton):
-    """
-    TODO
-    """
+    """Manages installation and status of arcade ROM naming libraries."""
 
     @staticmethod
     def get_arcade_library_status(menu_options: dict[str, str]) -> int:
         """
-        TODO
+        Retrieves the status of the installed arcade library and determines
+        the index of the current naming method in the provided menu options.
         """
         logger = LibraryManager.get_static_logger()
         installed: str = "n/a"
@@ -37,18 +36,18 @@ class LibraryManager(ClassSingleton):
     @classmethod
     def install_arcade_library(cls, value: str) -> None:
         """
-        TODO
+        Installs the specified arcade ROM naming library (stock or custom)
+        based on the provided value.
         """
         if value == STOCK_STR:
             cls._install_stock_arcade_library()
             return
         cls._install_custom_arcade_library()
-        return
 
     @staticmethod
     def _install_stock_arcade_library() -> None:
         """
-        Install the stock arcade ROM naming library by replacing any custom
+        Installs the stock arcade ROM naming library by replacing any custom
         library and removing custom arcade name lists.
         """
         logger = LibraryManager.get_static_logger()
@@ -69,7 +68,7 @@ class LibraryManager(ClassSingleton):
     @staticmethod
     def _install_custom_arcade_library() -> None:
         """
-        Install the custom arcade ROM naming library by backing up the stock
+        Installs the custom arcade ROM naming library by backing up the stock
         library and adding a configurable list of arcade ROM names.
         """
         logger = LibraryManager.get_static_logger()

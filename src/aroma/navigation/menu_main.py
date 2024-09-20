@@ -83,7 +83,7 @@ class MenuMain(MenuBase):
     @staticmethod
     def _refresh_roms() -> MenuItemSingle:
         """
-        TODO
+        Creates a menu item that refreshes the ROM database.
         """
         return MenuItemSingle(
             Strings().refresh_roms,

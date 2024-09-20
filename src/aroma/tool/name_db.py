@@ -1,5 +1,4 @@
-"""TODO"""
-
+"""Handles ROM name queries from databases."""
 
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -20,9 +19,10 @@ DB_ID_METHOD = {
 
 class NameDB(ClassSingleton):
     """A singleton class to handle ROM name queries from databases."""
+
     @dataclass
     class _RomResult(DBResult):  # pylint: disable=too-many-instance-attributes
-        """TODO"""
+        """Represents a result from the ROM table in the database."""
         row_id: int
         title: str
         name: str
@@ -31,13 +31,13 @@ class NameDB(ClassSingleton):
 
     @dataclass
     class _SubtableResult(DBResult):
-        """TODO"""
+        """Represents a result from subtables."""
         row_id: int
         name: str
 
     @dataclass
     class _QueryResult:  # pylint: disable=too-many-instance-attributes
-        """Holds the results of a ROM query."""
+        """Holds the results of a query."""
         query: dict[str, list[str]] = field(default_factory=dict)
         roms: list["NameDB._RomResult"] = field(default_factory=list)
         region: dict[int, list[str]] = field(default_factory=dict)
@@ -84,7 +84,7 @@ class NameDB(ClassSingleton):
         result: _QueryResult
     ) -> None:
         """
-        Query a subtable for the provided ROM IDs.
+        Query a subtable for the provided ROM IDs and update the results.
         """
         table_map = {
             "region": result.region,
@@ -169,6 +169,8 @@ class NameDB(ClassSingleton):
     ) -> dict[str, RomDetail]:
         """
         Query ROM details from the database based on the provided query values.
+        Returns a dictionary mapping file paths to their corresponding ROM
+        details.
         """
         if not query_vals:
             return {}

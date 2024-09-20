@@ -3,7 +3,6 @@ Defines the ROM naming preferences menu, allowing users to manage
 arcade ROM naming libraries.
 """
 
-
 from collections import OrderedDict
 from enum import Enum, auto
 
@@ -68,7 +67,7 @@ class MenuRomNaming(MenuBase):
 
     def _naming_method(self) -> MenuItemMulti:
         """
-        TODO
+        Create a menu item for selecting the naming method (stock or custom).
         """
         data: dict[str, str] = {
             STOCK_STR: Strings().stock,
@@ -89,7 +88,7 @@ class MenuRomNaming(MenuBase):
     @staticmethod
     def _console_naming() -> MenuItemMulti:
         """
-        TODO
+        Create a menu item for managing console naming preferences.
         """
         data: dict[str, str] = {
             STOCK_STR: Strings().stock,
@@ -110,7 +109,7 @@ class MenuRomNaming(MenuBase):
     @staticmethod
     def _name_format() -> MenuItemMulti:
         """
-        TODO
+        Create a menu item for selecting the naming format for ROMs.
         """
         data: dict[str, str] = {
             "NONE": Strings().name_format_none,

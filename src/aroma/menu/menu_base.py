@@ -128,7 +128,7 @@ class MenuBase(ClassSingleton, ABC):
         non_tsp_skip: bool = False
     ) -> list[MenuAction]:
         """
-        TODO
+        Creates menu actions from the provided data mapping.
         """
         actions: list[MenuAction] = []
         for k, v in data.items():
@@ -141,8 +141,8 @@ class MenuBase(ClassSingleton, ABC):
             )
         return actions
 
-    def _rebuild_menu(self, method: str) -> None:
-        """TODO"""
+    def _rebuild_menu(self, reason: str) -> None:
+        """Rebuilds the menu."""
         logger = MenuBase.get_static_logger()
-        logger.info("Rebuilding menu for %s naming method.", method)
+        logger.info("Rebuilding %s menu, reason: %s", type(self), reason)
         self.rebuild()

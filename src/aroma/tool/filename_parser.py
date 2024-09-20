@@ -1,12 +1,12 @@
-"""TODO"""
+"""Parses filenames to extract ROM details."""
 import re
 from pathlib import Path
 
 import util
 from base.class_singleton import ClassSingleton
-from constants import (NAMING_DISC_PATTERN, NAMING_FORMAT_PATTERN,
-                       NAMING_REGION_RESOURCE, NAMING_REMOVE_PATTERN,
-                       NAMING_SEARCH_PATTERN)
+from constants import (NAMING_DISC_PATTERN, NAMING_EXCLUDE_SYSTEMS,
+                       NAMING_FORMAT_PATTERN, NAMING_REGION_RESOURCE,
+                       NAMING_REMOVE_PATTERN, NAMING_SEARCH_PATTERN)
 from model.rom_detail import RomDetail
 
 REPLACE_STRINGS = {
@@ -17,7 +17,7 @@ REPLACE_STRINGS = {
 
 
 class FilenameParser(ClassSingleton):
-    """TODO"""
+    """Handles parsing of filenames to extract ROM details."""
 
     def __init__(self) -> None:
         super().__init__()
@@ -37,15 +37,15 @@ class FilenameParser(ClassSingleton):
     @staticmethod
     def _split_and_normalise(value: str) -> list[str]:
         """
-        Splits a string by commas, hyphens, and spaces, strips whitespace.
+        Splits a string by commas, hyphens, and spaces, and removes whitespace.
         """
         items = re.split(r'[,\-\s]+', value)
         return [item.strip() for item in items if item.strip()]
 
     def _check_regions(self, items: list[str]) -> list[str]:
         """
-        Checks if the given list of items exist in the normalized region map.
-        If a match is found, the corresponding value(s) is added to a set.
+        Checks if the given list of items exists in the normalised region map.
+        Adds the corresponding values to a list if matches are found.
         """
         matched: list[str] = []
         for item in items:
@@ -55,24 +55,24 @@ class FilenameParser(ClassSingleton):
 
     @staticmethod
     def _check_disc(text: str) -> list[str]:
-        """TODO"""
+        """Extracts disc information from the text."""
         matched = NAMING_DISC_PATTERN.findall(text)
         return [f'{term[0]} {term[1]}'.upper() for term in matched]
 
     @staticmethod
     def _check_format(text: str) -> list[str]:
-        """TODO"""
+        """Extracts format information from the text."""
         matched = NAMING_FORMAT_PATTERN.findall(text)
         return [term.upper() for term in matched]
 
     @staticmethod
     def _clean_name(text: str) -> str:
-        """TODO"""
+        """Cleans and normalizes the ROM name."""
         clean = util.remove_loop(text, NAMING_REMOVE_PATTERN)
         return " ".join(clean.split())
 
-    def parse(self, path: Path) -> RomDetail:
-        """TODO"""
+    def parse(self, path: Path, crc: str | None = None) -> RomDetail:
+        """Parses the filename to extract ROM details."""
         stem = self._replace_strings(path.stem)
         region: set[str] = set()
         disc: set[str] = set()
@@ -87,6 +87,8 @@ class FilenameParser(ClassSingleton):
             title=path.stem,
             name=self._clean_name(path.stem),
             source="file_name",
+            id_method="" if path.parts[0] in NAMING_EXCLUDE_SYSTEMS else "crc",
+            id=crc or "",
             region=list(region),
             disc=list(disc),
             format=list(vf)

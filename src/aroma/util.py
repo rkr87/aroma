@@ -87,7 +87,7 @@ def bytes_from_zip(
     file_name: str
 ) -> bytes | None:
     """
-    TODO
+    Retrieves the contents of a specified file from a zip archive.
     """
     buffer = None
     logging.info("Extracting %s from %s", file_name, zip_path)
@@ -109,7 +109,7 @@ def get_zip_info(
     zip_path: Path,
 ) -> list[FileCrc]:
     """
-    TODO
+    Retrieves CRC information for all files in a zip archive.
     """
     with ZipFile(zip_path, 'r') as archive:
         file_list: list[ZipInfo] = archive.filelist
@@ -123,7 +123,7 @@ def get_7z_info(
     archive_path: Path,
 ) -> list[FileCrc]:
     """
-    TODO
+    Retrieves CRC information for all files in a 7z archive.
     """
     with SevenZipFile(archive_path, mode='r') as archive:
         file_list: list[FileInfo] = archive.list()
@@ -137,7 +137,7 @@ def get_archive_info(
     archive_path: Path,
 ) -> list[FileCrc]:
     """
-    TODO
+    Determines the type of archive and retrieves file CRC information.
     """
     extractors: dict[str, Callable[[Path], list[FileCrc]]] = {
         ".7z": get_7z_info,

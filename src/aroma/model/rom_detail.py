@@ -1,5 +1,5 @@
 """
-TODO
+Represents detailed information about a ROM file.
 """
 from dataclasses import dataclass, field
 
@@ -7,7 +7,7 @@ from dataclasses import dataclass, field
 @dataclass
 class RomDetail:  # pylint: disable=too-many-instance-attributes
     """
-    TODO
+    Data class for storing information about a ROM.
     """
     title: str
     name: str
