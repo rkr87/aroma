@@ -1,0 +1,7 @@
+{
+    "label": "Refresh Roms",
+    "icon": "icon.png",
+    "iconsel": "icon.png",
+    "launch": "launch.sh",
+    "description": "aROMa - Refresh Roms"
+}

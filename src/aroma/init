@@ -1,0 +1,66 @@
+#!/usr/bin/env python3
+"""Entry point for initialising and starting the application."""
+
+import argparse
+import logging
+import logging.config
+import sys
+from pathlib import Path
+
+# Add directories to the Python path for module imports
+path_dirs: list[str] = ["aroma", "libs"]
+for d in path_dirs:
+    path: Path = Path(__file__).parent / d
+    sys.path.insert(0, str(path))
+
+# pylint: disable=wrong-import-position
+import constants  # noqa: E402
+from aroma_app import AromaApp  # noqa: E402
+from data.database.name_db import NameDB  # noqa: E402
+from data.database.rom_db import RomDB  # noqa: E402
+from model.app_config import AppConfig  # noqa: E402
+from model.strings import Strings  # noqa: E402
+
+
+def parse_args() -> argparse.Namespace:
+    """Parse command-line arguments."""
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "-r",
+        "--refresh",
+        action="store_true",
+        help="Refresh ROM DB and system cache.",
+    )
+    return parser.parse_args()
+
+
+def init() -> None:
+    """Initialise core app components."""
+    config = AppConfig.load(constants.APP_CONFIG_PATH)
+    logging.config.fileConfig(constants.APP_LOGGING_CONFIG_PATH)
+    logging.getLogger().setLevel(config.logging_level)
+    Strings.load(constants.APP_TRANSLATION_PATH / f"{config.language}.json")
+
+
+def refresh_roms() -> None:
+    """Refresh the ROM database and system cache."""
+    logging.info("Refreshing ROM database and system cache...")
+    RomDB().update_db()
+    NameDB().remove_db()
+    sys.exit()
+
+
+def launch_aroma() -> None:
+    """Initialise and starts the aroma."""
+    logging.info("Launching aROMa.")
+    app: AromaApp = AromaApp()
+    app.start()
+
+
+if __name__ == "__main__":
+    args = parse_args()
+    init()
+    if args.refresh:
+        refresh_roms()
+    else:
+        launch_aroma()
