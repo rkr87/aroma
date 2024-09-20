@@ -9,11 +9,14 @@ from enum import Enum, auto
 from constants import APP_NAME
 from menu.menu_base import MenuBase
 from menu.menu_item_base import MenuItemBase
+from menu.menu_item_single import MenuItemSingle
 from model.side_pane import SidePane
 from navigation.menu_collections import MenuCollections
 from navigation.menu_options import MenuOptions
 from navigation.menu_rom_naming import MenuRomNaming
 from navigation.menu_stack import MenuStack
+from strings import Strings
+from tool.rom_db import RomDB
 
 
 class MenuMain(MenuBase):
@@ -29,6 +32,7 @@ class MenuMain(MenuBase):
         COLLECTIONS = auto()
         ROM_NAMING = auto()
         OPTIONS = auto()
+        REFRESH = auto()
 
     @property
     def Option(self) -> type[_Options]:
@@ -58,7 +62,7 @@ class MenuMain(MenuBase):
         Builds the main menu with options to navigate to collections and
         options.
         """
-        logger = MenuRomNaming.get_static_logger()
+        logger = self.get_static_logger()
         logger.debug("Building Main menu options.")
         return OrderedDict([
             (
@@ -72,5 +76,17 @@ class MenuMain(MenuBase):
             (
                 self.Option.OPTIONS,
                 self.sub_menu(MenuOptions(), MenuStack().push)
-            )
+            ),
+            (self.Option.REFRESH, self._refresh_roms())
         ])
+
+    @staticmethod
+    def _refresh_roms() -> MenuItemSingle:
+        """
+        TODO
+        """
+        return MenuItemSingle(
+            Strings().refresh_roms,
+            RomDB().update_db,
+            SidePane(Strings().refresh_roms, Strings.refresh_roms_desc)
+        )
