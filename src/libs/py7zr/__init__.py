@@ -17,7 +17,8 @@
 #    License along with this library; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-from py7zr.exceptions import Bad7zFile, DecompressionError, PasswordRequired, UnsupportedCompressionMethodError
+from py7zr.exceptions import Bad7zFile,PasswordRequired, UnsupportedCompressionMethodError
+# DecompressionError, 
 from py7zr.properties import (
     CHECK_CRC32,
     CHECK_CRC64,
@@ -28,7 +29,7 @@ from py7zr.properties import (
     FILTER_BROTLI,
     FILTER_BZIP2,
     FILTER_COPY,
-    FILTER_CRYPTO_AES256_SHA256,
+    # FILTER_CRYPTO_AES256_SHA256,
     FILTER_DEFLATE,
     FILTER_DELTA,
     FILTER_IA64,
@@ -42,7 +43,8 @@ from py7zr.properties import (
     PRESET_DEFAULT,
     PRESET_EXTREME,
 )
-from py7zr.py7zr import ArchiveInfo, FileInfo, SevenZipFile, is_7zfile, pack_7zarchive, unpack_7zarchive
+from py7zr.py7zr import ArchiveInfo, FileInfo, SevenZipFile
+# , is_7zfile, pack_7zarchive, unpack_7zarchive
 from py7zr.version import __version__
 
 __copyright__ = "Copyright (C) 2019-2021 Hiroshi Miura"
@@ -53,18 +55,18 @@ __all__ = [
     "ArchiveInfo",
     "FileInfo",
     "SevenZipFile",
-    "is_7zfile",
-    "pack_7zarchive",
-    "unpack_7zarchive",
+    # "is_7zfile",
+    # "pack_7zarchive",
+    # "unpack_7zarchive",
     "PasswordRequired",
     "UnsupportedCompressionMethodError",
     "Bad7zFile",
-    "DecompressionError",
+    # "DecompressionError",
     "FILTER_LZMA",
     "FILTER_LZMA2",
     "FILTER_DELTA",
     "FILTER_COPY",
-    "FILTER_CRYPTO_AES256_SHA256",
+    # "FILTER_CRYPTO_AES256_SHA256",
     "FILTER_X86",
     "FILTER_ARM",
     "FILTER_SPARC",

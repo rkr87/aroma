@@ -31,11 +31,11 @@ from enum import Enum
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 import bcj
-import inflate64
-import pyppmd
-import pyzstd
-from Cryptodome.Cipher import AES
-from Cryptodome.Random import get_random_bytes
+# import inflate64
+# import pyppmd
+# import pyzstd
+# from Cryptodome.Cipher import AES
+# from Cryptodome.Random import get_random_bytes
 
 from py7zr.exceptions import PasswordRequired, UnsupportedCompressionMethodError
 from py7zr.helpers import Buffer, calculate_crc32, calculate_key
@@ -46,7 +46,7 @@ from py7zr.properties import (
     FILTER_BROTLI,
     FILTER_BZIP2,
     FILTER_COPY,
-    FILTER_CRYPTO_AES256_SHA256,
+    # FILTER_CRYPTO_AES256_SHA256,
     FILTER_DEFLATE,
     FILTER_DEFLATE64,
     FILTER_DELTA,
@@ -105,137 +105,137 @@ class ISevenZipDecompressor(ABC):
         pass
 
 
-class AESCompressor(ISevenZipCompressor):
-    """AES Compression(Encryption) class.
-    It accept pre-processing filter which may be a LZMA compression."""
+# class AESCompressor(ISevenZipCompressor):
+#     """AES Compression(Encryption) class.
+#     It accept pre-processing filter which may be a LZMA compression."""
 
-    AES_CBC_BLOCKSIZE = 16
+#     AES_CBC_BLOCKSIZE = 16
 
-    def __init__(self, password: str, blocksize: Optional[int] = None) -> None:
-        self.cycles = 19  # as same as p7zip
-        self.iv = get_random_bytes(16)
-        self.salt = b""
-        self.method = CompressionMethod.CRYPT_AES256_SHA256
-        key = calculate_key(password.encode("utf-16LE"), self.cycles, self.salt, "sha256")
-        self.iv += bytes(self.AES_CBC_BLOCKSIZE - len(self.iv))  # zero padding if iv < AES_CBC_BLOCKSIZE
-        self.cipher = AES.new(key, AES.MODE_CBC, self.iv)
-        self.flushed = False
-        if blocksize:
-            self.buf = Buffer(size=blocksize + self.AES_CBC_BLOCKSIZE * 2)
-        else:
-            self.buf = Buffer(size=get_default_blocksize() + self.AES_CBC_BLOCKSIZE * 2)
+#     def __init__(self, password: str, blocksize: Optional[int] = None) -> None:
+#         self.cycles = 19  # as same as p7zip
+#         self.iv = get_random_bytes(16)
+#         self.salt = b""
+#         self.method = CompressionMethod.CRYPT_AES256_SHA256
+#         key = calculate_key(password.encode("utf-16LE"), self.cycles, self.salt, "sha256")
+#         self.iv += bytes(self.AES_CBC_BLOCKSIZE - len(self.iv))  # zero padding if iv < AES_CBC_BLOCKSIZE
+#         self.cipher = AES.new(key, AES.MODE_CBC, self.iv)
+#         self.flushed = False
+#         if blocksize:
+#             self.buf = Buffer(size=blocksize + self.AES_CBC_BLOCKSIZE * 2)
+#         else:
+#             self.buf = Buffer(size=get_default_blocksize() + self.AES_CBC_BLOCKSIZE * 2)
 
-    def encode_filter_properties(self):
-        saltsize = len(self.salt)
-        ivsize = len(self.iv)
-        ivfirst = 1  # it should always 1
-        saltfirst = 1 if len(self.salt) > 0 else 0
-        firstbyte = (self.cycles + (ivfirst << 6) + (saltfirst << 7)).to_bytes(1, "little")
-        secondbyte = (((ivsize - 1) & 0x0F) + (((saltsize - saltfirst) << 4) & 0xF0)).to_bytes(1, "little")
-        properties = firstbyte + secondbyte + self.salt + self.iv
-        return properties
+#     def encode_filter_properties(self):
+#         saltsize = len(self.salt)
+#         ivsize = len(self.iv)
+#         ivfirst = 1  # it should always 1
+#         saltfirst = 1 if len(self.salt) > 0 else 0
+#         firstbyte = (self.cycles + (ivfirst << 6) + (saltfirst << 7)).to_bytes(1, "little")
+#         secondbyte = (((ivsize - 1) & 0x0F) + (((saltsize - saltfirst) << 4) & 0xF0)).to_bytes(1, "little")
+#         properties = firstbyte + secondbyte + self.salt + self.iv
+#         return properties
 
-    def compress(self, data):
-        """Compression + AES encryption with 16byte alignment."""
-        # The size is < 16 which should be only last chunk.
-        # From p7zip/CPP/7zip/common/FilterCoder.cpp
-        # /*
-        # AES filters need 16-bytes alignment for HARDWARE-AES instructions.
-        # So we call IFilter::Filter(, size), where (size != 16 * N) only for last data block.
-        # AES-CBC filters need data size aligned for 16-bytes.
-        # So the encoder can add zeros to the end of original stream.
-        # Some filters (BCJ and others) don't process data at the end of stream in some cases.
-        # So the encoder and decoder write such last bytes without change.
-        # */
-        currentlen = len(self.buf) + len(data)
-        # hopefully aligned and larger than block size.
-        if currentlen >= 16 and (currentlen & 0x0F) == 0:
-            self.buf.add(data)
-            res = self.cipher.encrypt(self.buf.view)
-            self.buf.reset()
-        elif currentlen > 16:  # when not aligned
-            # nextpos = (currentlen // self.AES_CBC_BLOCKSIZE) * self.AES_CBC_BLOCKSIZE
-            nextpos = currentlen & ~0x0F
-            buflen = len(self.buf)
-            self.buf.add(data[: nextpos - buflen])
-            res = self.cipher.encrypt(self.buf.view)
-            self.buf.set(data[nextpos - buflen :])
-        else:  # pragma: no-cover # smaller than block size, it will processed when flush()
-            self.buf.add(data)
-            res = b""
-        return res
+#     def compress(self, data):
+#         """Compression + AES encryption with 16byte alignment."""
+#         # The size is < 16 which should be only last chunk.
+#         # From p7zip/CPP/7zip/common/FilterCoder.cpp
+#         # /*
+#         # AES filters need 16-bytes alignment for HARDWARE-AES instructions.
+#         # So we call IFilter::Filter(, size), where (size != 16 * N) only for last data block.
+#         # AES-CBC filters need data size aligned for 16-bytes.
+#         # So the encoder can add zeros to the end of original stream.
+#         # Some filters (BCJ and others) don't process data at the end of stream in some cases.
+#         # So the encoder and decoder write such last bytes without change.
+#         # */
+#         currentlen = len(self.buf) + len(data)
+#         # hopefully aligned and larger than block size.
+#         if currentlen >= 16 and (currentlen & 0x0F) == 0:
+#             self.buf.add(data)
+#             res = self.cipher.encrypt(self.buf.view)
+#             self.buf.reset()
+#         elif currentlen > 16:  # when not aligned
+#             # nextpos = (currentlen // self.AES_CBC_BLOCKSIZE) * self.AES_CBC_BLOCKSIZE
+#             nextpos = currentlen & ~0x0F
+#             buflen = len(self.buf)
+#             self.buf.add(data[: nextpos - buflen])
+#             res = self.cipher.encrypt(self.buf.view)
+#             self.buf.set(data[nextpos - buflen :])
+#         else:  # pragma: no-cover # smaller than block size, it will processed when flush()
+#             self.buf.add(data)
+#             res = b""
+#         return res
 
-    def flush(self):
-        if len(self.buf) > 0:
-            # padlen = 16 - currentlen % 16 if currentlen % 16 > 0 else 0
-            padlen = -len(self.buf) & 15
-            self.buf.add(bytes(padlen))
-            res = self.cipher.encrypt(self.buf.view)
-            self.buf.reset()
-        else:
-            res = b""
-        return res
+#     def flush(self):
+#         if len(self.buf) > 0:
+#             # padlen = 16 - currentlen % 16 if currentlen % 16 > 0 else 0
+#             padlen = -len(self.buf) & 15
+#             self.buf.add(bytes(padlen))
+#             res = self.cipher.encrypt(self.buf.view)
+#             self.buf.reset()
+#         else:
+#             res = b""
+#         return res
 
 
-class AESDecompressor(ISevenZipDecompressor):
-    """Decrypt data"""
+# class AESDecompressor(ISevenZipDecompressor):
+#     """Decrypt data"""
 
-    def __init__(self, aes_properties: bytes, password: str, blocksize: Optional[int] = None) -> None:
-        firstbyte = aes_properties[0]
-        numcyclespower = firstbyte & 0x3F
-        if firstbyte & 0xC0 != 0:
-            saltsize = (firstbyte >> 7) & 1
-            ivsize = (firstbyte >> 6) & 1
-            secondbyte = aes_properties[1]
-            saltsize += secondbyte >> 4
-            ivsize += secondbyte & 0x0F
-            assert len(aes_properties) == 2 + saltsize + ivsize
-            salt = aes_properties[2 : 2 + saltsize]
-            iv = aes_properties[2 + saltsize : 2 + saltsize + ivsize]
-            assert len(salt) == saltsize
-            assert len(iv) == ivsize
-            assert numcyclespower <= 24
-            if ivsize < 16:
-                iv += bytes("\x00" * (16 - ivsize), "ascii")
-            key = calculate_key(password.encode("utf-16LE"), numcyclespower, salt, "sha256")
-            self.cipher = AES.new(key, AES.MODE_CBC, iv)
-            if blocksize:
-                self.buf = Buffer(size=blocksize + 16)
-            else:
-                self.buf = Buffer(size=get_default_blocksize() + 16)
-        else:
-            raise UnsupportedCompressionMethodError(firstbyte, "Wrong 7zAES properties")
+#     def __init__(self, aes_properties: bytes, password: str, blocksize: Optional[int] = None) -> None:
+#         firstbyte = aes_properties[0]
+#         numcyclespower = firstbyte & 0x3F
+#         if firstbyte & 0xC0 != 0:
+#             saltsize = (firstbyte >> 7) & 1
+#             ivsize = (firstbyte >> 6) & 1
+#             secondbyte = aes_properties[1]
+#             saltsize += secondbyte >> 4
+#             ivsize += secondbyte & 0x0F
+#             assert len(aes_properties) == 2 + saltsize + ivsize
+#             salt = aes_properties[2 : 2 + saltsize]
+#             iv = aes_properties[2 + saltsize : 2 + saltsize + ivsize]
+#             assert len(salt) == saltsize
+#             assert len(iv) == ivsize
+#             assert numcyclespower <= 24
+#             if ivsize < 16:
+#                 iv += bytes("\x00" * (16 - ivsize), "ascii")
+#             key = calculate_key(password.encode("utf-16LE"), numcyclespower, salt, "sha256")
+#             self.cipher = AES.new(key, AES.MODE_CBC, iv)
+#             if blocksize:
+#                 self.buf = Buffer(size=blocksize + 16)
+#             else:
+#                 self.buf = Buffer(size=get_default_blocksize() + 16)
+#         else:
+#             raise UnsupportedCompressionMethodError(firstbyte, "Wrong 7zAES properties")
 
-    def decompress(self, data: Union[bytes, bytearray, memoryview], max_length: int = -1) -> bytes:
-        currentlen = len(self.buf) + len(data)
-        # when aligned to 16 bytes(expected)
-        if len(data) > 0 and (currentlen & 0x0F) == 0:
-            self.buf.add(data)
-            temp = self.cipher.decrypt(self.buf.view)
-            self.buf.reset()
-            return temp
-        elif len(data) > 0:  # pragma: no-cover
-            # nextpos = (currentlen // 16) * 16
-            nextpos = currentlen & ~0x0F
-            buflen = len(self.buf)
-            temp2 = data[nextpos - buflen :]
-            self.buf.add(data[: nextpos - buflen])
-            temp = self.cipher.decrypt(self.buf.view)
-            self.buf.set(temp2)
-            return temp
-        elif len(self.buf) == 0:  # pragma: no-cover  # action flush
-            return b""
-        else:  # pragma: no-cover  # action padding
-            # align = 16
-            # padlen = (align - offset % align) % align
-            #       = (align - (offset & (align - 1))) & (align - 1)
-            #       = -offset & (align -1)
-            #       = -offset & (16 - 1) = -offset & 15
-            padlen = -len(self.buf) & 15
-            self.buf.add(bytes(padlen))
-            temp3 = self.cipher.decrypt(self.buf.view)  # type: bytes
-            self.buf.reset()
-            return temp3
+#     def decompress(self, data: Union[bytes, bytearray, memoryview], max_length: int = -1) -> bytes:
+#         currentlen = len(self.buf) + len(data)
+#         # when aligned to 16 bytes(expected)
+#         if len(data) > 0 and (currentlen & 0x0F) == 0:
+#             self.buf.add(data)
+#             temp = self.cipher.decrypt(self.buf.view)
+#             self.buf.reset()
+#             return temp
+#         elif len(data) > 0:  # pragma: no-cover
+#             # nextpos = (currentlen // 16) * 16
+#             nextpos = currentlen & ~0x0F
+#             buflen = len(self.buf)
+#             temp2 = data[nextpos - buflen :]
+#             self.buf.add(data[: nextpos - buflen])
+#             temp = self.cipher.decrypt(self.buf.view)
+#             self.buf.set(temp2)
+#             return temp
+#         elif len(self.buf) == 0:  # pragma: no-cover  # action flush
+#             return b""
+#         else:  # pragma: no-cover  # action padding
+#             # align = 16
+#             # padlen = (align - offset % align) % align
+#             #       = (align - (offset & (align - 1))) & (align - 1)
+#             #       = -offset & (align -1)
+#             #       = -offset & (16 - 1) = -offset & 15
+#             padlen = -len(self.buf) & 15
+#             self.buf.add(bytes(padlen))
+#             temp3 = self.cipher.decrypt(self.buf.view)  # type: bytes
+#             self.buf.reset()
+#             return temp3
 
 
 class DeflateCompressor(ISevenZipCompressor):
@@ -553,7 +553,7 @@ algorithm_class_map: Dict[int, Tuple[Any, Any]] = {
     FILTER_COPY: (CopyCompressor, CopyDecompressor),
     FILTER_DEFLATE: (DeflateCompressor, DeflateDecompressor),
     FILTER_DEFLATE64: (Deflate64Compressor, Deflate64Decompressor),
-    FILTER_CRYPTO_AES256_SHA256: (AESCompressor, AESDecompressor),
+    # FILTER_CRYPTO_AES256_SHA256: (AESCompressor, AESDecompressor),
     FILTER_X86: (BCJEncoder, BCJDecoder),
     FILTER_ARM: (BcjArmEncoder, BcjArmDecoder),
     FILTER_ARMTHUMB: (BcjArmtEncoder, BcjArmtDecoder),
@@ -1079,14 +1079,14 @@ class SupportedMethods:
             "filter_id": FILTER_DEFLATE64,
             "type": MethodsType.compressor,
         },
-        {
-            "id": COMPRESSION_METHOD.CRYPT_AES256_SHA256,
-            "name": "7zAES",
-            "native": False,
-            "need_prop": True,
-            "filter_id": FILTER_CRYPTO_AES256_SHA256,
-            "type": MethodsType.crypto,
-        },
+        # {
+        #     "id": COMPRESSION_METHOD.CRYPT_AES256_SHA256,
+        #     "name": "7zAES",
+        #     "native": False,
+        #     "need_prop": True,
+        #     "filter_id": FILTER_CRYPTO_AES256_SHA256,
+        #     "type": MethodsType.crypto,
+        # },
     ]
 
     @classmethod
