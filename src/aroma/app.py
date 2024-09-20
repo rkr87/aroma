@@ -20,6 +20,7 @@ from model.current_menu import CurrentMenu
 from navigation.nav_controller import NavController
 from render.screen import Screen
 from strings import Strings
+from tool.name_db import NameDB
 
 
 class App(ClassSingleton):
@@ -56,6 +57,7 @@ class App(ClassSingleton):
         """
         self._logger.info("Stopping application.")
         self.running = False
+        NameDB().remove_db()
         self.controller.cleanup()
         ext_quit()
         SDL_Quit()
