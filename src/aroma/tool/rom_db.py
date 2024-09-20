@@ -2,19 +2,18 @@
 Defines the ROM naming preferences menu, allowing users to manage
 arcade ROM naming libraries.
 """
-
-from __future__ import annotations
-
 import json
 from pathlib import Path
 
 import util
+from app_config import AppConfig
 from base.class_singleton import ClassSingleton
 from constants import (APP_ROM_DB_PATH, ARCADE_ID_METHOD, ARCADE_NAMES_DB,
                        ARCADE_NAMING_SYSTEMS, CONSOLE_NAMES_DB,
                        NAMING_EXCLUDE_SYSTEMS, ROM_PATH)
 from encoder.dataclass_encoder import DataclassEncoder
 from model.rom_detail import RomDetail
+from strings import Strings
 from tool.filename_parser import FilenameParser
 from tool.name_db import NameDB
 from tool.rom_validator import RomValidator
@@ -44,7 +43,7 @@ class RomDB(ClassSingleton):
         """
         TODO
         """
-        if reset:
+        if reset or AppConfig().db_rebuild_req:
             self._db = {}
         else:
             self._load_db()
@@ -57,6 +56,7 @@ class RomDB(ClassSingleton):
             valid_files.append((rel_path, current))
         self._process_files(valid_files)
         self.save_db()
+        AppConfig().update_value("db_rebuild_req", "")
 
     def _process_files(
         self,
@@ -98,6 +98,8 @@ class RomDB(ClassSingleton):
         console_roms: dict[str, list[str]]
     ) -> None:
         """Process console ROMs"""
+        if AppConfig().console_naming == Strings().stock:
+            return
         key = "/".join(path.parts)
         if path.suffix in {".zip", ".7z"}:
             self._process_compressed_rom(path, current, console_roms, key)
@@ -162,6 +164,14 @@ class RomDB(ClassSingleton):
         """TODO"""
         with open(APP_ROM_DB_PATH, "w", encoding="utf8") as file:
             json.dump(self._db, file, indent=4, cls=DataclassEncoder)
+
+    @staticmethod
+    def set_rebuild_required(reason: str) -> None:
+        """TODO"""
+        RomDB.get_static_logger().info(
+            "Force full rebuild of RomDB: %s", reason
+        )
+        AppConfig().update_value("db_rebuild_req", reason)
 
 
 if __name__ == "__main__":
