@@ -57,7 +57,7 @@ class LibraryManager(ClassSingleton):
         util.delete_file(ARCADE_NAMES_TARGET_FILE)
         util.delete_file(target_lib)
 
-        if (backup := target_lib.with_suffix("stock")).is_file():
+        if (backup := target_lib.with_suffix(".stock")).is_file():
             util.rename_file(backup, target_lib)
         else:
             util.extract_from_zip(
