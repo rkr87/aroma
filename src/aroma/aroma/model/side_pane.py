@@ -4,7 +4,7 @@ and content.
 """
 from dataclasses import dataclass
 
-from base.class_base import ClassBase
+from classes.base.class_base import ClassBase
 
 
 @dataclass

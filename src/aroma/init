@@ -3,6 +3,7 @@
 Entry point for initialising and starting the application.
 Sets up the Python path and starts the main app.
 """
+
 import argparse
 import logging
 import logging.config
@@ -16,13 +17,12 @@ for d in path_dirs:
     sys.path.insert(0, str(path))
 
 # pylint: disable=wrong-import-position
-from app import App  # nopep8
-from app_config import AppConfig  # nopep8
-from constants import (APP_CONFIG_PATH, APP_LOGGING_CONFIG_PATH,
-                       APP_TRANSLATION_PATH)  # nopep8
-from strings import Strings  # nopep8
-from tool.name_db import NameDB  # nopep8
-from tool.rom_db import RomDB  # nopep8
+from aroma_app import AromaApp  # nopep8
+import constants  # nopep8
+from data.database.name_db import NameDB  # nopep8
+from data.database.rom_db import RomDB  # nopep8
+from model.app_config import AppConfig  # nopep8
+from model.strings import Strings  # nopep8
 
 
 def parse_args() -> argparse.Namespace:
@@ -43,10 +43,10 @@ def init() -> None:
     Initializes the app by loading the configuration, setting up logging,
     and loading translations.
     """
-    config = AppConfig.load(APP_CONFIG_PATH)
-    logging.config.fileConfig(APP_LOGGING_CONFIG_PATH)
+    config = AppConfig.load(constants.APP_CONFIG_PATH)
+    logging.config.fileConfig(constants.APP_LOGGING_CONFIG_PATH)
     logging.getLogger().setLevel(config.logging_level)
-    Strings.load(APP_TRANSLATION_PATH / f"{config.language}.json")
+    Strings.load(constants.APP_TRANSLATION_PATH / f"{config.language}.json")
 
 
 def refresh_roms() -> None:
@@ -65,7 +65,7 @@ def launch_aroma() -> None:
     Initializes and starts the application.
     """
     logging.info("Launching the Aroma app.")
-    app: App = App()
+    app: AromaApp = AromaApp()
     app.start()
 
 

@@ -2507,7 +2507,7 @@ class VFS:
         :param maxpathname: The maximum length of database name in bytes when
             represented in UTF-8.  If a pathname is passed in longer than
             this value then SQLite will not`be able to open it.  If you are
-            using a base, then a value of zero will use the value from base.
+            using a base, then a value of zero will use the value from classes.
 
         :param iVersion: Version number for the `sqlite3_vfs <https://sqlite.org/c3ref/vfs.html>`__
             structure.
