@@ -152,12 +152,12 @@ def check_crc(data: Path | bytes) -> str:
     """
     Calculates and returns the CRC32 checksum of a file.
     """
-    logging.info("Calculating CRC32 checksum for file: %s", data)
+    logging.debug("Calculating CRC32 checksum for file: %s", data)
     if isinstance(data, Path):
         with open(data, "rb") as f:
             data = f.read()
     crc: int = binascii.crc32(data) & 0xFFFFFFFF
-    logging.info("CRC32 checksum: %s", crc)
+    logging.debug("CRC32 checksum: %s", crc)
     return f"{crc:08x}"
 
 
