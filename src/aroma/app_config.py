@@ -23,3 +23,4 @@ class AppConfig(JsonDataClass):   # pylint: disable=too-many-instance-attributes
     naming_method: str = ""
     console_naming: str = ""
     name_format: str = ""
+    db_rebuild_req: str = ""
