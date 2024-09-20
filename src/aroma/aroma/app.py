@@ -2,8 +2,6 @@
 Main application class that manages SDL initialization, event handling, and the
 application lifecycle.
 """
-import logging
-import logging.config
 import sys
 
 from sdl2 import (SDL_CONTROLLER_BUTTON_GUIDE, SDL_INIT_GAMECONTROLLER,
@@ -11,15 +9,12 @@ from sdl2 import (SDL_CONTROLLER_BUTTON_GUIDE, SDL_INIT_GAMECONTROLLER,
                   SDL_Quit)
 from sdl2.ext import quit as ext_quit
 
-from app_config import AppConfig
 from base.class_singleton import ClassSingleton
-from constants import (APP_CONFIG_PATH, APP_LOGGING_CONFIG_PATH, APP_NAME,
-                       APP_TRANSLATION_PATH)
+from constants import APP_NAME
 from input.controller import Controller
 from model.current_menu import CurrentMenu
 from navigation.nav_controller import NavController
 from render.screen import Screen
-from strings import Strings
 from tool.name_db import NameDB
 
 
@@ -34,10 +29,6 @@ class App(ClassSingleton):
         Initializes the SDL system, game controller, screen, and menu
         navigator.
         """
-        config = AppConfig.load(APP_CONFIG_PATH)
-        logging.config.fileConfig(APP_LOGGING_CONFIG_PATH)
-        logging.getLogger().setLevel(config.logging_level)
-        Strings.load(APP_TRANSLATION_PATH / f"{config.language}.json")
         super().__init__()
         self._logger.info("Initialising %s", APP_NAME)
         if SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER) != 0:

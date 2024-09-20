@@ -3,6 +3,9 @@
 Entry point for initialising and starting the application.
 Sets up the Python path and starts the main app.
 """
+import argparse
+import logging
+import logging.config
 import sys
 from pathlib import Path
 
@@ -14,15 +17,62 @@ for d in path_dirs:
 
 # pylint: disable=wrong-import-position
 from app import App  # nopep8
+from app_config import AppConfig  # nopep8
+from constants import (APP_CONFIG_PATH, APP_LOGGING_CONFIG_PATH,
+                       APP_TRANSLATION_PATH)  # nopep8
+from strings import Strings  # nopep8
+from tool.name_db import NameDB  # nopep8
+from tool.rom_db import RomDB  # nopep8
+
+
+def parse_args() -> argparse.Namespace:
+    """
+    Parses command-line arguments.
+    """
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "-r", "--refresh",
+        action="store_true",
+        help="Refresh ROM DB and system cache."
+    )
+    return parser.parse_args()
 
 
 def init() -> None:
     """
+    Initializes the app by loading the configuration, setting up logging,
+    and loading translations.
+    """
+    config = AppConfig.load(APP_CONFIG_PATH)
+    logging.config.fileConfig(APP_LOGGING_CONFIG_PATH)
+    logging.getLogger().setLevel(config.logging_level)
+    Strings.load(APP_TRANSLATION_PATH / f"{config.language}.json")
+
+
+def refresh_roms() -> None:
+    """
+    Refreshes the ROM database and system cache by scanning directories
+    and updating the stored ROM data.
+    """
+    logging.info("Refreshing ROM database and system cache...")
+    RomDB().update_db()
+    NameDB().remove_db()
+    sys.exit()
+
+
+def launch_aroma() -> None:
+    """
     Initializes and starts the application.
     """
+    logging.info("Launching the Aroma app.")
     app: App = App()
     app.start()
 
 
 if __name__ == "__main__":
+    args = parse_args()
     init()
+    if args.refresh:
+        refresh_roms()
+    else:
+        launch_aroma()
