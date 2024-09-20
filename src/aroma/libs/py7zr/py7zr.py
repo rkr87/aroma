@@ -744,43 +744,43 @@ class SevenZipFile(contextlib.AbstractContextManager):
             self.input = 0  # unpack stream count in each folder
             self.stream = 0  # target input stream position
 
-    # def _get_fileinfo_sizes(
-    #     self,
-    #     pstat,
-    #     subinfo,
-    #     packinfo,
-    #     folder,
-    #     packsizes,
-    #     unpacksizes,
-    #     file_in_solid,
-    #     numinstreams,
-    # ):
-    #     if pstat.input == 0:
-    #         folder.solid = subinfo.num_unpackstreams_folders[pstat.folder] > 1
-    #     maxsize = (folder.solid and packinfo.packsizes[pstat.stream]) or None
-    #     uncompressed = unpacksizes[pstat.outstreams]
-    #     if file_in_solid > 0:
-    #         compressed = None
-    #     elif pstat.stream < len(packsizes):  # file is compressed
-    #         compressed = packsizes[pstat.stream]
-    #     else:  # file is not compressed
-    #         compressed = uncompressed
-    #     packsize = packsizes[pstat.stream : pstat.stream + numinstreams]
-    #     return maxsize, compressed, uncompressed, packsize, folder.solid
+    def _get_fileinfo_sizes(
+        self,
+        pstat,
+        subinfo,
+        packinfo,
+        folder,
+        packsizes,
+        unpacksizes,
+        file_in_solid,
+        numinstreams,
+    ):
+        if pstat.input == 0:
+            folder.solid = subinfo.num_unpackstreams_folders[pstat.folder] > 1
+        maxsize = (folder.solid and packinfo.packsizes[pstat.stream]) or None
+        uncompressed = unpacksizes[pstat.outstreams]
+        if file_in_solid > 0:
+            compressed = None
+        elif pstat.stream < len(packsizes):  # file is compressed
+            compressed = packsizes[pstat.stream]
+        else:  # file is not compressed
+            compressed = uncompressed
+        packsize = packsizes[pstat.stream : pstat.stream + numinstreams]
+        return maxsize, compressed, uncompressed, packsize, folder.solid
 
-    # def set_encoded_header_mode(self, mode: bool) -> None:
-    #     if mode:
-    #         self.encoded_header_mode = True
-    #     else:
-    #         self.encoded_header_mode = False
-    #         self.header_encryption = False
+    def set_encoded_header_mode(self, mode: bool) -> None:
+        if mode:
+            self.encoded_header_mode = True
+        else:
+            self.encoded_header_mode = False
+            self.header_encryption = False
 
-    # def set_encrypted_header(self, mode: bool) -> None:
-    #     if mode:
-    #         self.encoded_header_mode = True
-    #         self.header_encryption = True
-    #     else:
-    #         self.header_encryption = False
+    def set_encrypted_header(self, mode: bool) -> None:
+        if mode:
+            self.encoded_header_mode = True
+            self.header_encryption = True
+        else:
+            self.header_encryption = False
 
     @staticmethod
     def _check_7zfile(fp: Union[BinaryIO, io.BufferedReader, io.IOBase]) -> bool:

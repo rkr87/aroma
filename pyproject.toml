@@ -140,13 +140,13 @@ multiline = true
 # Relative paths are treated relative to the working directory of the mypy command, not the config file. 
 # Use the MYPY_CONFIG_FILE_DIR environment variable to refer to paths relative to the config file 
 # e.g. mypy_path = $MYPY_CONFIG_FILE_DIR/src
-mypy_path = "$MYPY_CONFIG_FILE_DIR/src/aroma,$MYPY_CONFIG_FILE_DIR/.typings"
+mypy_path = "$MYPY_CONFIG_FILE_DIR/src/aROMa/aroma,$MYPY_CONFIG_FILE_DIR/.typings"
 
 # A comma-separated list of paths which should be checked by mypy if none are given on the command line. 
 # Supports recursive file globbing using glob, where * (e.g. *.py) matches files in the current directory 
 # and **/ (e.g. **/*.py) matches files in any directories below the current one. 
 # User home directory and environment variables will be expanded.
-files = "$MYPY_CONFIG_FILE_DIR/src/aroma/**/*.py"
+files = "$MYPY_CONFIG_FILE_DIR/src/aROMa/aroma/**/*.py"
 
 # A regular expression that matches file names, 
 # directory names and paths which mypy should ignore while recursively discovering files to check. 
@@ -500,10 +500,10 @@ verbosity = 0
 ## MAIN PYRIGHT CONFIG OPTIONS
 
 # Paths of directories or files that should be included. If no paths are specified, pyright defaults to the directory that contains the config file Paths may contain wildcard characters ** (a directory or multiple levels of directories), * (a sequence of zero or more characters), or ? (a single character). If no include paths are specified, the root path for the workspace is assumed.
-include = ['./src']
+include = ['./src/aROMa']
 
 # Paths of directories or files that should not be included. These override the includes directories, allowing specific subdirectories to be ignored. Note that files in the exclude paths may still be included in the analysis if they are referenced (imported) by source files that are not excluded. Paths may contain wildcard characters ** (a directory or multiple levels of directories), * (a sequence of zero or more characters), or ? (a single character). If no exclude paths are specified, Pyright automatically excludes the following: **/node_modules, **/__pycache__, .git and any virtual environment directories.
-exclude = ['./.typings', './src/libs']
+exclude = ['./.typings', './src/aROMa/libs', './src/aROMa/init']
 
 # Paths of directories or files whose diagnostic output (errors and warnings) should be suppressed even if they are an included file or within the transitive closure of an included file. Paths may contain wildcard characters ** (a directory or multiple levels of directories), * (a sequence of zero or more characters), or ? (a single character).
 # ignore = ['./distiller/data/consumers']
@@ -775,11 +775,11 @@ load-plugins = [
     "pylint.extensions.typing",
     "pylint.extensions.while_used",
 ]
-init-hook = "import sys, os; sys.path.insert(0, os.path.join('src','aroma')); sys.path.insert(0, os.path.join('.venv','lib','site-packages'))"
-source-roots = ["src/aroma"]
+init-hook = "import sys, os; sys.path.insert(0, os.path.join('src','aROMa','aroma')); sys.path.insert(0, os.path.join('.venv','lib','site-packages'))"
+source-roots = ["src/aROMa/aroma"]
 
 [tool.pylint.'MASTER']
-ignore-paths = ['src/libs/.*$']
+ignore-paths = ['src/aROMa/libs/.*$']
 disable = "R0903, C0199, C0411"
 enable = "W0614,C0302,R0915,E1121"
 ignore-patterns = ".+\\.pyi"
@@ -833,7 +833,7 @@ append_only = true
 skip_gitignore = true
 force_single_line = false
 lines_between_sections = 1
-src_paths = ["src/aroma"]
+src_paths = ["src/aROMa/aroma"]
 extend_skip_glob = ["*/libs/*"]
 extend_skip = [".env", '.toml', ".json", ".yaml", ".gitignore"]
 known_third_party = []

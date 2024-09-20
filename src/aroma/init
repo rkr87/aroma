@@ -13,14 +13,14 @@ for d in path_dirs:
     sys.path.insert(0, str(path))
 
 # pylint: disable=wrong-import-position
-from aroma.app import App  # type: ignore # nopep8
+from app import App  # nopep8
 
 
 def init() -> None:
     """
     Initializes and starts the application.
     """
-    app: App = App()  # type: ignore
+    app: App = App()
     app.start()
 
 

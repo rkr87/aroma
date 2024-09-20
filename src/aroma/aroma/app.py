@@ -38,7 +38,6 @@ class App(ClassSingleton):
         logging.config.fileConfig(APP_LOGGING_CONFIG_PATH)
         logging.getLogger().setLevel(config.logging_level)
         Strings.load(APP_TRANSLATION_PATH / f"{config.language}.json")
-
         super().__init__()
         self._logger.info("Initialising %s", APP_NAME)
         if SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER) != 0:
