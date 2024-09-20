@@ -5,7 +5,9 @@ todo
 TEMPLATE_SETUP.bat
 local_git_clean.bat
 pylog.txt
-
+rom_db.json
+arcade.db
+console.db
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

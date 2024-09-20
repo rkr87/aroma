@@ -5,5 +5,9 @@
     "launch": "launch.sh",
     "description": "aROMa",
     "language": "english",
-    "logging_level": "INFO"
+    "logging_level": "INFO",
+    "naming_method": "CUSTOM",
+    "console_naming": "CUSTOM",
+    "name_format": "NAME",
+    "db_rebuild_req": ""
 }

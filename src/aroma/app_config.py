@@ -20,3 +20,7 @@ class AppConfig(JsonDataClass):   # pylint: disable=too-many-instance-attributes
     description: str = ""
     language: str = ""
     logging_level: str = ""
+    naming_method: str = ""
+    console_naming: str = ""
+    name_format: str = ""
+    db_rebuild_req: str = ""

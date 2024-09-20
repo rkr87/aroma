@@ -7,6 +7,7 @@ import json
 import logging
 from abc import ABC
 from dataclasses import asdict, dataclass
+from pathlib import Path
 from typing import Self
 
 from base.class_singleton import ClassSingleton
@@ -20,13 +21,13 @@ class JsonDataClass(ClassSingleton, ABC):
     newline-separated strings.
     """
 
-    _file_path: str = ""
+    _file_path: Path = Path()
 
     def __post_init__(self) -> None:
         self._logger = logging.getLogger(f"{self.__class__.__module__}")
 
     @classmethod
-    def load(cls, file_path: str) -> Self:
+    def load(cls, file_path: Path) -> Self:
         """
         Loads data from a JSON file into an instance of JsonDataClass. The data
         is expected to be a dictionary where values can be either strings or
@@ -45,7 +46,7 @@ class JsonDataClass(ClassSingleton, ABC):
             logger.error("Error decoding JSON from file: %s", file_path)
             raise e
 
-        new_dict: dict[str, str] = {
+        new_dict: dict[str, str | Path] = {
             k: '\n'.join(v) if isinstance(v, list) else v
             for k, v in data.items()
         }
@@ -73,6 +74,9 @@ class JsonDataClass(ClassSingleton, ABC):
         Updates a specific attribute of the instance and saves the updated data
         to the JSON file.
         """
+        JsonDataClass.get_static_logger().info(
+            "Updating %s.%s=%s", self.__class__.__name__, attribute, value
+        )
         setattr(self, attribute, value)
         self.save()
 

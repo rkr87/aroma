@@ -7,6 +7,9 @@ visible slice of items for rendering. It also manages the side pane content
 based on the current selection.
 """
 
+from collections import OrderedDict
+from enum import Enum
+
 from base.class_base import ClassBase
 from menu.menu_item_base import MenuItemBase
 from menu.selection_manager import SelectionManager
@@ -18,7 +21,7 @@ class ContentManager(ClassBase):
 
     def __init__(
         self,
-        items: list[MenuItemBase],
+        items: OrderedDict[Enum, MenuItemBase],
         selection_manager: SelectionManager,
         side_pane: SidePane | None = None,
     ) -> None:
@@ -27,30 +30,20 @@ class ContentManager(ClassBase):
         pane.
         """
         super().__init__()
-        self.items: list[MenuItemBase] = items
+        self.items: OrderedDict[Enum, MenuItemBase] = items
         self.select: SelectionManager = selection_manager
         self._side_pane: SidePane | None = side_pane
 
-    def add_item(self, item: MenuItemBase) -> None:
+    def add_item(self, key: Enum, item: MenuItemBase) -> None:
         """Add a menu item to the list."""
-        self.items.append(item)
+        self.items[key] = item
         self._logger.debug("Added item %s to list", item)
 
-    def remove_item(self, index: int) -> None:
+    def remove_item(self, key: Enum) -> None:
         """Remove a menu item by index."""
-        if 0 <= index < len(self.items):
-            removed_item = self.items.pop(index)
+        if key in self.items:
+            removed_item = self.items.pop(key)
             self._logger.debug("Removed item %s from list", removed_item)
-
-    def update_item(self, index: int, new_item: MenuItemBase) -> None:
-        """Update a menu item at a given index."""
-        if 0 <= index < len(self.items):
-            old_item = self.items[index]
-            self.items[index] = new_item
-            self._logger.debug(
-                "Updated item at index %d from %s to %s",
-                index, old_item, new_item
-            )
 
     def clear_items(self) -> None:
         """Clear all menu items."""
@@ -59,12 +52,13 @@ class ContentManager(ClassBase):
 
     def get_slice(self) -> list[MenuItemBase]:
         """Retrieve the current slice of visible menu items."""
+        item_list = list(self.items.values())
         if not self.select.state.total > self.select.state.max:
-            return self.items
+            return item_list
 
         start = self.select.state.start
         end = self.select.state.end
-        item_slice = self.items[start:end]
+        item_slice = item_list[start:end]
         self._logger.debug(
             "Retrieved slice from index %d to %d", start, end
         )
@@ -82,6 +76,7 @@ class ContentManager(ClassBase):
 
     def _get_current_item(self) -> MenuItemBase:
         """Retrieve the currently selected menu item."""
-        selected_item = self.items[self.select.state.selected]
+        item_list = list(self.items.values())
+        selected_item = item_list[self.select.state.selected]
         self._logger.debug("Retrieved current item: %s", selected_item)
         return selected_item

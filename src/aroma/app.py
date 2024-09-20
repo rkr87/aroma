@@ -13,12 +13,14 @@ from sdl2.ext import quit as ext_quit
 
 from app_config import AppConfig
 from base.class_singleton import ClassSingleton
-from constants import APP_NAME, PATH_PREFIX
+from constants import (APP_CONFIG_PATH, APP_LOGGING_CONFIG_PATH, APP_NAME,
+                       APP_TRANSLATION_PATH)
 from input.controller import Controller
 from model.current_menu import CurrentMenu
 from navigation.nav_controller import NavController
 from render.screen import Screen
 from strings import Strings
+from tool.name_db import NameDB
 
 
 class App(ClassSingleton):
@@ -32,12 +34,10 @@ class App(ClassSingleton):
         Initializes the SDL system, game controller, screen, and menu
         navigator.
         """
-        config = AppConfig.load(f"{PATH_PREFIX}/config.json")
-        logging.config.fileConfig(
-            f"{PATH_PREFIX}/aroma/resources/config/logging.conf"
-        )
+        config = AppConfig.load(APP_CONFIG_PATH)
+        logging.config.fileConfig(APP_LOGGING_CONFIG_PATH)
         logging.getLogger().setLevel(config.logging_level)
-        Strings.load(f"{PATH_PREFIX}/translations/{config.language}.json")
+        Strings.load(APP_TRANSLATION_PATH / f"{config.language}.json")
 
         super().__init__()
         self._logger.info("Initialising %s", APP_NAME)
@@ -57,6 +57,7 @@ class App(ClassSingleton):
         """
         self._logger.info("Stopping application.")
         self.running = False
+        NameDB().remove_db()
         self.controller.cleanup()
         ext_quit()
         SDL_Quit()
