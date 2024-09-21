@@ -36,6 +36,8 @@ NAMES_APP_RESOURCE = RESOURCES / "naming" / "names.zip"
 ARCADE_NAMES_DB = RESOURCES / "naming" / "arcade.db"
 CONSOLE_NAMES_DB = RESOURCES / "naming" / "console.db"
 ARCADE_ID_METHOD = "file_stem"
+CONSOLE_ID_METHOD = "db_crc"
+FILE_ID_METHOD = "file_crc"
 ARCADE_NAMING_SYSTEMS = [
     "MAME2003PLUS",
     "FBNEO",
