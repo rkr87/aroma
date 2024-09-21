@@ -15,6 +15,7 @@ from constants import (
     FILE_ID_METHOD,
     NAMING_EXCLUDE_SYSTEMS,
     ROM_PATH,
+    STOCK_STR,
 )
 from data.database.name_db import NameDB
 from data.encoder.dataclass_encoder import DataclassEncoder
@@ -22,7 +23,6 @@ from data.parser.filename_parser import FilenameParser
 from data.validator.rom_validator import RomValidator
 from model.app_config import AppConfig
 from model.rom_detail import RomDetail
-from model.strings import Strings
 from tools import util
 
 
@@ -140,7 +140,7 @@ class RomDB(ClassSingleton):
         console_roms: dict[str, list[str]],
     ) -> None:
         """Process a console ROM file based on its type."""
-        if AppConfig().console_naming == Strings().stock:
+        if AppConfig().console_naming == STOCK_STR:
             self._logger.debug(
                 "Console naming is set to stock; skipping %s.", path
             )
