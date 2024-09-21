@@ -35,7 +35,7 @@
     ],
     "logging_level": "LOGGING LEVEL",
     "logging_desc": [
-        "Add descrpition of options here"
+        "Add description of options here"
     ],
     "logging_debug": "DEBUG",
     "logging_info": "INFO",

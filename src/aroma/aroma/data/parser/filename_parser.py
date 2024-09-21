@@ -5,6 +5,7 @@ from pathlib import Path
 
 from classes.base.class_singleton import ClassSingleton
 from constants import (
+    FILE_ID_METHOD,
     NAMING_DISC_PATTERN,
     NAMING_EXCLUDE_SYSTEMS,
     NAMING_FORMAT_PATTERN,
@@ -49,6 +50,9 @@ class FilenameParser(ClassSingleton):
         for item in items:
             if item in self._region_map:
                 matched.extend(self._region_map[item].split("|"))
+                FilenameParser.get_static_logger().debug(
+                    "Matched region: %s", item
+                )
         return matched
 
     @staticmethod
@@ -69,24 +73,37 @@ class FilenameParser(ClassSingleton):
         clean = util.remove_loop(text, NAMING_REMOVE_PATTERN)
         return " ".join(clean.split())
 
-    def parse(self, path: Path, crc: str | None = None) -> RomDetail:
+    def parse(self, path: Path, crc: list[str] | None = None) -> RomDetail:
         """Parse the filename to extract ROM details."""
         stem = self._replace_strings(path.stem)
+        FilenameParser.get_static_logger().debug("Parsing filename: %s", stem)
+
         region: set[str] = set()
         disc: set[str] = set()
         vf: set[str] = set()
+
         for content in NAMING_SEARCH_PATTERN.findall(stem):
             items = self._split_and_normalise(content)
             region.update(self._check_regions(items))
             disc.update(self._check_disc(content))
             vf.update(self._check_format(content))
 
+        id_method = (
+            ""
+            if path.parts[0] in NAMING_EXCLUDE_SYSTEMS or not crc
+            else FILE_ID_METHOD
+        )
+
+        FilenameParser.get_static_logger().debug(
+            "Parsed ROM details: title=%s", path.stem
+        )
+
         return RomDetail(
             title=path.stem,
             name=self._clean_name(path.stem),
             source="file_name",
-            id_method="" if path.parts[0] in NAMING_EXCLUDE_SYSTEMS else "crc",
-            id=crc or "",
+            id_method=id_method,
+            id=str(crc) if crc else "",
             region=list(region),
             disc=list(disc),
             format=list(vf),
