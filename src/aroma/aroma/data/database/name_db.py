@@ -6,13 +6,19 @@ from pathlib import Path
 import apsw
 from classes.base.class_singleton import ClassSingleton
 from classes.base.db_result import DBResult
-from constants import ARCADE_NAMES_DB, CONSOLE_NAMES_DB, NAMES_APP_RESOURCE
+from constants import (
+    ARCADE_ID_METHOD,
+    ARCADE_NAMES_DB,
+    CONSOLE_ID_METHOD,
+    CONSOLE_NAMES_DB,
+    NAMES_APP_RESOURCE,
+)
 from model.rom_detail import RomDetail
 from tools import util
 
 DB_ID_METHOD = {
-    ARCADE_NAMES_DB: "file_stem",
-    CONSOLE_NAMES_DB: "crc",
+    ARCADE_NAMES_DB: ARCADE_ID_METHOD,
+    CONSOLE_NAMES_DB: CONSOLE_ID_METHOD,
 }
 
 
@@ -67,7 +73,11 @@ class NameDB(ClassSingleton):
     def _get_db(db: Path) -> None:
         """Ensure the database file exists by extracting it from a resource."""
         if db.is_file():
+            NameDB.get_static_logger().debug("Database file exists: %s", db)
             return
+        NameDB.get_static_logger().info(
+            "Extracting database file: %s", db.name
+        )
         util.extract_from_zip(NAMES_APP_RESOURCE, db.name, db)
 
     @staticmethod
@@ -75,6 +85,9 @@ class NameDB(ClassSingleton):
         """Remove the database files for arcade and console ROMs."""
         for db in (ARCADE_NAMES_DB, CONSOLE_NAMES_DB):
             if db.is_file():
+                NameDB.get_static_logger().info(
+                    "Removing database file: %s", db
+                )
                 db.unlink()
 
     @staticmethod
@@ -94,11 +107,22 @@ class NameDB(ClassSingleton):
                 FROM {table}
                 WHERE rom_id IN ({', '.join('?' for _ in result.row_ids)})
             """  # noqa: S608
+            NameDB.get_static_logger().debug(
+                "Executing query on %s for row IDs: %s", table, result.row_ids
+            )
             cursor.execute(query, result.row_ids)
             if not (results := cursor.fetchall()):
+                NameDB.get_static_logger().debug(
+                    "No results found for table %s with row IDs: %s",
+                    table,
+                    result.row_ids,
+                )
                 continue
             for row in [NameDB._SubtableResult.factory(r) for r in results]:
                 target.setdefault(row.row_id, []).append(row.name)
+                NameDB.get_static_logger().debug(
+                    "Added %s to %s for row ID %d", row.name, table, row.row_id
+                )
 
     @staticmethod
     def _fetch_rom_details(
@@ -107,6 +131,9 @@ class NameDB(ClassSingleton):
     ) -> list["NameDB._RomResult"]:
         """Fetch ROM details from database for provided query values."""
         if not query_vals:
+            NameDB.get_static_logger().warning(
+                "No query values provided, returning empty list."
+            )
             return []  # Safeguard against empty query values
         placeholders = ", ".join("?" for _ in query_vals)
 
@@ -115,17 +142,33 @@ class NameDB(ClassSingleton):
             FROM rom
             WHERE val IN ({placeholders})
         """  # noqa: S608
+        NameDB.get_static_logger().debug(
+            "Executing fetch ROM details query for values: %s", query_vals
+        )
         cursor.execute(query, list(query_vals))
-        return [NameDB._RomResult.factory(r) for r in cursor.fetchall()]
+        results = [NameDB._RomResult.factory(r) for r in cursor.fetchall()]
+        NameDB.get_static_logger().debug(
+            "Fetched %d ROM details.", len(results)
+        )
+        return results
 
     @staticmethod
     def _check_result(result: _QueryResult, rom_id: str, path: str) -> bool:
         """Check if a rom result is valid for processing."""
         if rom_id not in result.rom_vals:
+            NameDB.get_static_logger().debug(
+                "ROM ID %s not in result values.", rom_id
+            )
             return False
         if path in result.black_list:
+            NameDB.get_static_logger().debug(
+                "Path %s is in the blacklist.", path
+            )
             return False
         if path in result.processed:
+            NameDB.get_static_logger().debug(
+                "Path %s has already been processed.", path
+            )
             result.black_list.add(path)
             result.processed.pop(path)
             return False
@@ -141,27 +184,36 @@ class NameDB(ClassSingleton):
     ) -> None:
         """Process the result for a given ROM ID and path."""
         if not cls._check_result(result, rom_id, path):
+            NameDB.get_static_logger().debug(
+                "Skipping processing for ROM ID %s and path %s.", rom_id, path
+            )
             return
         rom = result.roms[result.rom_vals.index(rom_id)]
         result.processed[path] = RomDetail(
             title=str(rom.title),
             name=str(rom.name),
             source=str(rom.source),
-            id=str(rom.rom_id),
+            id="" if id_method == ARCADE_ID_METHOD else str(rom.rom_id),
             id_method=id_method,
             region=result.region.get(rom.row_id, []),
             disc=result.disc.get(rom.row_id, []),
             format=result.format.get(rom.row_id, []),
         )
+        NameDB.get_static_logger().debug(
+            "Processed result for path %s: %s", path, result.processed[path]
+        )
 
     @classmethod
-    def query_vals(
+    def query(
         cls,
         db: Path,
         query_vals: dict[str, list[str]],
     ) -> dict[str, RomDetail]:
         """Query ROM details from database based on provided query values."""
         if not query_vals:
+            NameDB.get_static_logger().info(
+                "No query values provided, returning empty dictionary."
+            )
             return {}
         NameDB._get_db(db)
         result = cls._QueryResult(query_vals)
@@ -172,4 +224,8 @@ class NameDB(ClassSingleton):
             for path, ids in result.query.items():
                 for rom_id in ids:
                     cls._process_result(result, rom_id, path, DB_ID_METHOD[db])
+        NameDB.get_static_logger().debug(
+            "Query completed with processed results: %s",
+            result.processed.keys(),
+        )
         return result.processed
