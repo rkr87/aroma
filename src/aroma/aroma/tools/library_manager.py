@@ -1,4 +1,4 @@
-"""TODO."""
+"""Manages installation and status of arcade ROM naming libraries."""
 
 from classes.base.class_singleton import ClassSingleton
 from constants import (
