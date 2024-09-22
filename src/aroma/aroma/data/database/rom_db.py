@@ -1,5 +1,6 @@
 """Defines the ROM naming preferences menu."""
 
+import ast
 import json
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
@@ -17,6 +18,7 @@ from constants import (
     ROM_PATH,
     STOCK_STR,
 )
+from data.database.cache_manager import CacheManager
 from data.database.name_db import NameDB
 from data.encoder.dataclass_encoder import DataclassEncoder
 from data.parser.filename_parser import FilenameParser
@@ -27,17 +29,14 @@ from tools import util
 
 
 class RomDB(ClassSingleton):
-    """A singleton class to manage ROM details and naming preferences.
-
-    Handles loading, updating, and saving ROM data, as well as processing
-    arcade and console ROMs based on naming conventions.
-    """
+    """A singleton class to manage ROM details and naming preferences."""
 
     def __init__(self) -> None:
         super().__init__()
         self._validator = RomValidator()
         self._db: dict[str, RomDetail] = {}
         self._parser = FilenameParser()
+        self._cache = CacheManager()
 
     @property
     def data(self) -> dict[str, RomDetail]:
@@ -45,7 +44,12 @@ class RomDB(ClassSingleton):
         self._load_db()
         return self._db
 
-    def update_db(self, *, reset: bool = False) -> None:
+    def refresh_roms(self) -> None:
+        """Refresh ROMs in app database and update TSP cache dbs."""
+        self._update_db()
+        self._cache.update_cache_db(self._db)
+
+    def _update_db(self, *, reset: bool = False) -> None:
         """Update the ROM database by scanning ROM_PATH for valid ROM files."""
         if reset or AppConfig().db_rebuild_req:
             self._db = {}
@@ -65,6 +69,18 @@ class RomDB(ClassSingleton):
         self._process_files_in_batches(valid_files)
         self.save_db()
         AppConfig().update_value("db_rebuild_req", "")
+
+    def _get_unmatched(self) -> None:
+        """Output unmatched crcs to file."""
+        self._db = {
+            ast.literal_eval(v.id)[0]: v
+            for _, v in self._db.items()
+            if v.id_method == FILE_ID_METHOD
+        }
+        for k, v in self._db.items():
+            v.id_method = ""
+            v.id = k
+        self.save_db()
 
     def _process_files_in_batches(
         self,

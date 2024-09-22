@@ -71,6 +71,6 @@ class MenuMain(MenuBase):
         """Create a menu item that refreshes the ROM database."""
         return MenuItemSingle(
             Strings().refresh_roms,
-            RomDB().update_db,
+            RomDB().refresh_roms,
             SidePane(Strings().refresh_roms, Strings.refresh_roms_desc),
         )
