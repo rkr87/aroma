@@ -7,10 +7,24 @@ from typing import TYPE_CHECKING
 from classes.menu.menu_base import MenuBase
 from classes.menu.menu_item_base import MenuItemBase
 from classes.menu.menu_item_multi import MenuItemMulti
-from constants import CUSTOM_STR, STOCK_STR
+from constants import (
+    CUSTOM_STR,
+    NAMING_ADDITIONAL_ID,
+    NAMING_DISC_ID,
+    NAMING_FORMAT_ID,
+    NAMING_FORMATS_RESOURCE,
+    NAMING_HACK_ID,
+    NAMING_NAME_ID,
+    NAMING_REGION_ID,
+    NAMING_TITLE_ID,
+    NAMING_VERSION_ID,
+    NAMING_YEAR_ID,
+    STOCK_STR,
+)
 from model.app_config import AppConfig
 from model.side_pane import SidePane
 from model.strings import Strings
+from tools import util
 from tools.library_manager import LibraryManager
 
 if TYPE_CHECKING:
@@ -96,13 +110,29 @@ class MenuRomNaming(MenuBase):
     @staticmethod
     def _name_format() -> MenuItemMulti:
         """Create a menu item for selecting the naming format for ROMs."""
-        data: dict[str, str] = {
-            "NONE": Strings().name_format_none,
-            "NAME": Strings().name_format_name_only,
-            "NAME_R": Strings().name_format_name_region,
-            "NAME_D": Strings().name_format_name_disc,
-            "NAME_R_D": Strings().name_format_name_region_disc,
-        }
+        formats: list[str] = util.load_simple_json(NAMING_FORMATS_RESOURCE)[
+            "formats"
+        ]
+
+        def _replace_var(unformatted: str) -> str:
+            s = Strings()
+            mapping: dict[str, str] = {
+                NAMING_TITLE_ID: s.naming_title_desc,
+                NAMING_NAME_ID: s.naming_name_desc,
+                NAMING_REGION_ID: s.naming_region_desc,
+                NAMING_DISC_ID: s.naming_disc_desc,
+                NAMING_FORMAT_ID: s.naming_format_desc,
+                NAMING_HACK_ID: s.naming_hack_desc,
+                NAMING_VERSION_ID: s.naming_version_desc,
+                NAMING_YEAR_ID: s.naming_year_desc,
+                NAMING_ADDITIONAL_ID: s.naming_additional_desc,
+            }
+            formatted = unformatted.lower()
+            for k, v in mapping.items():
+                formatted = formatted.replace(k, v)
+            return formatted
+
+        data: dict[str, str] = {k.lower(): _replace_var(k) for k in formats}
         actions, current = MenuRomNaming._generate_config_actions(
             data,
             "name_format",

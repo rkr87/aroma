@@ -66,6 +66,7 @@ NAMING_EXCLUDE_SYSTEMS = [
     "PORTS",
 ]
 NAMING_REGION_RESOURCE = RESOURCES / "naming" / "regions.json"
+NAMING_FORMATS_RESOURCE = RESOURCES / "naming" / "formats.json"
 NAMING_DISC_PATTERN = re.compile(
     r"\b(side|disk|disc|tape|set)[ \-](\w|\d{1,})\b",
     re.IGNORECASE,
@@ -73,6 +74,16 @@ NAMING_DISC_PATTERN = re.compile(
 NAMING_FORMAT_PATTERN = re.compile(r"\b(pal|ntsc|secam)\b", re.IGNORECASE)
 NAMING_SEARCH_PATTERN = re.compile(r"\((.*?)\)")
 NAMING_REMOVE_PATTERN = re.compile(r"{[^{}]*}|\[[^][]*]|\([^()]*\)")
+NAMING_TITLE_ID = "$t"
+NAMING_NAME_ID = "$n"
+NAMING_REGION_ID = "$r"
+NAMING_DISC_ID = "$d"
+NAMING_FORMAT_ID = "$f"
+NAMING_HACK_ID = "$h"
+NAMING_VERSION_ID = "$v"
+NAMING_YEAR_ID = "$y"
+NAMING_ADDITIONAL_ID = "$a"
+TSP_CACHE_DB_SUFFIX = "_cache7.db"
 
 PRIMARY_COLOR = (217, 217, 217)
 SECONDARY_COLOR = (23, 147, 209)
