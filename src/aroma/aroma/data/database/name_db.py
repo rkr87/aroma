@@ -34,6 +34,9 @@ class NameDB(ClassSingleton):
         name: str
         source: str
         rom_id: str
+        hack: str | None
+        version: str | None
+        year: str | None
 
     @dataclass
     class _SubtableResult(DBResult):
@@ -51,6 +54,7 @@ class NameDB(ClassSingleton):
         region: dict[int, list[str]] = field(default_factory=dict)
         disc: dict[int, list[str]] = field(default_factory=dict)
         format: dict[int, list[str]] = field(default_factory=dict)
+        additional: dict[int, list[str]] = field(default_factory=dict)
         black_list: set[str] = field(default_factory=set)
         processed: dict[str, RomDetail] = field(default_factory=dict)
 
@@ -100,6 +104,7 @@ class NameDB(ClassSingleton):
             "region": result.region,
             "disc": result.disc,
             "format": result.format,
+            "additional": result.additional,
         }
         for table, target in table_map.items():
             query = f"""
@@ -138,7 +143,7 @@ class NameDB(ClassSingleton):
         placeholders = ", ".join("?" for _ in query_vals)
 
         query = f"""
-            SELECT id, title, name, source, val
+            SELECT id, title, name, source, val, hack, version, year
             FROM rom
             WHERE val IN ({placeholders})
         """  # noqa: S608
@@ -190,14 +195,18 @@ class NameDB(ClassSingleton):
             return
         rom = result.roms[result.rom_vals.index(rom_id)]
         result.processed[path] = RomDetail(
-            title=str(rom.title),
-            name=str(rom.name),
-            source=str(rom.source),
-            id="" if id_method == ARCADE_ID_METHOD else str(rom.rom_id),
+            title=rom.title,
+            name=rom.name,
+            source=rom.source,
+            id="" if id_method == ARCADE_ID_METHOD else rom.rom_id,
             id_method=id_method,
+            year=rom.year,
+            version=rom.version,
+            hack=rom.hack,
             region=result.region.get(rom.row_id, []),
             disc=result.disc.get(rom.row_id, []),
             format=result.format.get(rom.row_id, []),
+            additional=result.additional.get(rom.row_id, []),
         )
         NameDB.get_static_logger().debug(
             "Processed result for path %s: %s", path, result.processed[path]

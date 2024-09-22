@@ -19,11 +19,15 @@
     "name_format_desc": [
         "Add description of options here"
     ],
-    "name_format_none": "FULL TITLE",
-    "name_format_name_only": "NAME ONLY",
-    "name_format_name_region": "NAME (REGION)",
-    "name_format_name_region_disc": "NAME (REGION) [DISC]",
-    "name_format_name_disc": "NAME [DISC]",
+    "naming_title_desc": "TITLE",
+    "naming_name_desc": "NAME",
+    "naming_region_desc": "REGION",
+    "naming_disc_desc": "DISC",
+    "naming_format_desc": "FORMAT",
+    "naming_hack_desc": "HACK",
+    "naming_version_desc": "VERSION",
+    "naming_year_desc": "YEAR",
+    "naming_additional_desc": "ADDITIONAL",
     "arcade_naming": "ARCADE ROM NAMING",
     "arcade_naming_desc": [
         "Add description of options here"

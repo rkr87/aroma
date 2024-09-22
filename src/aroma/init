@@ -45,7 +45,7 @@ def init() -> None:
 def refresh_roms() -> None:
     """Refresh the ROM database and system cache."""
     logging.info("Refreshing ROM database and system cache...")
-    RomDB().update_db()
+    RomDB().refresh_roms()
     NameDB().remove_db()
     sys.exit()
 
