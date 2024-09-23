@@ -1,4 +1,6 @@
 {
+    "yes": "YES",
+    "no": "NO",
     "stock": "STOCK",
     "custom": "CUSTOM",
     "collections": "COLLECTIONS",
@@ -44,5 +46,17 @@
     "logging_debug": "DEBUG",
     "logging_info": "INFO",
     "logging_warning": "WARNING",
-    "logging_error": "ERROR"
+    "logging_error": "ERROR",
+    "image_management": "IMAGE MANAGEMENT",
+    "image_management_desc": [
+        "Add description of options here"
+    ],
+    "remove_broken": "DELETE BROKEN IMAGES",
+    "remove_broken_desc": [
+        "Add description of options here"
+    ],
+    "remove_broken_refresh": "DELETE ON REFRESH",
+    "remove_broken_refresh_desc": [
+        "Add description of options here"
+    ]
 }

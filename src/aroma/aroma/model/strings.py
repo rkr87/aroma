@@ -10,6 +10,8 @@ from classes.base.json_dataclass import JsonDataClass
 class Strings(JsonDataClass):  # pylint: disable=too-many-instance-attributes
     """Singleton class for managing various string translations."""
 
+    yes: str = ""
+    no: str = ""
     stock: str = ""
     custom: str = ""
     collections: str = ""
@@ -42,3 +44,9 @@ class Strings(JsonDataClass):  # pylint: disable=too-many-instance-attributes
     logging_error: str = ""
     language: str = ""
     language_desc: list[str] = field(default_factory=list)
+    image_management: str = ""
+    image_management_desc: list[str] = field(default_factory=list)
+    remove_broken: str = ""
+    remove_broken_desc: list[str] = field(default_factory=list)
+    remove_broken_refresh: str = ""
+    remove_broken_refresh_desc: list[str] = field(default_factory=list)
