@@ -21,6 +21,17 @@ DB_ID_METHOD = {
     CONSOLE_NAMES_DB: CONSOLE_ID_METHOD,
 }
 
+ROM_QUERY = """
+        SELECT id, title, name, source, val, hack, version, year
+        FROM rom
+        WHERE val IN (%s)
+    """
+SUBTABLE_QUERY = """
+        SELECT rom_id, name
+        FROM %s
+        WHERE rom_id IN (%s)
+    """
+
 
 class NameDB(ClassSingleton):
     """A singleton class to handle ROM name queries from databases."""
@@ -107,11 +118,8 @@ class NameDB(ClassSingleton):
             "additional": result.additional,
         }
         for table, target in table_map.items():
-            query = f"""
-                SELECT rom_id, name
-                FROM {table}
-                WHERE rom_id IN ({', '.join('?' for _ in result.row_ids)})
-            """  # noqa: S608
+            placeholders = ", ".join("?" for _ in result.row_ids)
+            query = SUBTABLE_QUERY % (table, placeholders)
             NameDB.get_static_logger().debug(
                 "Executing query on %s for row IDs: %s", table, result.row_ids
             )
@@ -135,18 +143,7 @@ class NameDB(ClassSingleton):
         query_vals: set[str],
     ) -> list["NameDB._RomResult"]:
         """Fetch ROM details from database for provided query values."""
-        if not query_vals:
-            NameDB.get_static_logger().warning(
-                "No query values provided, returning empty list."
-            )
-            return []  # Safeguard against empty query values
-        placeholders = ", ".join("?" for _ in query_vals)
-
-        query = f"""
-            SELECT id, title, name, source, val, hack, version, year
-            FROM rom
-            WHERE val IN ({placeholders})
-        """  # noqa: S608
+        query = ROM_QUERY % ", ".join("?" for _ in query_vals)
         NameDB.get_static_logger().debug(
             "Executing fetch ROM details query for values: %s", query_vals
         )

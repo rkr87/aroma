@@ -16,6 +16,7 @@ from constants import (
     FILE_ID_METHOD,
     NAMING_EXCLUDE_SYSTEMS,
     ROM_PATH,
+    RUNNING_ON_TSP,
     STOCK_STR,
 )
 from data.database.cache_manager import CacheManager
@@ -48,6 +49,8 @@ class RomDB(ClassSingleton):
         """Refresh ROMs in app database and update TSP cache dbs."""
         self._update_db()
         self._cache.update_cache_db(self._db)
+        if not RUNNING_ON_TSP:
+            self._get_unmatched()
 
     def _update_db(self, *, reset: bool = False) -> None:
         """Update the ROM database by scanning ROM_PATH for valid ROM files."""
@@ -72,14 +75,19 @@ class RomDB(ClassSingleton):
 
     def _get_unmatched(self) -> None:
         """Output unmatched crcs to file."""
-        self._db = {
+        unmatched: dict[str, RomDetail] = {
             ast.literal_eval(v.id)[0]: v
             for _, v in self._db.items()
             if v.id_method == FILE_ID_METHOD
         }
-        for k, v in self._db.items():
+        for k, v in unmatched.items():
             v.id_method = ""
+            v.source = "crc"
+            v.hack = "Hack en-translation"
             v.id = k
+        path = APP_ROM_DB_PATH.parent / "unmatched_items.json"
+        with Path.open(path, "w", encoding="utf8") as file:
+            json.dump(unmatched, file, indent=4, cls=DataclassEncoder)
         self.save_db()
 
     def _process_files_in_batches(

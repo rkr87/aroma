@@ -73,7 +73,12 @@ NAMING_DISC_PATTERN = re.compile(
 )
 NAMING_FORMAT_PATTERN = re.compile(r"\b(pal|ntsc|secam)\b", re.IGNORECASE)
 NAMING_SEARCH_PATTERN = re.compile(r"\((.*?)\)")
+NAMING_YEAR_PATTERN = re.compile(r"\b(\d{2}[0-9x]{2})\b", re.IGNORECASE)
 NAMING_REMOVE_PATTERN = re.compile(r"{[^{}]*}|\[[^][]*]|\([^()]*\)")
+NAMING_VERSION_PATTERN = re.compile(
+    r"\b(?!(?:\d{4}\.\d{2}\.\d{2})\b)(rev\s?\d+|v\d+[\.\d+]+)\b",
+    re.IGNORECASE,
+)
 NAMING_TITLE_ID = "$t"
 NAMING_NAME_ID = "$n"
 NAMING_REGION_ID = "$r"
