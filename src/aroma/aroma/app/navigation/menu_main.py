@@ -4,6 +4,7 @@ from collections import OrderedDict
 from enum import Enum, auto
 
 from app.navigation.menu_collections import MenuCollections
+from app.navigation.menu_image_management import MenuImageManagement
 from app.navigation.menu_options import MenuOptions
 from app.navigation.menu_rom_naming import MenuRomNaming
 from app.navigation.menu_stack import MenuStack
@@ -24,6 +25,7 @@ class MenuMain(MenuBase):
 
         COLLECTIONS = auto()
         ROM_NAMING = auto()
+        IMG_MNGT = auto()
         OPTIONS = auto()
         REFRESH = auto()
 
@@ -57,6 +59,17 @@ class MenuMain(MenuBase):
                 (
                     self.option.ROM_NAMING,
                     self.sub_menu(MenuRomNaming(), MenuStack().push),
+                ),
+                (
+                    self.option.IMG_MNGT,
+                    self.sub_menu(
+                        MenuImageManagement(),
+                        MenuStack().push,
+                        SidePane(
+                            Strings().image_management,
+                            Strings().image_management_desc,
+                        ),
+                    ),
                 ),
                 (
                     self.option.OPTIONS,
