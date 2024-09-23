@@ -72,5 +72,5 @@ class MenuMain(MenuBase):
         return MenuItemSingle(
             Strings().refresh_roms,
             RomManager().refresh_roms,
-            SidePane(Strings().refresh_roms, Strings.refresh_roms_desc),
+            SidePane(Strings().refresh_roms, Strings().refresh_roms_desc),
         )

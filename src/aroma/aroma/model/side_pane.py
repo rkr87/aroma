@@ -10,7 +10,7 @@ class SidePane(ClassBase):
     """Represents a side pane with an optional header and content."""
 
     header: str | None = None
-    content: str | None = None
+    content: str | list[str] | None = None
 
     @staticmethod
     def merge(
