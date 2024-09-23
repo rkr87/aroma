@@ -4,7 +4,13 @@
     "stock": "STOCK",
     "custom": "CUSTOM",
     "collections": "COLLECTIONS",
+    "collections_desc": [
+        "Add description of options here"
+    ],
     "rom_naming": "ROM NAMING",
+    "rom_naming_desc": [
+        "Add description of options here"
+    ],
     "refresh_roms": "REFRESH ROMS",
     "refresh_roms_desc": [
         "Add description of options here"
@@ -35,6 +41,9 @@
         "Add description of options here"
     ],
     "options": "OPTIONS",
+    "options_desc": [
+        "Add description of options here"
+    ],
     "language": "LANGUAGE",
     "language_desc": [
         "Add description of options here"

@@ -15,7 +15,9 @@ class Strings(JsonDataClass):  # pylint: disable=too-many-instance-attributes
     stock: str = ""
     custom: str = ""
     collections: str = ""
+    collections_desc: list[str] = field(default_factory=list)
     rom_naming: str = ""
+    rom_naming_desc: list[str] = field(default_factory=list)
     refresh_roms: str = ""
     refresh_roms_desc: list[str] = field(default_factory=list)
     naming_method: str = ""
@@ -36,6 +38,7 @@ class Strings(JsonDataClass):  # pylint: disable=too-many-instance-attributes
     name_format: str = ""
     name_format_desc: list[str] = field(default_factory=list)
     options: str = ""
+    options_desc: list[str] = field(default_factory=list)
     logging_level: str = ""
     logging_desc: list[str] = field(default_factory=list)
     logging_debug: str = ""

@@ -35,16 +35,7 @@ class MenuMain(MenuBase):
         return self._Options
 
     def __init__(self) -> None:
-        side_pane: SidePane = SidePane(
-            "Header Test",
-            (
-                "some very long content to test word wrap while rendering the "
-                "side pane also need to do some nested side pane testing by "
-                "applying a different side pane to each menu item and actions"
-                "\n\nthis side pane is generated at the menu level"
-            ),
-        )
-        super().__init__(APP_NAME, self._build_menu(), side_pane)
+        super().__init__(APP_NAME, self._build_menu())
 
     def _build_menu(self) -> OrderedDict[Enum, MenuItemBase]:
         """Build the initial main menu."""
@@ -54,11 +45,25 @@ class MenuMain(MenuBase):
             [
                 (
                     self.option.COLLECTIONS,
-                    self.sub_menu(MenuCollections(), MenuStack().push),
+                    self.sub_menu(
+                        MenuCollections(),
+                        MenuStack().push,
+                        SidePane(
+                            Strings().collections,
+                            Strings().collections_desc,
+                        ),
+                    ),
                 ),
                 (
                     self.option.ROM_NAMING,
-                    self.sub_menu(MenuRomNaming(), MenuStack().push),
+                    self.sub_menu(
+                        MenuRomNaming(),
+                        MenuStack().push,
+                        SidePane(
+                            Strings().rom_naming,
+                            Strings().rom_naming_desc,
+                        ),
+                    ),
                 ),
                 (
                     self.option.IMG_MNGT,
@@ -73,7 +78,14 @@ class MenuMain(MenuBase):
                 ),
                 (
                     self.option.OPTIONS,
-                    self.sub_menu(MenuOptions(), MenuStack().push),
+                    self.sub_menu(
+                        MenuOptions(),
+                        MenuStack().push,
+                        SidePane(
+                            Strings().options,
+                            Strings().options_desc,
+                        ),
+                    ),
                 ),
                 (self.option.REFRESH, self._refresh_roms()),
             ],
