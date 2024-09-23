@@ -62,6 +62,8 @@ class RomDB(ClassSingleton):
             self._logger.info(
                 "Database reset requested, clearing current database."
             )
+            AppConfig().db_rebuild_req = False
+            AppConfig().save()
         else:
             self._load_db()
         valid_files: list[tuple[Path, RomDetail | None]] = []
@@ -74,7 +76,6 @@ class RomDB(ClassSingleton):
         self._logger.debug("Processing %d valid files.", len(valid_files))
         self._process_files_in_batches(valid_files)
         self.save_db()
-        AppConfig().set_db_rebuild_required()
 
     def _get_unmatched(self) -> None:
         """Output unmatched crcs to file."""

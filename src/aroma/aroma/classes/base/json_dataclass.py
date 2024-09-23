@@ -50,8 +50,19 @@ class JsonDataClass(ClassSingleton):
         with Path.open(file_path, "w", encoding="utf-8") as f:
             json.dump(data_dict, f, ensure_ascii=False, indent=4)
 
-    def update_value(self, attribute: str, value: str) -> None:
+    def update_value(self, attribute: str, value: str | int | bool) -> None:
         """Update provided attribute and save data to file."""
+        self._check_attr(attribute)
+        current_value = getattr(self, attribute)
+        if not isinstance(value, type(current_value)):
+            JsonDataClass.get_static_logger().exception(
+                "Type mismatch: %s.%s expected %s but got %s",
+                self.__class__.__name__,
+                attribute,
+                type(current_value).__name__,
+                type(value).__name__,
+            )
+            return
         JsonDataClass.get_static_logger().info(
             "Updating %s.%s=%s",
             self.__class__.__name__,
@@ -61,6 +72,26 @@ class JsonDataClass(ClassSingleton):
         setattr(self, attribute, value)
         self.save()
 
-    def get_value(self, attribute: str) -> str:
+    def get_value(self, attribute: str) -> str | int | bool:
         """Retrieve the value of provided attribute from the instance."""
-        return str(getattr(self, attribute))
+        self._check_attr(attribute)
+        value = getattr(self, attribute)
+        if not isinstance(value, (str | int | bool)):
+            JsonDataClass.get_static_logger().warning(
+                "Invalid type: %s.%s is of invalid type %s",
+                self.__class__.__name__,
+                attribute,
+                type(value).__name__,
+            )
+            raise TypeError
+        return value
+
+    def _check_attr(self, attribute: str) -> None:
+        """Check provided attribute exists."""
+        if not hasattr(self, attribute):
+            JsonDataClass.get_static_logger().exception(
+                "Attempted to access non-existent attribute %s.%s",
+                self.__class__.__name__,
+                attribute,
+            )
+            raise AttributeError
