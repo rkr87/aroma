@@ -196,3 +196,8 @@ def remove_loop(text: str, pattern: re.Pattern[str]) -> str:
     """Recursively remove text matching the pattern."""
     new_text, n = re.subn(pattern, "", text)
     return remove_loop(new_text, pattern) if n > 0 else new_text.strip()
+
+
+def is_relative_path(path: Path, base_path: Path) -> bool:
+    """Check whether a path is a sub-path of base path."""
+    return str(path).startswith(str(base_path))
