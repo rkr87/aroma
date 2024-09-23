@@ -8,6 +8,7 @@ pylog.txt
 rom_db.json
 arcade.db
 console.db
+unmatched_items.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
