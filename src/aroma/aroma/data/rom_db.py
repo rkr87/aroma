@@ -23,7 +23,6 @@ from data.encoder.dataclass_encoder import DataclassEncoder
 from data.name_db import NameDB
 from data.parser.filename_parser import FilenameParser
 from data.validator.rom_validator import RomValidator
-from manager.cache_manager import CacheManager
 from model.app_config import AppConfig
 from model.rom_detail import RomDetail
 from tools import util
@@ -37,13 +36,18 @@ class RomDB(ClassSingleton):
         self._validator = RomValidator()
         self._db: dict[str, RomDetail] = {}
         self._parser = FilenameParser()
-        self._cache = CacheManager()
 
     @property
     def data(self) -> dict[str, RomDetail]:
         """Load and return the current ROM database."""
         self._load_db()
         return self._db
+
+    @property
+    def valid_paths(self) -> list[Path]:
+        """Load and return valid ROM paths."""
+        self._load_db()
+        return [Path(p) for p in self._db]
 
     def update(self, *, reset: bool = False) -> None:
         """Refresh ROMs in app database."""
