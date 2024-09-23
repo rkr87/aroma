@@ -27,7 +27,7 @@ class JsonDataClass(ClassSingleton):
 
         try:
             with Path.open(file_path, encoding="utf-8") as f:
-                data: dict[str, str | list[str]] = json.load(f)
+                data: dict[str, object] = json.load(f)
         except FileNotFoundError:
             logger.exception("File not found: %s", file_path)
             raise
@@ -35,18 +35,13 @@ class JsonDataClass(ClassSingleton):
             logger.exception("Error decoding JSON from file: %s", file_path)
             raise
 
-        new_dict: dict[str, str | Path] = {
-            k: "\n".join(v) if isinstance(v, list) else v
-            for k, v in data.items()
-        }
-
-        new_dict["_file_path"] = file_path
+        data["_file_path"] = file_path
 
         logger.info(
             "Successfully loaded and processed data from file: %s",
             file_path,
         )
-        return cls.reset_instance(**new_dict)
+        return cls.reset_instance(**data)
 
     def save(self) -> None:
         """Save the current instance data to file."""
@@ -55,8 +50,19 @@ class JsonDataClass(ClassSingleton):
         with Path.open(file_path, "w", encoding="utf-8") as f:
             json.dump(data_dict, f, ensure_ascii=False, indent=4)
 
-    def update_value(self, attribute: str, value: str) -> None:
+    def update_value(self, attribute: str, value: str | int | bool) -> None:
         """Update provided attribute and save data to file."""
+        self._check_attr(attribute)
+        current_value = getattr(self, attribute)
+        if not isinstance(value, type(current_value)):
+            JsonDataClass.get_static_logger().exception(
+                "Type mismatch: %s.%s expected %s but got %s",
+                self.__class__.__name__,
+                attribute,
+                type(current_value).__name__,
+                type(value).__name__,
+            )
+            return
         JsonDataClass.get_static_logger().info(
             "Updating %s.%s=%s",
             self.__class__.__name__,
@@ -66,6 +72,26 @@ class JsonDataClass(ClassSingleton):
         setattr(self, attribute, value)
         self.save()
 
-    def get_value(self, attribute: str) -> str:
+    def get_value(self, attribute: str) -> str | int | bool:
         """Retrieve the value of provided attribute from the instance."""
-        return str(getattr(self, attribute))
+        self._check_attr(attribute)
+        value = getattr(self, attribute)
+        if not isinstance(value, (str | int | bool)):
+            JsonDataClass.get_static_logger().warning(
+                "Invalid type: %s.%s is of invalid type %s",
+                self.__class__.__name__,
+                attribute,
+                type(value).__name__,
+            )
+            raise TypeError
+        return value
+
+    def _check_attr(self, attribute: str) -> None:
+        """Check provided attribute exists."""
+        if not hasattr(self, attribute):
+            JsonDataClass.get_static_logger().exception(
+                "Attempted to access non-existent attribute %s.%s",
+                self.__class__.__name__,
+                attribute,
+            )
+            raise AttributeError

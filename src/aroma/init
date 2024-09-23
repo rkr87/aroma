@@ -16,8 +16,8 @@ for d in path_dirs:
 # pylint: disable=wrong-import-position
 import constants  # noqa: E402
 from aroma_app import AromaApp  # noqa: E402
-from data.database.name_db import NameDB  # noqa: E402
-from data.database.rom_db import RomDB  # noqa: E402
+from data.name_db import NameDB  # noqa: E402
+from manager.rom_manager import RomManager  # noqa: E402
 from model.app_config import AppConfig  # noqa: E402
 from model.strings import Strings  # noqa: E402
 
@@ -45,7 +45,7 @@ def init() -> None:
 def refresh_roms() -> None:
     """Refresh the ROM database and system cache."""
     logging.info("Refreshing ROM database and system cache...")
-    RomDB().refresh_roms()
+    RomManager().refresh_roms()
     NameDB().remove_db()
     sys.exit()
 

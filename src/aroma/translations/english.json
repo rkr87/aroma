@@ -1,8 +1,16 @@
 {
+    "yes": "YES",
+    "no": "NO",
     "stock": "STOCK",
     "custom": "CUSTOM",
     "collections": "COLLECTIONS",
+    "collections_desc": [
+        "Add description of options here"
+    ],
     "rom_naming": "ROM NAMING",
+    "rom_naming_desc": [
+        "Add description of options here"
+    ],
     "refresh_roms": "REFRESH ROMS",
     "refresh_roms_desc": [
         "Add description of options here"
@@ -33,6 +41,9 @@
         "Add description of options here"
     ],
     "options": "OPTIONS",
+    "options_desc": [
+        "Add description of options here"
+    ],
     "language": "LANGUAGE",
     "language_desc": [
         "Add description of options here"
@@ -44,5 +55,17 @@
     "logging_debug": "DEBUG",
     "logging_info": "INFO",
     "logging_warning": "WARNING",
-    "logging_error": "ERROR"
+    "logging_error": "ERROR",
+    "image_management": "IMAGE MANAGEMENT",
+    "image_management_desc": [
+        "Add description of options here"
+    ],
+    "remove_broken": "DELETE BROKEN IMAGES",
+    "remove_broken_desc": [
+        "Add description of options here"
+    ],
+    "remove_broken_refresh": "DELETE ON REFRESH",
+    "remove_broken_refresh_desc": [
+        "Add description of options here"
+    ]
 }

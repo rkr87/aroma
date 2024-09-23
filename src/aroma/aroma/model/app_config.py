@@ -20,13 +20,16 @@ class AppConfig(JsonDataClass):  # pylint: disable=too-many-instance-attributes
     naming_method: str = ""
     console_naming: str = ""
     name_format: str = ""
-    db_rebuild_req: str = ""
+    db_rebuild_req: bool = False
+    remove_broken_images_on_refresh: bool = False
 
     @staticmethod
-    def set_db_rebuild_required(reason: str) -> None:
+    def set_db_rebuild_required(reason: str | None = None) -> None:
         """Set ROM DB rebuild required flag."""
-        AppConfig.get_static_logger().info(
-            "Force full rebuild of RomDB: %s",
-            reason,
-        )
-        AppConfig().update_value("db_rebuild_req", reason)
+        AppConfig().db_rebuild_req = (check := bool(reason))
+        AppConfig().save()
+        if check:
+            AppConfig.get_static_logger().info(
+                "Force full rebuild of RomDB: %s",
+                reason,
+            )

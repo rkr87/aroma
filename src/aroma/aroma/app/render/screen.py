@@ -258,11 +258,13 @@ class Screen(ClassSingleton):
 
     def _get_content_surface(
         self,
-        content_text: str | None,
+        content_text: str | list[str] | None,
     ) -> SDL_Surface | None:
         """Get the surface for the content text."""
         if not content_text:
             return None
+        if isinstance(content_text, list):
+            content_text = "\n".join(content_text)
         return self.text_gen.get_wrapped_text(
             content_text,
             SCREEN_WIDTH - self.SPLIT_PANE - self.PADDING,

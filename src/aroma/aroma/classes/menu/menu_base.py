@@ -5,7 +5,7 @@ from collections import OrderedDict
 from collections.abc import Callable
 from enum import Enum
 from functools import partial
-from typing import Any
+from typing import Any, TypeVar, cast
 
 from classes.base.class_singleton import ClassSingleton
 from classes.menu.action_manager import ActionManager
@@ -17,6 +17,8 @@ from classes.menu.selection_manager import SelectionManager
 from model.app_config import AppConfig
 from model.side_pane import SidePane
 from tools import util
+
+_T = TypeVar("_T", str, int, bool)
 
 
 class MenuBase(ClassSingleton, ABC):
@@ -75,16 +77,16 @@ class MenuBase(ClassSingleton, ABC):
 
     @staticmethod
     def _generate_config_actions(
-        data: dict[str, str],
+        data: dict[_T, str],
         config_attr: str,
-        function: Callable[[str], None] | None = None,
+        function: Callable[[_T], None] | None = None,
         default: int = 0,
         *,
         non_tsp_skip: bool = False,
     ) -> tuple[list[MenuAction], int]:
         """Generate a menu actions for configuring a specific option."""
 
-        def config_func(val: str) -> None:
+        def config_func(val: _T) -> None:
             AppConfig().update_value(config_attr, val)
             if function:
                 logger = MenuBase.get_static_logger()
@@ -95,8 +97,9 @@ class MenuBase(ClassSingleton, ABC):
                 )
                 function(val)
 
-        if (config := AppConfig().get_value(config_attr)) in data:
-            default = list(data).index(config)
+        if (config := cast(_T, AppConfig().get_value(config_attr))) in data:
+            options: list[_T] = list(data.keys())
+            default = options.index(config)
 
         actions: list[MenuAction] = MenuBase._generate_actions(
             data,
@@ -107,8 +110,8 @@ class MenuBase(ClassSingleton, ABC):
 
     @staticmethod
     def _generate_actions(
-        data: dict[str, str],
-        function: Callable[[str], None] | None = None,
+        data: dict[_T, str],
+        function: Callable[[_T], None] | None = None,
         *,
         non_tsp_skip: bool = False,
     ) -> list[MenuAction]:

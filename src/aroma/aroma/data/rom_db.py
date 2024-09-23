@@ -19,9 +19,8 @@ from constants import (
     RUNNING_ON_TSP,
     STOCK_STR,
 )
-from data.database.cache_manager import CacheManager
-from data.database.name_db import NameDB
 from data.encoder.dataclass_encoder import DataclassEncoder
+from data.name_db import NameDB
 from data.parser.filename_parser import FilenameParser
 from data.validator.rom_validator import RomValidator
 from model.app_config import AppConfig
@@ -37,7 +36,6 @@ class RomDB(ClassSingleton):
         self._validator = RomValidator()
         self._db: dict[str, RomDetail] = {}
         self._parser = FilenameParser()
-        self._cache = CacheManager()
 
     @property
     def data(self) -> dict[str, RomDetail]:
@@ -45,20 +43,27 @@ class RomDB(ClassSingleton):
         self._load_db()
         return self._db
 
-    def refresh_roms(self) -> None:
-        """Refresh ROMs in app database and update TSP cache dbs."""
-        self._update_db()
-        self._cache.update_cache_db(self._db)
-        if not RUNNING_ON_TSP:
+    @property
+    def valid_paths(self) -> list[Path]:
+        """Load and return valid ROM paths."""
+        self._load_db()
+        return [Path(p) for p in self._db]
+
+    def update(self, *, reset: bool = False) -> None:
+        """Refresh ROMs in app database."""
+        self._update_db(reset=reset)
+        if RUNNING_ON_TSP:
             self._get_unmatched()
 
-    def _update_db(self, *, reset: bool = False) -> None:
+    def _update_db(self, *, reset: bool) -> None:
         """Update the ROM database by scanning ROM_PATH for valid ROM files."""
         if reset or AppConfig().db_rebuild_req:
             self._db = {}
             self._logger.info(
                 "Database reset requested, clearing current database."
             )
+            AppConfig().db_rebuild_req = False
+            AppConfig().save()
         else:
             self._load_db()
         valid_files: list[tuple[Path, RomDetail | None]] = []
@@ -71,7 +76,6 @@ class RomDB(ClassSingleton):
         self._logger.debug("Processing %d valid files.", len(valid_files))
         self._process_files_in_batches(valid_files)
         self.save_db()
-        AppConfig().update_value("db_rebuild_req", "")
 
     def _get_unmatched(self) -> None:
         """Output unmatched crcs to file."""

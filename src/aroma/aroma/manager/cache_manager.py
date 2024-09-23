@@ -12,6 +12,7 @@ from constants import (
     ROM_PATH,
     TSP_CACHE_DB_SUFFIX,
 )
+from manager.image_manager import ImageManager
 from model.rom_detail import RomDetail
 
 RESET_TABLE = """
@@ -61,16 +62,15 @@ class CacheManager(ClassSingleton):
         @property
         def rom_path(self) -> str:
             """Return the ROM file path."""
-            return f"{self._emu_path}/Roms/{'/'.join(self.raw_path.parts)}"
+            return str(self._emu_path / "Roms" / self.raw_path)
 
         @property
         def img_path(self) -> str:
             """Return the image path for the ROM or directory."""
             if not self._is_dir:
-                filename = self.raw_path.with_suffix(".png").name
-                return f"{self._emu_path}/Imgs/{self._system}/{filename}"
-            filename = f"{'/'.join(self.raw_path.parts)}/_root.png"
-            return f"{self._emu_path}/Roms/{filename}"
+                img_path = ImageManager.get_rom_img_relpath(self.raw_path)
+                return str(self._emu_path / "Imgs" / img_path)
+            return str(self._emu_path / "Roms" / self.raw_path / "_root.png")
 
         @property
         def type(self) -> int:
@@ -85,9 +85,9 @@ class CacheManager(ClassSingleton):
             return ">".join(self.raw_path.parts[1:-1])
 
         @property
-        def _emu_path(self) -> str:
+        def _emu_path(self) -> Path:
             """Return the emulation base path."""
-            return f"{EMU_PATH}/{self._system}/../.."
+            return EMU_PATH / self._system / ".." / ".."
 
         @property
         def _system(self) -> str:
