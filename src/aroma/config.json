@@ -5,9 +5,10 @@
     "launch": "launch.sh",
     "description": "aROMa",
     "language": "english",
-    "logging_level": "ERROR",
+    "logging_level": "WARNING",
     "naming_method": "CUSTOM",
     "console_naming": "CUSTOM",
     "name_format": "$n ($h)",
-    "db_rebuild_req": ""
+    "db_rebuild_req": false,
+    "remove_broken_images_on_refresh": false
 }

@@ -74,7 +74,7 @@ class RomDB(ClassSingleton):
         self._logger.debug("Processing %d valid files.", len(valid_files))
         self._process_files_in_batches(valid_files)
         self.save_db()
-        AppConfig().update_value("db_rebuild_req", "")
+        AppConfig().set_db_rebuild_required()
 
     def _get_unmatched(self) -> None:
         """Output unmatched crcs to file."""
