@@ -11,7 +11,7 @@ from classes.menu.menu_base import MenuBase
 from classes.menu.menu_item_base import MenuItemBase
 from classes.menu.menu_item_single import MenuItemSingle
 from constants import APP_NAME
-from data.database.rom_db import RomDB
+from manager.rom_manager import RomManager
 from model.side_pane import SidePane
 from model.strings import Strings
 
@@ -71,6 +71,6 @@ class MenuMain(MenuBase):
         """Create a menu item that refreshes the ROM database."""
         return MenuItemSingle(
             Strings().refresh_roms,
-            RomDB().refresh_roms,
+            RomManager().refresh_roms,
             SidePane(Strings().refresh_roms, Strings.refresh_roms_desc),
         )

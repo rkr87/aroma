@@ -8,7 +8,7 @@ from app.navigation.nav_controller import NavController
 from app.render.screen import Screen
 from classes.base.class_singleton import ClassSingleton
 from constants import APP_NAME
-from data.database.name_db import NameDB
+from data.name_db import NameDB
 from sdl2 import (
     SDL_CONTROLLER_BUTTON_GUIDE,
     SDL_INIT_GAMECONTROLLER,

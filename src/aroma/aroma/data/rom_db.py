@@ -19,11 +19,11 @@ from constants import (
     RUNNING_ON_TSP,
     STOCK_STR,
 )
-from data.database.cache_manager import CacheManager
-from data.database.name_db import NameDB
 from data.encoder.dataclass_encoder import DataclassEncoder
+from data.name_db import NameDB
 from data.parser.filename_parser import FilenameParser
 from data.validator.rom_validator import RomValidator
+from manager.cache_manager import CacheManager
 from model.app_config import AppConfig
 from model.rom_detail import RomDetail
 from tools import util
@@ -45,14 +45,13 @@ class RomDB(ClassSingleton):
         self._load_db()
         return self._db
 
-    def refresh_roms(self) -> None:
-        """Refresh ROMs in app database and update TSP cache dbs."""
-        self._update_db()
-        self._cache.update_cache_db(self._db)
-        if not RUNNING_ON_TSP:
+    def update(self, *, reset: bool = False) -> None:
+        """Refresh ROMs in app database."""
+        self._update_db(reset=reset)
+        if RUNNING_ON_TSP:
             self._get_unmatched()
 
-    def _update_db(self, *, reset: bool = False) -> None:
+    def _update_db(self, *, reset: bool) -> None:
         """Update the ROM database by scanning ROM_PATH for valid ROM files."""
         if reset or AppConfig().db_rebuild_req:
             self._db = {}
