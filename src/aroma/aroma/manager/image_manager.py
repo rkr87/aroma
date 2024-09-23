@@ -17,7 +17,7 @@ class ImageManager(ClassSingleton):
             ImageManager.get_rom_img_relpath(path) for path in valid_rom_paths
         }
         for path in IMG_PATH.rglob("*.png"):
-            if path.relative_to(IMG_PATH).with_suffix("") in valid_images:
+            if path.relative_to(IMG_PATH) in valid_images:
                 continue
             util.delete_file(path)
             ImageManager.get_static_logger().info(
