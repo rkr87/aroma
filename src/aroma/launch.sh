@@ -1,5 +1,5 @@
 #!/bin/sh
-controlfolder="/mnt/SDCARD/Apps/aROMa"
+controlfolder="/mnt/SDCARD/Apps/aroma"
 source /mnt/SDCARD/System/etc/ex_config
 exec > >(tee "$controlfolder/log.txt") 2>&1
 export PYSDL2_DLL_PATH="/usr/trimui/lib"
