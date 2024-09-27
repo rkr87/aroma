@@ -19,13 +19,13 @@ from constants import (
     RUNNING_ON_TSP,
     STOCK_STR,
 )
-from data.encoder.dataclass_encoder import DataclassEncoder
 from data.name_db import NameDB
 from data.parser.filename_parser import FilenameParser
 from data.validator.rom_validator import RomValidator
 from model.app_config import AppConfig
 from model.rom_detail import RomDetail
 from tools import util
+from tools.enhanced_json_encoder import EnhancedJSONEncoder
 
 
 class RomDB(ClassSingleton):
@@ -91,7 +91,7 @@ class RomDB(ClassSingleton):
             v.id = k
         path = APP_ROM_DB_PATH.parent / "unmatched_items.json"
         with Path.open(path, "w", encoding="utf8") as file:
-            json.dump(unmatched, file, indent=4, cls=DataclassEncoder)
+            json.dump(unmatched, file, indent=4, cls=EnhancedJSONEncoder)
         self.save_db()
 
     def _process_files_in_batches(
@@ -275,4 +275,4 @@ class RomDB(ClassSingleton):
             "Saving ROM database to %s.", APP_ROM_DB_PATH
         )
         with Path.open(APP_ROM_DB_PATH, "w", encoding="utf8") as file:
-            json.dump(self._db, file, indent=4, cls=DataclassEncoder)
+            json.dump(self._db, file, indent=4, cls=EnhancedJSONEncoder)

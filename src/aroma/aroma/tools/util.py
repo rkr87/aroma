@@ -5,6 +5,7 @@ import json
 import logging
 import re
 from collections.abc import Callable
+from datetime import UTC, datetime
 from functools import partial
 from pathlib import Path
 from typing import Any, TypeVar
@@ -13,6 +14,7 @@ from zipfile import ZIP_LZMA, ZipFile, ZipInfo
 from model.file_crc import FileCrc
 from py7zr import FileInfo, SevenZipFile
 from sdl2.ext import Color
+from tools.enhanced_json_encoder import EnhancedJSONEncoder
 
 T = TypeVar("T", int, float)
 
@@ -190,6 +192,29 @@ def load_simple_json(path: Path) -> dict[str, Any]:
         logging.exception("JSON decode error")
         data = {}
     return data
+
+
+def save_simple_json(
+    data: dict[Path, Any] | dict[str, Any], path: Path
+) -> None:
+    """Save a simple dictionary as a JSON file."""
+    str_data = {str(key): value for key, value in data.items()}
+    try:
+        with path.open("w", encoding="utf8") as file:
+            json.dump(
+                str_data,
+                file,
+                ensure_ascii=False,
+                indent=4,
+                cls=EnhancedJSONEncoder,
+            )
+    except (OSError, TypeError):
+        logging.exception("Error while saving JSON data")
+
+
+def get_datestamp() -> int:
+    """Return the current date as a UNIX timestamp in days since epoch."""
+    return int(datetime.now(tz=UTC).timestamp()) // 86400
 
 
 def remove_loop(text: str, pattern: re.Pattern[str]) -> str:
