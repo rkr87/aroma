@@ -5,10 +5,17 @@
     "launch": "launch.sh",
     "description": "aROMa",
     "language": "english",
-    "logging_level": "WARNING",
+    "logging_level": "INFO",
     "naming_method": "CUSTOM",
     "console_naming": "CUSTOM",
     "name_format": "$n ($h)",
     "db_rebuild_req": false,
-    "remove_broken_images_on_refresh": false
+    "remove_broken_images_on_refresh": true,
+    "days_until_scrape_attempt": 7,
+    "scrape_on_refresh": true,
+    "scrape_media_type": "mixrbv2",
+    "scrape_preferred_region": "uk",
+    "screenscraper_userid": "",
+    "screenscraper_password": "",
+    "_scrape_cpu_threads": 0
 }

@@ -35,6 +35,12 @@ class RomDetail:  # pylint: disable=too-many-instance-attributes
     additional: list[str] = field(default_factory=list)
 
     @property
+    def name_url_encoded(self) -> str:
+        """Return the ROM's name with special characters removed."""
+        name_clean = re.sub(r"[^a-zA-Z0-9\s]", "", self.name)
+        return re.sub(r"\s+", " ", name_clean)
+
+    @property
     def format_name(self) -> str:
         """Generate a formatted string representation of the ROM name."""
         formats = {

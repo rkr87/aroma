@@ -64,8 +64,87 @@
     "remove_broken_desc": [
         "Add description of options here"
     ],
-    "remove_broken_refresh": "DELETE ON REFRESH",
+    "remove_broken_refresh": "DELETE BROKEN ON REFRESH",
     "remove_broken_refresh_desc": [
         "Add description of options here"
-    ]
+    ],
+    "scrape_missing": "SCRAPE MISSING IMAGES",
+    "scrape_missing_desc": [
+        "Add description of options here"
+    ],
+    "scrape_missing_refresh": "SCRAPE MISSING ON REFRESH",
+    "scrape_missing_refresh_desc": [
+        "Add description of options here"
+    ],
+    "scrape_days_to_retry": "RESCRAPE ATTEMPT",
+    "scrape_days_to_retry_desc": [
+        "Add description of options here"
+    ],
+    "scrape_days_to_retry_never": "NEVER",
+    "scrape_days_to_retry_always": "ALWAYS",
+    "scrape_days_to_retry_days": "DAYS",
+    "scrape_media_type": "MEDIA TYPE",
+    "scrape_media_type_desc": [
+        "Add description of options here"
+    ],
+    "scrape_max_cpu_threads": "MAX CPU THREADS",
+    "scrape_max_cpu_threads_desc": [
+        "Add description of options here"
+    ],
+    "scrape_user": "USERNAME",
+    "scrape_user_desc": [
+        "Add description of options here"
+    ],
+    "scrape_password": "PASSWORD",
+    "scrape_password_desc": [
+        "Add description of options here"
+    ],
+    "scrape_preferred_region": "REGION",
+    "scrape_preferred_region_desc": [
+        "Add description of options here"
+    ],
+    "scrape_region_ae": "United Arab Emirates",
+    "scrape_region_afr": "African continent",
+    "scrape_region_ame": "American continent",
+    "scrape_region_asi": "Asia",
+    "scrape_region_au": "Australia",
+    "scrape_region_bg": "Bulgary",
+    "scrape_region_br": "Brazil",
+    "scrape_region_ca": "Canada",
+    "scrape_region_cl": "Chile",
+    "scrape_region_cn": "China",
+    "scrape_region_cus": "Custom",
+    "scrape_region_cz": "Czech republic",
+    "scrape_region_de": "Germany",
+    "scrape_region_dk": "Denmark",
+    "scrape_region_eu": "Europe",
+    "scrape_region_fi": "Finland",
+    "scrape_region_fr": "France",
+    "scrape_region_gr": "Greece",
+    "scrape_region_hu": "Hungary",
+    "scrape_region_il": "Israel",
+    "scrape_region_it": "Italy",
+    "scrape_region_jp": "Japan",
+    "scrape_region_kr": "Korea",
+    "scrape_region_kw": "Kuwait",
+    "scrape_region_mex": "Mexico",
+    "scrape_region_mor": "Middle East",
+    "scrape_region_nl": "Netherlands",
+    "scrape_region_no": "Norway",
+    "scrape_region_nz": "New Zealand",
+    "scrape_region_oce": "Oceania",
+    "scrape_region_pe": "Peru",
+    "scrape_region_pl": "Poland",
+    "scrape_region_pt": "Portugal",
+    "scrape_region_ru": "Russia",
+    "scrape_region_se": "Sweden",
+    "scrape_region_sk": "Slovakia",
+    "scrape_region_sp": "Spain",
+    "scrape_region_ss": "ScreenScraper",
+    "scrape_region_tr": "Turkey",
+    "scrape_region_tw": "Taiwan",
+    "scrape_region_uk": "United Kingdom",
+    "scrape_region_us": "USA",
+    "scrape_region_wor": "World",
+    "scrape_region_za": "South Africa"
 }
