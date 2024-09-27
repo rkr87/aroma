@@ -14,7 +14,7 @@ from constants import (
     NAMING_VERSION_ID,
     NAMING_YEAR_ID,
 )
-from model.app_config import AppConfig
+from tools.app_config import AppConfig
 
 
 @dataclass

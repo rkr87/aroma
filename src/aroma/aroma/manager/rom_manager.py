@@ -4,7 +4,7 @@ from classes.base.class_singleton import ClassSingleton
 from data.rom_db import RomDB
 from manager.cache_manager import CacheManager
 from manager.image_manager import ImageManager
-from model.app_config import AppConfig
+from tools.app_config import AppConfig
 
 
 class RomManager(ClassSingleton):

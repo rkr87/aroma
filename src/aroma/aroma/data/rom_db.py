@@ -22,9 +22,9 @@ from constants import (
 from data.name_db import NameDB
 from data.parser.filename_parser import FilenameParser
 from data.validator.rom_validator import RomValidator
-from model.app_config import AppConfig
 from model.rom_detail import RomDetail
 from tools import util
+from tools.app_config import AppConfig
 from tools.enhanced_json_encoder import EnhancedJSONEncoder
 
 

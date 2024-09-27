@@ -21,11 +21,11 @@ from constants import (
     NAMING_YEAR_ID,
     STOCK_STR,
 )
-from model.app_config import AppConfig
 from model.side_pane import SidePane
-from model.strings import Strings
 from tools import util
+from tools.app_config import AppConfig
 from tools.library_manager import LibraryManager
+from tools.strings import Strings
 
 if TYPE_CHECKING:
     from classes.menu.menu_action import MenuAction

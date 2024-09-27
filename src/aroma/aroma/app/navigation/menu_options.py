@@ -8,9 +8,9 @@ from classes.menu.menu_base import MenuBase
 from classes.menu.menu_item_base import MenuItemBase
 from classes.menu.menu_item_multi import MenuItemMulti
 from constants import APP_TRANSLATION_PATH
-from model.app_config import AppConfig
 from model.side_pane import SidePane
-from model.strings import Strings
+from tools.app_config import AppConfig
+from tools.strings import Strings
 
 
 class MenuOptions(MenuBase):

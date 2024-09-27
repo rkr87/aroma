@@ -19,10 +19,10 @@ from constants import (
     SCRAPER_SYSTEM_MAP,
 )
 from data.screen_scraper_api import ScreenScraperAPI
-from model.app_config import AppConfig
 from model.media_item import MediaItem
 from model.rom_detail import RomDetail
 from tools import util
+from tools.app_config import AppConfig
 
 if TYPE_CHECKING:
     from collections.abc import Awaitable

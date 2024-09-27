@@ -7,8 +7,8 @@ import urllib.request
 from typing import Any
 
 from classes.base.class_singleton import ClassSingleton
-from model.app_config import AppConfig
 from model.media_item import MediaItem
+from tools.app_config import AppConfig
 
 
 class ScreenScraperAPI(ClassSingleton):

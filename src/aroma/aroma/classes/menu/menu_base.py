@@ -14,9 +14,9 @@ from classes.menu.menu_action import MenuAction
 from classes.menu.menu_item_base import MenuItemBase
 from classes.menu.menu_item_single import MenuItemSingle
 from classes.menu.selection_manager import SelectionManager
-from model.app_config import AppConfig
 from model.side_pane import SidePane
 from tools import util
+from tools.app_config import AppConfig
 
 _T = TypeVar("_T", str, int, bool)
 
