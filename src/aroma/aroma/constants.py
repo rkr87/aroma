@@ -8,7 +8,7 @@ APP_NAME = "aROMa"
 
 TSP_LIBRARY_VAR = "LD_LIBRARY_PATH"
 RUNNING_ON_TSP = TSP_LIBRARY_VAR in os.environ
-APP_PATH = Path("." if RUNNING_ON_TSP else "./src/aROMa")
+APP_PATH = Path("." if RUNNING_ON_TSP else "./src/aroma")
 APP_CONFIG_PATH = APP_PATH / "config.json"
 RESOURCES = APP_PATH / "aroma" / "resources"
 APP_LOGGING_CONFIG_PATH = RESOURCES / "config" / "logging.conf"

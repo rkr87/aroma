@@ -20,7 +20,7 @@ repos:
     hooks:
     - id: mypy
       name: mypy
-      entry: "mypy ./src/aROMa/aroma"
+      entry: "mypy ./src/aroma/aroma"
       language: python
       language_version: python3.12
       additional_dependencies: ["mypy",
