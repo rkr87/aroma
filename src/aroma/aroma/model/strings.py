@@ -82,7 +82,6 @@ class Strings(JsonDataClass):  # pylint: disable=too-many-instance-attributes
     scrape_region_ca: str = ""
     scrape_region_cl: str = ""
     scrape_region_cn: str = ""
-    scrape_region_cus: str = ""
     scrape_region_cz: str = ""
     scrape_region_de: str = ""
     scrape_region_dk: str = ""
