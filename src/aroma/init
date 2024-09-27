@@ -18,8 +18,8 @@ import constants  # noqa: E402
 from aroma_app import AromaApp  # noqa: E402
 from data.name_db import NameDB  # noqa: E402
 from manager.rom_manager import RomManager  # noqa: E402
-from model.app_config import AppConfig  # noqa: E402
-from model.strings import Strings  # noqa: E402
+from tools.app_config import AppConfig  # noqa: E402
+from tools.strings import Strings  # noqa: E402
 
 
 def parse_args() -> argparse.Namespace:

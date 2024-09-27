@@ -10,9 +10,9 @@ from classes.menu.menu_item_multi import MenuItemMulti
 from classes.menu.menu_item_single import MenuItemSingle
 from constants import SCRAPER_MEDIA_TYPES, SCRAPER_REGION_TREE
 from manager.rom_manager import RomManager
-from model.app_config import AppConfig
 from model.side_pane import SidePane
-from model.strings import Strings
+from tools.app_config import AppConfig
+from tools.strings import Strings
 
 
 class MenuImageManagement(MenuBase):

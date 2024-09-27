@@ -14,7 +14,7 @@ from classes.menu.menu_item_single import MenuItemSingle
 from constants import APP_NAME
 from manager.rom_manager import RomManager
 from model.side_pane import SidePane
-from model.strings import Strings
+from tools.strings import Strings
 
 
 class MenuMain(MenuBase):

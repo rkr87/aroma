@@ -114,7 +114,6 @@ SCRAPER_REGION_TREE = {
     "ca": ["ca", "ame", "wor", "us", "uk", "eu", "ss"],
     "cl": ["cl", "ame", "wor", "us", "uk", "ss"],
     "cn": ["cn", "asi", "wor", "us", "ame", "uk", "ss"],
-    "cus": ["cus", "wor", "us", "ame", "uk", "ss"],
     "cz": ["cz", "eu", "wor", "us", "ame", "uk", "ss"],
     "de": ["de", "eu", "wor", "us", "ame", "uk", "ss"],
     "dk": ["dk", "eu", "wor", "us", "ame", "uk", "ss"],

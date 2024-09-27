@@ -6,7 +6,7 @@ from constants import (
     SCRAPER_MAX_HEIGHT,
     SCRAPER_MAX_WIDTH,
 )
-from model.app_config import AppConfig
+from tools.app_config import AppConfig
 
 
 @dataclass
