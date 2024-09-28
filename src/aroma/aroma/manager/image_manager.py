@@ -1,8 +1,6 @@
 """Manages image files associated with ROMs."""
 
 import asyncio
-import urllib.error
-import urllib.request
 from concurrent.futures import ThreadPoolExecutor
 from contextlib import suppress
 from pathlib import Path
@@ -18,6 +16,7 @@ from constants import (
     SCRAPER_REGION_TREE,
     SCRAPER_SYSTEM_MAP,
 )
+from data.parser.filename_parser import FilenameParser
 from data.screen_scraper_api import ScreenScraperAPI
 from model.media_item import MediaItem
 from model.rom_detail import RomDetail
@@ -79,23 +78,25 @@ class ImageManager(ClassSingleton):
         return rom_last_scrape <= util.get_datestamp() - days
 
     @staticmethod
+    def _fetch_and_save_image(url: str, save_path: Path) -> None:
+        """Fetch an image and save it to the provided path."""
+        if response := ScreenScraperAPI.get(url):
+            with save_path.open(mode="wb") as f:
+                f.write(response.content)
+
+    @staticmethod
     async def _download_image(
         url: str, save_path: Path, executor: ThreadPoolExecutor
     ) -> None:
-        """Download the image asynchronously using urllib."""
+        """Download the image asynchronously."""
         save_path.parent.mkdir(parents=True, exist_ok=True)
-        try:
-            await asyncio.get_running_loop().run_in_executor(
-                executor,
-                lambda: urllib.request.urlretrieve(url, save_path),
-            )
-        except (urllib.error.URLError, FileNotFoundError) as e:
-            ImageManager.get_static_logger().error(
-                "Error downloading image from %s: %s", url, str(e)
-            )
+        await asyncio.get_running_loop().run_in_executor(
+            executor,
+            lambda: ImageManager._fetch_and_save_image(url, save_path),
+        )
 
     @staticmethod
-    async def _fetch_image_data(
+    async def _fetch_image_data(  # pylint: disable=too-complex
         scraper: ScreenScraperAPI,
         path: Path,
         rom: RomDetail,
@@ -106,25 +107,27 @@ class ImageManager(ClassSingleton):
         system_id = SCRAPER_SYSTEM_MAP.get(system := path.parts[0], None)
         result: list[MediaItem] | None = None
 
+        async def name_search(name: str) -> list[MediaItem] | None:
+            """Fetch media items by name."""
+            return await asyncio.get_event_loop().run_in_executor(
+                executor,
+                lambda: scraper.get_game_media_by_name(
+                    name, system_id, region_priority
+                ),
+            )
+
         if rom.id_method == CONSOLE_ID_METHOD:
             result = await asyncio.get_event_loop().run_in_executor(
                 executor,
                 lambda: scraper.get_game_media_by_crc(rom.id, region_priority),
             )
-        if not result and system in ARCADE_NAMING_SYSTEMS:
-            result = await asyncio.get_event_loop().run_in_executor(
-                executor,
-                lambda: scraper.get_game_media_by_name(
-                    path.with_suffix(".zip").name, system_id, region_priority
-                ),
-            )
+        if system in ARCADE_NAMING_SYSTEMS:
+            result = await name_search(path.with_suffix(".zip").name)
         if not result:
-            result = await asyncio.get_event_loop().run_in_executor(
-                executor,
-                lambda: scraper.get_game_media_by_name(
-                    rom.name_url_encoded, system_id, region_priority
-                ),
-            )
+            result = await name_search(rom.name_clean)
+        if not result and system not in ARCADE_NAMING_SYSTEMS:
+            parse_filename = FilenameParser().parse(path)
+            result = await name_search(parse_filename.name_clean)
         return result
 
     @staticmethod
@@ -146,7 +149,10 @@ class ImageManager(ClassSingleton):
                 await ImageManager._download_image(
                     result[0].url, IMG_PATH / path, executor
                 )
-                return path, (IMG_PATH / path).is_file()
+                if (IMG_PATH / path).is_file():
+                    ImageManager.get_static_logger().debug("Scraped: %s", path)
+                    return path, True
+            ImageManager.get_static_logger().info("Failed Scrape: %s", path)
             return path, False
 
     @staticmethod

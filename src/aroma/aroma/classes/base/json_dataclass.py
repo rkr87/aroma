@@ -26,7 +26,7 @@ class JsonDataClass(ClassSingleton):
         logger.info("Loading JSON data from file: %s", file_path)
 
         try:
-            with Path.open(file_path, encoding="utf-8") as f:
+            with file_path.open(encoding="utf-8") as f:
                 data: dict[str, object] = json.load(f)
         except FileNotFoundError:
             logger.exception("File not found: %s", file_path)
@@ -47,7 +47,7 @@ class JsonDataClass(ClassSingleton):
         """Save the current instance data to file."""
         data_dict = asdict(self)
         file_path = data_dict.pop("_file_path")
-        with Path.open(file_path, "w", encoding="utf-8") as f:
+        with Path(file_path).open("w", encoding="utf-8") as f:
             json.dump(data_dict, f, ensure_ascii=False, indent=4)
 
     def update_value(self, attribute: str, value: str | int | bool) -> None:
