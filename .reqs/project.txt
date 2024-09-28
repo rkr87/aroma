@@ -3,3 +3,4 @@ pylint
 pre_commit
 commitizen
 ruff
+types-requests

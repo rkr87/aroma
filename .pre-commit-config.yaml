@@ -15,6 +15,7 @@ repos:
         entry: ruff format
         language: python
         types: [python]
+        args: ["--force-exclude"]
 
   - repo: local
     hooks:
@@ -24,7 +25,8 @@ repos:
       language: python
       language_version: python3.12
       additional_dependencies: ["mypy",
-                                "mypy-extensions"]
+                                "mypy-extensions",
+                                "types-requests"]
       types: [python]
       args: ["--config-file=pyproject.toml"]
       require_serial: true
