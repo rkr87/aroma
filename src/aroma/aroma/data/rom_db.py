@@ -52,7 +52,7 @@ class RomDB(ClassSingleton):
     def update(self, *, reset: bool = False) -> None:
         """Refresh ROMs in app database."""
         self._update_db(reset=reset)
-        if RUNNING_ON_TSP:
+        if not RUNNING_ON_TSP:
             self._get_unmatched()
 
     def _update_db(self, *, reset: bool) -> None:
@@ -90,7 +90,7 @@ class RomDB(ClassSingleton):
             v.hack = "Hack en-translation"
             v.id = k
         path = APP_ROM_DB_PATH.parent / "unmatched_items.json"
-        with Path.open(path, "w", encoding="utf8") as file:
+        with path.open("w", encoding="utf8") as file:
             json.dump(unmatched, file, indent=4, cls=EnhancedJSONEncoder)
         self.save_db()
 
@@ -274,5 +274,5 @@ class RomDB(ClassSingleton):
         RomDB.get_static_logger().info(
             "Saving ROM database to %s.", APP_ROM_DB_PATH
         )
-        with Path.open(APP_ROM_DB_PATH, "w", encoding="utf8") as file:
+        with APP_ROM_DB_PATH.open("w", encoding="utf8") as file:
             json.dump(self._db, file, indent=4, cls=EnhancedJSONEncoder)

@@ -140,7 +140,7 @@ def check_crc(data: Path | bytes) -> str:
     """Calculate and returns the CRC32 checksum of a file."""
     logging.debug("Calculating CRC32 checksum for file: %s", data)
     if isinstance(data, Path):
-        with Path.open(data, "rb") as f:  # pylint: disable=unspecified-encoding
+        with data.open("rb") as f:  # pylint: disable=unspecified-encoding
             data = f.read()
     crc: int = binascii.crc32(data) & 0xFFFFFFFF
     logging.debug("CRC32 checksum: %s", crc)
