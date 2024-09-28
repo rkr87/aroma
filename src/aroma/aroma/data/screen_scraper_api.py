@@ -1,40 +1,23 @@
 """Defines the ScreenScraper API class for fetching game media data."""
 
-import json
-import urllib.error
-import urllib.parse
-import urllib.request
 from typing import Any
 
-from classes.base.class_singleton import ClassSingleton
 from model.media_item import MediaItem
 from tools.app_config import AppConfig
+from tools.http_request_handler import HttpRequestHandler
 
 
-class ScreenScraperAPI(ClassSingleton):
+class ScreenScraperAPI(HttpRequestHandler):
     """Provides methods to interact with the ScreenScraper API."""
 
     BASE_URL = "https://www.screenscraper.fr/api2/"
 
-    @staticmethod
-    def _load_json(response_data: bytes) -> dict[str, Any]:  # type: ignore[misc]
-        """Load JSON data from bytes."""
-        try:
-            result: dict[str, Any] = json.loads(response_data.decode("utf-8"))
-        except json.JSONDecodeError as e:
-            ScreenScraperAPI.get_static_logger().error(
-                "JSON decode error: %s", str(e)
-            )
-            return {}
-        return result
-
     def _make_request(
         self, endpoint: str, params: dict[str, Any] | None = None
     ) -> dict[str, Any]:
-        """Make a request to the ScreenScraper API using urllib."""
+        """Make a request to the ScreenScraper API."""
         if params is None:
             params = {}
-
         params.update(
             {
                 "devid": "Schmurtz",
@@ -46,22 +29,11 @@ class ScreenScraperAPI(ClassSingleton):
                 "sspassword": AppConfig().screenscraper_password,
             }
         )
-        url = f"{self.BASE_URL}{endpoint}?" + urllib.parse.urlencode(params)
+        url = f"{self.BASE_URL}{endpoint}"
+        if response := self.get(url, params=params):
+            return self.parse_json(response) or {}
 
-        try:
-            with urllib.request.urlopen(url) as response:
-                response_data = response.read()
-        except urllib.error.HTTPError as e:
-            ScreenScraperAPI.get_static_logger().error(
-                "HTTP error occurred: %s - %s", e.code, e.reason
-            )
-            return {}
-        except urllib.error.URLError as e:
-            ScreenScraperAPI.get_static_logger().error(
-                "URL error occurred: %s", str(e.reason)
-            )
-            return {}
-        return self._load_json(response_data)
+        return {}
 
     def _get_game_media(
         self, params: dict[str, str], region_priority: dict[str, int]
@@ -73,7 +45,7 @@ class ScreenScraperAPI(ClassSingleton):
                 result["response"]["jeu"]["medias"], region_priority
             )
         except KeyError as e:
-            ScreenScraperAPI.get_static_logger().error(
+            ScreenScraperAPI.get_static_logger().debug(
                 "Key error while accessing media data: %s", str(e)
             )
             return None
