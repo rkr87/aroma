@@ -115,7 +115,7 @@ class FilenameParser(ClassSingleton):
     def _check_version(result: "_ParserResult") -> None:
         """Extract version information from the text."""
         if match := NAMING_VERSION_PATTERN.search(result.content):
-            result.version = match.group(0)
+            result.version = match.group(0).lower()
             result.content = FilenameParser._strip_item_from_text(
                 result.content, match.group(0)
             )
