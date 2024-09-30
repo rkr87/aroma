@@ -107,12 +107,14 @@ class ImageManager(ClassSingleton):
         system_id = SCRAPER_SYSTEM_MAP.get(system := path.parts[0], None)
         result: list[MediaItem] | None = None
 
-        async def name_search(name: str) -> list[MediaItem] | None:
+        async def name_search(
+            name: str, *, exc_system: bool = False
+        ) -> list[MediaItem] | None:
             """Fetch media items by name."""
             return await asyncio.get_event_loop().run_in_executor(
                 executor,
                 lambda: scraper.get_game_media_by_name(
-                    name, system_id, region_priority
+                    name, None if exc_system else system_id, region_priority
                 ),
             )
 
@@ -128,6 +130,11 @@ class ImageManager(ClassSingleton):
         if not result and system not in ARCADE_NAMING_SYSTEMS:
             parse_filename = FilenameParser().parse(path)
             result = await name_search(parse_filename.name_clean)
+        if not result and system in {"PORTS"}:
+            parse_filename = FilenameParser().parse(path)
+            result = await name_search(
+                parse_filename.name_clean, exc_system=True
+            )
         return result
 
     @staticmethod
