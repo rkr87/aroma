@@ -2,7 +2,7 @@
 
 import logging.config
 from collections import OrderedDict
-from enum import Enum, auto
+from pathlib import Path
 
 from classes.menu.menu_base import MenuBase
 from classes.menu.menu_item_base import MenuItemBase
@@ -19,29 +19,18 @@ class MenuOptions(MenuBase):
     LANG_FILE_SUFFIX = ".json"
     DEFAULT_LANG = "english"
 
-    class _Options(Enum):
-        """Defines the options available in this menu."""
-
-        LANGUAGE = auto()
-        LOGGING = auto()
-
-    @property
-    def option(self) -> type[_Options]:
-        """Provides the enum class for this menu's options."""
-        return self._Options
-
     def __init__(self) -> None:
         self._config = AppConfig()
         super().__init__(Strings().options, self._build_menu())
 
-    def _build_menu(self) -> OrderedDict[Enum, MenuItemBase]:  # pylint: disable=no-self-use
+    def _build_menu(self) -> OrderedDict[str, MenuItemBase]:  # pylint: disable=no-self-use
         """Build the options menu with predefined settings choices."""
         logger = MenuOptions.get_static_logger()
         logger.debug("Building Options menu options.")
         return OrderedDict(
             [
-                (self.option.LANGUAGE, self._language()),
-                (self.option.LOGGING, self._logging_level()),
+                ("LANGUAGE", self._language()),
+                ("LOGGING", self._logging_level()),
             ],
         )
 
@@ -105,4 +94,9 @@ class MenuOptions(MenuBase):
         """Set the application language and update configuration."""
         Strings.load(APP_TRANSLATION_PATH / f"{language}.json")
         for menu in reversed(MenuBase.get_children()):
-            menu.rebuild()
+            menu.reset_menu()
+
+    def build_dynamic_menu(  # noqa: D102  # Ignore missing docstring, it's inherited
+        self, breadcrumb: str, path: Path | None, identifier: str | None
+    ) -> None:
+        pass

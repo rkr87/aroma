@@ -1,7 +1,7 @@
 """Defines a menu for managing collections."""
 
 from collections import OrderedDict
-from enum import Enum, auto
+from pathlib import Path
 
 from app.navigation.menu_new_collection import MenuNewCollection
 from app.navigation.menu_stack import MenuStack
@@ -13,33 +13,22 @@ from tools.strings import Strings
 class MenuCollections(MenuBase):
     """Manages a menu for collections."""
 
-    class _Options(Enum):
-        """Defines the options available in this menu."""
-
-        NEW = auto()
-
-    @property
-    def option(self) -> type[_Options]:
-        """Provides the enum class for this menu's options."""
-        return self._Options
-
     def __init__(self) -> None:
         self.menu_stack: MenuStack = MenuStack()
         self.new_collection_menu: MenuNewCollection = MenuNewCollection()
         super().__init__(Strings().collections, self._build_menu())
 
-    def _build_menu(self) -> OrderedDict[Enum, MenuItemBase]:
+    def _build_menu(self) -> OrderedDict[str, MenuItemBase]:
         """Build the initial menu."""
         logger = MenuNewCollection.get_static_logger()
         logger.debug("Building Collections menu options.")
-        return OrderedDict(
-            [
-                (
-                    self.option.NEW,
-                    self.sub_menu(
-                        self.new_collection_menu,
-                        self.menu_stack.push,
-                    ),
-                ),
-            ],
+        new = (
+            "NEW",
+            self.sub_menu(self.new_collection_menu, self.menu_stack.push),
         )
+        return OrderedDict([new])
+
+    def build_dynamic_menu(  # noqa: D102  # Ignore missing docstring, it's inherited
+        self, breadcrumb: str, path: Path | None, identifier: str | None
+    ) -> None:
+        pass

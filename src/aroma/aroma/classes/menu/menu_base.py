@@ -3,8 +3,8 @@
 from abc import ABC, abstractmethod
 from collections import OrderedDict
 from collections.abc import Callable
-from enum import Enum
 from functools import partial
+from pathlib import Path
 from typing import Any, TypeVar, cast
 
 from classes.base.class_singleton import ClassSingleton
@@ -27,7 +27,7 @@ class MenuBase(ClassSingleton, ABC):
     def __init__(
         self,
         breadcrumb: str,
-        items: OrderedDict[Enum, MenuItemBase],
+        items: OrderedDict[str, MenuItemBase],
         side_pane: SidePane | None = None,
     ) -> None:
         super().__init__()
@@ -41,12 +41,7 @@ class MenuBase(ClassSingleton, ABC):
         self.action: ActionManager = ActionManager(self.select, self.content)
         self._logger.info("Initialised %s menu", breadcrumb)
 
-    @property
-    @abstractmethod
-    def option(self) -> type[Enum]:  # pylint: disable=invalid-name
-        """Abstract property that returns the enum class for menu options."""
-
-    def rebuild(self) -> None:
+    def reset_menu(self) -> None:
         """Rebuild the menu and restore the previously selected item."""
         selected = self.select.state.selected
         self.reset_instance()
@@ -66,12 +61,36 @@ class MenuBase(ClassSingleton, ABC):
     def sub_menu(
         menu: "MenuBase",
         stack_push: Callable[["MenuBase"], Any],
+        *,
         side_pane: SidePane | None = None,
     ) -> MenuItemSingle:
         """Create a menu item that pushes a submenu onto the menu stack."""
         return MenuItemSingle(
             menu.breadcrumb,
             partial(stack_push, menu),
+            side_pane=side_pane,
+        )
+
+    @staticmethod  # type: ignore[misc]
+    def dynamic_sub_menu(  # pylint: disable=too-many-arguments  # noqa: PLR0913
+        text: str,
+        path: Path | None,
+        identifier: str | None,
+        menu: "MenuBase",
+        stack_push: Callable[["MenuBase"], Any],
+        *,
+        side_pane: SidePane | None = None,
+    ) -> MenuItemSingle:
+        """Create a menu item that pushes a submenu onto the menu stack."""
+
+        def rebuild_and_push() -> None:
+            """TODO."""
+            menu.build_dynamic_menu(text, path, identifier)
+            stack_push(menu)
+
+        return MenuItemSingle(
+            text,
+            rebuild_and_push,
             side_pane=side_pane,
         )
 
@@ -127,8 +146,14 @@ class MenuBase(ClassSingleton, ABC):
             )
         return actions
 
-    def _rebuild_menu(self, reason: str) -> None:
+    def _reset_menu_action(self, reason: str) -> None:
         """Rebuilds the menu."""
         logger = MenuBase.get_static_logger()
         logger.info("Rebuilding %s menu, reason: %s", type(self), reason)
-        self.rebuild()
+        self.reset_menu()
+
+    @abstractmethod
+    def build_dynamic_menu(
+        self, breadcrumb: str, path: Path | None, identifier: str | None
+    ) -> None:
+        """TODO."""
