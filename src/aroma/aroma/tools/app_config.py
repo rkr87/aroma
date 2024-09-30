@@ -29,6 +29,8 @@ class AppConfig(JsonDataClass):  # pylint: disable=too-many-instance-attributes
     screenscraper_userid: str = ""
     screenscraper_password: str = ""
     _scrape_cpu_threads: int = 0
+    archive_userid: str = ""
+    archive_password: str = ""
 
     @property
     def scrape_cpu_threads(self) -> int | None:
