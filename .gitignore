@@ -9,6 +9,8 @@ rom_db.json
 arcade.db
 console.db
 unmatched_items.json
+session.json
+test_dl_list.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

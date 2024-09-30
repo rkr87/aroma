@@ -18,6 +18,12 @@ class Strings(JsonDataClass):  # pylint: disable=too-many-instance-attributes
     collections_desc: list[str] = field(default_factory=list)
     rom_naming: str = ""
     rom_naming_desc: list[str] = field(default_factory=list)
+    downloader: str = ""
+    downloader_desc: str = ""
+    archive_user: str = ""
+    archive_user_desc: list[str] = field(default_factory=list)
+    archive_password: str = ""
+    archive_password_desc: list[str] = field(default_factory=list)
     refresh_roms: str = ""
     refresh_roms_desc: list[str] = field(default_factory=list)
     naming_method: str = ""

@@ -4,6 +4,7 @@ from collections import OrderedDict
 from pathlib import Path
 
 from app.navigation.menu_collections import MenuCollections
+from app.navigation.menu_downloader import MenuDownloader
 from app.navigation.menu_image_management import MenuImageManagement
 from app.navigation.menu_options import MenuOptions
 from app.navigation.menu_rom_naming import MenuRomNaming
@@ -59,6 +60,20 @@ class MenuMain(MenuBase):
                         side_pane=SidePane(
                             Strings().image_management,
                             Strings().image_management_desc,
+                        ),
+                    ),
+                ),
+                (
+                    "DOWNLOADER",
+                    self.dynamic_sub_menu(
+                        Strings().downloader,
+                        None,
+                        None,
+                        MenuDownloader(),
+                        MenuStack().push,
+                        side_pane=SidePane(
+                            Strings().downloader,
+                            Strings().downloader_desc,
                         ),
                     ),
                 ),
