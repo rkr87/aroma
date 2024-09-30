@@ -1,7 +1,7 @@
 """Defines the Image Management preferences menu."""
 
 from collections import OrderedDict
-from enum import Enum, auto
+from pathlib import Path
 
 from classes.menu.menu_action import MenuAction
 from classes.menu.menu_base import MenuBase
@@ -18,45 +18,26 @@ from tools.strings import Strings
 class MenuImageManagement(MenuBase):
     """A menu for managing Image Management preferences."""
 
-    class _Options(Enum):
-        """Defines the options available in this menu."""
-
-        SCRAPE_MISSING = auto()
-        SCRAPE_USER = auto()
-        SCRAPE_PASSWORD = auto()
-        SCRAPE_REGION = auto()
-        SCRAPE_MEDIA_TYPE = auto()
-        DAYS_TO_RESCRAPE = auto()
-        SCRAPE_CPU_THREADS = auto()
-        SCRAPE_ON_REFRESH = auto()
-        REMOVE_BROKEN = auto()
-        REMOVE_BROKEN_REFRESH = auto()
-
-    @property
-    def option(self) -> type[_Options]:
-        """Provides the enum class for this menu's options."""
-        return self._Options
-
     def __init__(self) -> None:
         super().__init__(Strings().image_management, self._build_menu())
 
-    def _build_menu(self) -> OrderedDict[Enum, MenuItemBase]:
+    def _build_menu(self) -> OrderedDict[str, MenuItemBase]:
         """Build and return the menu items."""
         logger = MenuImageManagement.get_static_logger()
         logger.debug("Building Image Management menu options.")
 
-        options: OrderedDict[Enum, MenuItemBase] = OrderedDict(
+        options: OrderedDict[str, MenuItemBase] = OrderedDict(
             [
-                (self.option.SCRAPE_MISSING, self._scrape_missing()),
-                (self.option.SCRAPE_USER, self._scrape_user()),
-                (self.option.SCRAPE_PASSWORD, self._scrape_password()),
-                (self.option.SCRAPE_CPU_THREADS, self._scrape_cpu_threads()),
-                (self.option.SCRAPE_MEDIA_TYPE, self._scrape_media_type()),
-                (self.option.SCRAPE_REGION, self._scrape__region()),
-                (self.option.DAYS_TO_RESCRAPE, self._days_to_rescrape()),
-                (self.option.SCRAPE_ON_REFRESH, self._scrape_on_refresh()),
-                (self.option.REMOVE_BROKEN, self._remove_broken_images()),
-                (self.option.REMOVE_BROKEN_REFRESH, self._remove_on_refresh()),
+                ("SCRAPE_MISSING", self._scrape_missing()),
+                ("SCRAPE_USER", self._scrape_user()),
+                ("SCRAPE_PASSWORD", self._scrape_password()),
+                ("SCRAPE_CPU_THREADS", self._scrape_cpu_threads()),
+                ("SCRAPE_MEDIA_TYPE", self._scrape_media_type()),
+                ("SCRAPE_REGION", self._scrape__region()),
+                ("DAYS_TO_RESCRAPE", self._days_to_rescrape()),
+                ("SCRAPE_ON_REFRESH", self._scrape_on_refresh()),
+                ("REMOVE_BROKEN", self._remove_broken_images()),
+                ("REMOVE_BROKEN_REFRESH", self._remove_on_refresh()),
             ],
         )
         return options
@@ -224,3 +205,8 @@ class MenuImageManagement(MenuBase):
                 Strings().remove_broken_refresh_desc,
             ),
         )
+
+    def build_dynamic_menu(  # noqa: D102  # Ignore missing docstring, it's inherited
+        self, breadcrumb: str, path: Path | None, identifier: str | None
+    ) -> None:
+        pass

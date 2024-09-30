@@ -1,7 +1,7 @@
 """Defines the ROM naming preferences menu."""
 
 from collections import OrderedDict
-from enum import Enum, auto
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 from classes.menu.menu_base import MenuBase
@@ -34,40 +34,27 @@ if TYPE_CHECKING:
 class MenuRomNaming(MenuBase):
     """A menu for managing ROM naming preferences."""
 
-    class _Options(Enum):
-        """Defines the options available in this menu."""
-
-        ARCADE_NAMING = auto()
-        NAMING_METHOD = auto()
-        CONSOLE_NAMING = auto()
-        NAME_FORMAT = auto()
-
-    @property
-    def option(self) -> type[_Options]:
-        """Provides the enum class for this menu's options."""
-        return self._Options
-
     def __init__(self) -> None:
-        """Initialize the ROM naming menu with arcade ROM naming options."""
+        """Initialise the ROM naming menu with arcade ROM naming options."""
         super().__init__(Strings().rom_naming, self._build_menu())
 
-    def _build_menu(self) -> OrderedDict[Enum, MenuItemBase]:
+    def _build_menu(self) -> OrderedDict[str, MenuItemBase]:
         """Build the menu."""
         logger = MenuRomNaming.get_static_logger()
         logger.debug("Building Rom Naming menu options.")
 
-        options: OrderedDict[Enum, MenuItemBase] = OrderedDict(
+        options: OrderedDict[str, MenuItemBase] = OrderedDict(
             [
-                (self.option.NAMING_METHOD, self._naming_method()),
+                ("NAMING_METHOD", self._naming_method()),
             ],
         )
 
         if AppConfig().naming_method == STOCK_STR:
-            options[self.option.ARCADE_NAMING] = self._arcade_rom_naming()
+            options["ARCADE_NAMING"] = self._arcade_rom_naming()
             return options
 
-        options[self.option.CONSOLE_NAMING] = self._console_naming()
-        options[self.option.NAME_FORMAT] = self._name_format()
+        options["CONSOLE_NAMING"] = self._console_naming()
+        options["NAME_FORMAT"] = self._name_format()
         return options
 
     def _naming_method(self) -> MenuItemMulti:
@@ -79,7 +66,7 @@ class MenuRomNaming(MenuBase):
         actions, current = self._generate_config_actions(
             data,
             "naming_method",
-            self._rebuild_menu,
+            self._reset_menu_action,
         )
         return MenuItemMulti(
             Strings().naming_method,
@@ -162,3 +149,8 @@ class MenuRomNaming(MenuBase):
             LibraryManager.get_arcade_library_status(data),
             SidePane(Strings().arcade_naming, Strings().arcade_naming_desc),
         )
+
+    def build_dynamic_menu(  # noqa: D102  # Ignore missing docstring, it's inherited
+        self, breadcrumb: str, path: Path | None, identifier: str | None
+    ) -> None:
+        pass

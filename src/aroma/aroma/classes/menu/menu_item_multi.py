@@ -26,7 +26,7 @@ class MenuItemMulti(MenuItemBase):
     def get_action(self) -> MenuAction:  # noqa: D102  # Ignore missing docstring, it's inherited
         return self.actions[self.action_index]
 
-    def run_action(self) -> None:  # noqa: D102  # Ignore missing docstring, it's inherited
+    def _run_action(self) -> None:  # Ignore missing docstring, it's inherited
         if self.selected and self.actions:
             current_action = self.actions[self.action_index]
             self._logger.debug("Running action: %s", current_action.text)

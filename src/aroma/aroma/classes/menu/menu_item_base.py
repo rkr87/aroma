@@ -15,10 +15,12 @@ class MenuItemBase(ClassBase, ABC):
         side_pane: SidePane | None = None,
         *,
         selected: bool = False,
+        deactivated: bool = False,
     ) -> None:
         super().__init__()
         self.selected: bool = selected
         self._side_pane: SidePane | None = side_pane
+        self.deactivated: bool = deactivated
 
     @abstractmethod
     def get_actions(self) -> list[MenuAction]:
@@ -28,8 +30,14 @@ class MenuItemBase(ClassBase, ABC):
     def get_action(self) -> MenuAction:
         """Return the list of actions for the menu item."""
 
-    @abstractmethod
     def run_action(self) -> None:
+        """TODO."""
+        if self.deactivated:
+            return
+        self._run_action()
+
+    @abstractmethod
+    def _run_action(self) -> None:
         """Run selected an action (either single or from a list)."""
 
     @abstractmethod

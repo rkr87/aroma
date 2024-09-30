@@ -28,7 +28,7 @@ class MenuItemSingle(MenuItemBase):
     def get_action(self) -> MenuAction:  # noqa: D102  # Ignore missing docstring, it's inherited
         return self.action
 
-    def run_action(self) -> None:  # noqa: D102  # Ignore missing docstring, it's inherited
+    def _run_action(self) -> None:  # Ignore missing docstring, it's inherited
         if self.selected:
             self._logger.debug("Running action: %s", self.action.text)
             self.action.run()
