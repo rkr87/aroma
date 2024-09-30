@@ -37,7 +37,7 @@ class RomDetail:  # pylint: disable=too-many-instance-attributes
     @property
     def name_clean(self) -> str:
         """Return the ROM's name with special characters removed."""
-        name_clean = re.sub(r"[^a-zA-Z0-9\s]", "", self.name)
+        name_clean = re.sub(r"[^a-zA-Z0-9\s]", " ", self.name)
         return re.sub(r"\s+", " ", name_clean)
 
     @property
