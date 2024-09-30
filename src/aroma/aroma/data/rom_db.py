@@ -85,9 +85,9 @@ class RomDB(ClassSingleton):
             if v.id_method == FILE_ID_METHOD
         }
         for k, v in unmatched.items():
-            v.id_method = ""
-            v.source = "crc"
-            v.hack = "Hack en-translation"
+            v.id_method = "crc"
+            v.source = "aroma_overrides"
+            v.hack = "SET MANUALLY"
             v.id = k
         path = APP_ROM_DB_PATH.parent / "unmatched_items.json"
         with path.open("w", encoding="utf8") as file:
