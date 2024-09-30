@@ -35,8 +35,8 @@ from tools.util import tuple_to_sdl_color
 class Screen(ClassSingleton):
     """Manages the screen rendering process."""
 
-    SPACING = 12
-    PADDING = 24
+    SPACING = 13
+    PADDING = 39
     SPLIT_PANE = int((SCREEN_WIDTH / 7 * 3) + PADDING + SPACING)
 
     def __init__(self) -> None:
@@ -170,25 +170,28 @@ class Screen(ClassSingleton):
         self._logger.debug("Rendered breadcrumbs: %s", breadcrumbs)
         return max_y
 
-    def _render_menu(self, menu: MenuBase, y_start: int) -> None:
+    def _render_menu(
+        self, menu: MenuBase, y_start: int, max_width: int
+    ) -> None:
         """Render the current menu's items."""
         items: list[MenuItemBase] = menu.update()
 
         for i, item in enumerate(items):
-            text_surface, multi_val, chevron = self._get_menu_surfaces(item)
-            if text_surface:
-                y: int = i * (text_surface.h + self.SPACING) + y_start
-                self._render_item(text_surface, multi_val, chevron, y)
+            surfaces = self._get_menu_surfaces(item, max_width)
+            if surfaces[0]:
+                y: int = i * (surfaces[0].h + self.SPACING) + y_start
+                self._render_item(surfaces[0], surfaces[1], surfaces[2], y)
         self._logger.debug("Rendered menu items")
 
     def _get_menu_surfaces(
-        self,
-        item: MenuItemBase,
+        self, item: MenuItemBase, max_width: int
     ) -> tuple[SDL_Surface | None, SDL_Surface | None, SDL_Surface | None]:
         """Generate the text surfaces for the given menu item."""
         select_surface = self.text_gen.get_selectable(
             item.get_text(),
             selected=item.selected,
+            deactivated=item.deactivated,
+            max_width=max_width,
         )
         if isinstance(item, MenuItemSingle):
             return select_surface, None, None
@@ -228,24 +231,31 @@ class Screen(ClassSingleton):
             )
         self._logger.debug("Rendered item at y-offset %d", y)
 
-    def _render_sidepane(self, side_pane: SidePane | None, y: int) -> None:
+    def _render_sidepane(
+        self, side_pane: SidePane | None, y: int, y_end: int
+    ) -> int:
         """Render the side pane with header and content."""
         if not side_pane:
-            return
+            return SCREEN_WIDTH
+        self._draw_line(
+            tuple_to_sdl_color(SECONDARY_COLOR),
+            (self._side_pane_line_pos, self._side_pane_line_pos),
+            (y, y_end),
+        )
         if header := self._get_header_surface(side_pane.header):
             self._render_surface(
                 header,
                 self.SPLIT_PANE,
                 y,
             )
-        if content := self._get_content_surface(side_pane.content):
-            y += 0 if not header else header.h + self.SPACING
-            self._render_surface(
-                content,
-                self.SPLIT_PANE,
-                y,
-            )
+        content_height = y_end - y - (header.h if header else 0)
+        if content := self._get_content_surface(
+            side_pane.content, content_height
+        ):
+            y += 0 if not header else header.h + self.SPACING // 2
+            self._render_surface(content, self.SPLIT_PANE, y)
         self._logger.debug("Rendered side pane")
+        return self.SPLIT_PANE
 
     def _get_header_surface(
         self,
@@ -259,6 +269,7 @@ class Screen(ClassSingleton):
     def _get_content_surface(
         self,
         content_text: str | list[str] | None,
+        max_height: int | None = None,
     ) -> SDL_Surface | None:
         """Get the surface for the content text."""
         if not content_text:
@@ -269,6 +280,7 @@ class Screen(ClassSingleton):
             content_text,
             SCREEN_WIDTH - self.SPLIT_PANE - self.PADDING,
             Style.SIDEPANE_CONTENT,
+            max_height=max_height,
         )
 
     def render_screen(
@@ -279,16 +291,15 @@ class Screen(ClassSingleton):
         if current.update_required:
             help_h = self._render_background()
             crumb_h = self._render_breadcrumbs(current.breadcrumbs)
-            self._render_menu(current.menu, crumb_h + self.SPACING)
-            self._draw_line(
-                tuple_to_sdl_color(SECONDARY_COLOR),
-                (self._side_pane_line_pos, self._side_pane_line_pos),
-                (crumb_h + self.SPACING, help_h - self.SPACING),
+            side_pane_w = self._render_sidepane(
+                current.menu.content.side_pane, crumb_h + self.SPACING, help_h
             )
-            self._render_sidepane(
-                current.menu.content.side_pane,
+            self._render_menu(
+                current.menu,
                 crumb_h + self.SPACING,
+                side_pane_w - self.PADDING * 2,
             )
+
             self.renderer.present()
             current.update_required = False
             self._logger.debug("Rendered screen for current menu")
