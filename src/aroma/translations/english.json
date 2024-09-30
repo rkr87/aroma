@@ -11,6 +11,18 @@
     "rom_naming_desc": [
         "Add description of options here"
     ],
+    "downloader": "ARCHIVE.ORG DOWNLOADER",
+    "downloader_desc": [
+        "Add description of options here"
+    ],
+    "archive_user": "ARCHIVE.ORG EMAIL",
+    "archive_user_desc": [
+        "Add description of options here"
+    ],
+    "archive_password": "ARCHIVE.ORG PASSWORD",
+    "archive_password_desc": [
+        "Add description of options here"
+    ],
     "refresh_roms": "REFRESH ROMS",
     "refresh_roms_desc": [
         "Add description of options here"
