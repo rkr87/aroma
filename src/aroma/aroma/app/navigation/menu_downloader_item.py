@@ -41,6 +41,6 @@ class MenuDownloaderItem(MenuBase):
                 ),
             )
             menu_item.deactivated = (
-                f"{path.parent.name}/{item["name"]}" in existing_files
+                f"{path.parent.name}/{item['name']}" in existing_files
             )
             self.content.add_item(item["name"].upper(), menu_item)
