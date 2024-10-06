@@ -3,6 +3,7 @@
     "no": "NO",
     "stock": "STOCK",
     "custom": "CUSTOM",
+    "none_set": "NONE SET",
     "collections": "COLLECTIONS",
     "collections_desc": [
         "Add description of options here"
@@ -68,6 +69,22 @@
     "logging_info": "INFO",
     "logging_warning": "WARNING",
     "logging_error": "ERROR",
+    "emu_management": "EMU MANAGEMENT",
+    "emu_management_desc": [
+        "Add description of options here"
+    ],
+    "clean_emus": "CLEAN EMUS",
+    "clean_emus_desc": [
+        "Add description of options here"
+    ],
+    "default_emu": "DEFAULT EMU",
+    "default_emu_desc": [
+        "Add description of options here"
+    ],
+    "clean_emus_refresh": "CLEAN EMUS ON REFRESH",
+    "clean_emus_refresh_desc": [
+        "Add description of options here"
+    ],
     "image_management": "IMAGE MANAGEMENT",
     "image_management_desc": [
         "Add description of options here"
@@ -157,5 +174,31 @@
     "scrape_region_uk": "United Kingdom",
     "scrape_region_us": "USA",
     "scrape_region_wor": "World",
-    "scrape_region_za": "South Africa"
+    "scrape_region_za": "South Africa",
+    "cpu_governor_on_demand": "ON DEMAND",
+    "cpu_governor_performance": "PERFORMANCE",
+    "cpu_governor_conservative": "CONSERVATIVE",
+    "cpu_governor_powersave": "POWERSAVE",
+    "cpu_governor_userspace": "USERSPACE",
+    "cpu_governor_schedutil": "SCHEDUTIL",
+    "cpu_governor_interactive": "INTERACTIVE",
+    "cpu_governor": "CPU GOVERNOR",
+    "cpu_governor_desc": [
+        "Add description of options here"
+    ],
+    "cpu_min_frequency": "CPU MIN FREQUENCY",
+    "cpu_min_frequency_desc": [
+        "Add description of options here"
+    ],
+    "cpu_max_frequency": "CPU MAX FREQUENCY",
+    "cpu_max_frequency_desc": [
+        "Add description of options here"
+    ],
+    "cpu_profile": "CPU PROFILE",
+    "cpu_profile_desc": [
+        "Add description of options here"
+    ],
+    "cpu_profile_balanced": "BALANCED",
+    "cpu_profile_powersave": "POWERSAVE",
+    "cpu_profile_performance": "PERFORMANCE"
 }

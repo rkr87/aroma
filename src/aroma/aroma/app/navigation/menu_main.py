@@ -5,6 +5,7 @@ from pathlib import Path
 
 from app.navigation.menu_collections import MenuCollections
 from app.navigation.menu_downloader import MenuDownloader
+from app.navigation.menu_emu_management import MenuEmuManagement
 from app.navigation.menu_image_management import MenuImageManagement
 from app.navigation.menu_options import MenuOptions
 from app.navigation.menu_rom_naming import MenuRomNaming
@@ -60,6 +61,20 @@ class MenuMain(MenuBase):
                         side_pane=SidePane(
                             Strings().image_management,
                             Strings().image_management_desc,
+                        ),
+                    ),
+                ),
+                (
+                    "EMU_MNGT",
+                    self.dynamic_sub_menu(
+                        Strings().emu_management,
+                        None,
+                        None,
+                        MenuEmuManagement(),
+                        MenuStack().push,
+                        side_pane=SidePane(
+                            Strings().emu_management,
+                            Strings().emu_management_desc,
                         ),
                     ),
                 ),

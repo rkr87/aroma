@@ -111,7 +111,9 @@ def get_zip_info(
     """Retrieve CRC information for all files in a zip archive."""
     with ZipFile(zip_path, "r") as archive:
         file_list: list[ZipInfo] = archive.filelist
-    return [FileCrc(zf.filename, f"{zf.CRC:08x}") for zf in file_list]
+    return [
+        FileCrc(zf.filename, f"{zf.CRC:08x}") for zf in file_list if zf.CRC
+    ]
 
 
 def get_7z_info(
@@ -120,7 +122,9 @@ def get_7z_info(
     """Retrieve CRC information for all files in a 7z archive."""
     with SevenZipFile(archive_path, mode="r") as archive:
         file_list: list[FileInfo] = archive.list()
-    return [FileCrc(zf.filename, f"{zf.crc32:08x}") for zf in file_list]
+    return [
+        FileCrc(zf.filename, f"{zf.crc32:08x}") for zf in file_list if zf.crc32
+    ]
 
 
 def get_archive_info(
@@ -181,6 +185,19 @@ def get_callable_name(func: Callable[..., Any]) -> str:
     return f"{func.__module__}.{func.__name__}"
 
 
+def load_json_list(path: Path) -> list[Any]:
+    """Load a simple JSON file as a dictionary of strings."""
+    if not path.is_file():
+        return []
+    try:
+        with path.open("r", encoding="utf8") as file:
+            data: list[Any] = json.load(file)
+    except json.JSONDecodeError:
+        logging.exception("JSON decode error")
+        data = []
+    return data
+
+
 def load_simple_json(path: Path) -> dict[str, Any]:
     """Load a simple JSON file as a dictionary of strings."""
     if not path.is_file():
@@ -195,14 +212,15 @@ def load_simple_json(path: Path) -> dict[str, Any]:
 
 
 def save_simple_json(
-    data: dict[Path, Any] | dict[str, Any], path: Path
+    data: dict[Path, Any] | dict[str, Any] | list[Any], path: Path
 ) -> None:
     """Save a simple dictionary as a JSON file."""
-    str_data = {str(key): value for key, value in data.items()}
+    if isinstance(data, dict):
+        data = {str(key): value for key, value in data.items()}
     try:
         with path.open("w", encoding="utf8") as file:
             json.dump(
-                str_data,
+                data,
                 file,
                 ensure_ascii=False,
                 indent=4,

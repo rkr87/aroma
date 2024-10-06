@@ -9,7 +9,8 @@ from classes.menu.menu_action import MenuAction
 from classes.menu.menu_base import MenuBase
 from classes.menu.menu_item_base import MenuItemBase
 from classes.menu.menu_item_multi import MenuItemMulti
-from constants import DOWNLOADER_PATH, EMU_PATH
+from constants import DOWNLOADER_PATH
+from manager.emu_manager import EmuManager
 from model.side_pane import SidePane
 from tools.app_config import AppConfig
 from tools.strings import Strings
@@ -72,9 +73,8 @@ class MenuDownloader(MenuBase):
         self.content.clear_items()
         self.content.items = self.default_items()
         for child_path in DOWNLOADER_PATH.iterdir():
-            if (
-                not child_path.is_dir()
-                or not (EMU_PATH / child_path.name).is_dir()
+            if not child_path.is_dir() or not EmuManager.is_valid_system(
+                child_path.name
             ):
                 continue
             self.content.add_item(

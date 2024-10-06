@@ -19,5 +19,6 @@
     "screenscraper_password": "",
     "_scrape_cpu_threads": 0,
     "archive_userid": "",
-    "archive_password": ""
+    "archive_password": "",
+    "clean_emu_on_refresh": true
 }

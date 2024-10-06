@@ -121,3 +121,30 @@ class Strings(JsonDataClass):  # pylint: disable=too-many-instance-attributes
     scrape_region_us: str = ""
     scrape_region_wor: str = ""
     scrape_region_za: str = ""
+    emu_management: str = ""
+    emu_management_desc: list[str] = field(default_factory=list)
+    clean_emus: str = ""
+    clean_emus_desc: list[str] = field(default_factory=list)
+    clean_emus_refresh: str = ""
+    clean_emus_refresh_desc: list[str] = field(default_factory=list)
+    default_emu: str = ""
+    default_emu_desc: list[str] = field(default_factory=list)
+    cpu_governor_on_demand: str = ""
+    cpu_governor_performance: str = ""
+    cpu_governor_conservative: str = ""
+    cpu_governor_powersave: str = ""
+    cpu_governor_userspace: str = ""
+    cpu_governor_schedutil: str = ""
+    cpu_governor_interactive: str = ""
+    cpu_governor: str = ""
+    cpu_governor_desc: list[str] = field(default_factory=list)
+    cpu_min_frequency: str = ""
+    cpu_min_frequency_desc: list[str] = field(default_factory=list)
+    cpu_max_frequency: str = ""
+    cpu_max_frequency_desc: list[str] = field(default_factory=list)
+    cpu_profile: str = ""
+    cpu_profile_desc: list[str] = field(default_factory=list)
+    cpu_profile_balanced: str = ""
+    cpu_profile_powersave: str = ""
+    cpu_profile_performance: str = ""
+    none_set: str = ""
