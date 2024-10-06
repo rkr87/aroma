@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Self
 
 from classes.base.class_singleton import ClassSingleton
+from tools import util
 
 
 @dataclass
@@ -20,21 +21,13 @@ class JsonDataClass(ClassSingleton):
         self._logger = logging.getLogger(f"{self.__class__.__module__}")
 
     @classmethod
-    def load(cls, file_path: Path) -> Self:
+    def load(cls, file_path: Path, default: Path | None = None) -> Self:
         """Load data from a JSON file into an instance of JsonDataClass."""
         logger = cls.get_static_logger()
         logger.info("Loading JSON data from file: %s", file_path)
 
-        try:
-            with file_path.open(encoding="utf-8") as f:
-                data: dict[str, object] = json.load(f)
-        except FileNotFoundError:
-            logger.exception("File not found: %s", file_path)
-            raise
-        except json.JSONDecodeError:
-            logger.exception("Error decoding JSON from file: %s", file_path)
-            raise
-
+        data = util.load_simple_json(default) if default else {}
+        data.update(util.load_simple_json(file_path))
         data["_file_path"] = file_path
 
         logger.info(
