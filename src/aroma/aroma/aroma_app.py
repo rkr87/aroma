@@ -1,8 +1,10 @@
 """Main application class."""
 
 import sys
+import time
 from typing import TYPE_CHECKING
 
+from app.background_worker import BackgroundWorker
 from app.input.controller import Controller
 from app.navigation.nav_controller import NavController
 from app.render.screen import Screen
@@ -64,10 +66,20 @@ class AromaApp(ClassSingleton):
         menu: CurrentMenu = self.navigator.handle_events(event)
         self.screen.render_screen(menu)
 
+    def _check_worker(self) -> None:
+        """TODO."""
+        if not BackgroundWorker().busy:
+            return
+        while BackgroundWorker().busy:  # pylint: disable=while-used
+            time.sleep(0.01)
+        menu = self.navigator.current_menu(force_update=True)
+        self.screen.render_screen(menu)
+
     def poll_event(self) -> None:
         """Poll and process SDL events."""
         self._logger.info("Event polling started.")
         while self.running:  # pylint: disable=while-used
+            self._check_worker()
             event = SDL_Event()
             if SDL_PollEvent(event):
                 self.handle_event(event)
