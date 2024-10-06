@@ -4,6 +4,9 @@ import os
 import re
 from pathlib import Path
 
+from enums.cpu_governor import CPUGovernor
+from model.cpu_profile import CPUProfile
+
 APP_NAME = "aROMa"
 
 TSP_LIBRARY_VAR = "LD_LIBRARY_PATH"
@@ -253,6 +256,7 @@ SCRAPER_SYSTEM_MAP = {
     "ZXS": "76",
 }
 
+NON_CONFIGURABLE_SYSTEM_PREFIX = ["PORTS", "_"]
 
 PRIMARY_COLOR = (217, 217, 217)
 SECONDARY_COLOR = (23, 147, 209)
@@ -267,3 +271,31 @@ CUSTOM_STR = "CUSTOM"
 ROM_DB_IGNORE_EXT = {"srm", "sav", "db", "png"}
 ROM_DB_IGNORE_WORDS = {"\u00b0"}
 EMU_EXT_KEY = "extlist"
+
+
+MAX_CPU_FREQ = 2010001
+MIN_CPU_FREQ = 268000
+CPU_FREQ_STEP = 67000
+
+
+CPU_PROFILES = [
+    CPUProfile("CUSTOM"),
+    CPUProfile(
+        "BALANCED",
+        CPUGovernor.ON_DEMAND,
+        402000,
+        1608000,
+    ),
+    CPUProfile(
+        "POWERSAVE",
+        CPUGovernor.CONSERVATIVE,
+        402000,
+        1608000,
+    ),
+    CPUProfile(
+        "PERFOMANCE",
+        CPUGovernor.ON_DEMAND,
+        603000,
+        1809000,
+    ),
+]
