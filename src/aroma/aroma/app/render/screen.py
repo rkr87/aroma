@@ -2,6 +2,7 @@
 
 import ctypes
 
+from app.background_worker import BackgroundWorker
 from app.render.text_generator import Style, TextGenerator
 from classes.base.class_singleton import ClassSingleton
 from classes.menu.menu_base import MenuBase
@@ -24,10 +25,13 @@ from sdl2 import (
     SDL_Rect,
     SDL_RenderCopy,
     SDL_RenderDrawLine,
+    SDL_RenderFillRect,
+    SDL_SetRenderDrawBlendMode,
     SDL_SetRenderDrawColor,
     SDL_Surface,
     SDL_Texture,
 )
+from sdl2.blendmode import SDL_BLENDMODE_BLEND
 from sdl2.ext import Color, Renderer, Window, load_image
 from tools.util import tuple_to_sdl_color
 
@@ -283,6 +287,36 @@ class Screen(ClassSingleton):
             max_height=max_height,
         )
 
+    def _render_worker_overlay(self) -> None:
+        """Render an overlay indicating that a job is in progress."""
+        if not (worker := BackgroundWorker()).busy:
+            return
+        SDL_SetRenderDrawBlendMode(
+            self.renderer.sdlrenderer, SDL_BLENDMODE_BLEND
+        )
+        SDL_SetRenderDrawColor(self.renderer.sdlrenderer, 0, 0, 0, 225)
+        overlay_rect = SDL_Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
+        SDL_RenderFillRect(self.renderer.sdlrenderer, overlay_rect)
+        rect_wh = (480, 270)
+        rect_xy = (
+            (SCREEN_WIDTH - rect_wh[0]) // 2,
+            (SCREEN_HEIGHT - rect_wh[1]) // 2,
+        )
+
+        SDL_SetRenderDrawColor(self.renderer.sdlrenderer, *BG_COLOR, 255)
+        progress_rect = SDL_Rect(
+            rect_xy[0], rect_xy[1], rect_wh[0], rect_wh[1]
+        )
+        SDL_RenderFillRect(self.renderer.sdlrenderer, progress_rect)
+
+        msg_surface: SDL_Surface | None = self.text_gen.get_text(
+            worker.message, Style.DEFAULT
+        )
+        if msg_surface:
+            msg_x = rect_xy[0] + (rect_wh[0] - msg_surface.w) // 2
+            msg_y = rect_xy[1] + (rect_wh[1] - msg_surface.h) // 2
+            self._render_surface(msg_surface, msg_x, msg_y)
+
     def render_screen(
         self,
         current: CurrentMenu,
@@ -299,7 +333,7 @@ class Screen(ClassSingleton):
                 crumb_h + self.SPACING,
                 side_pane_w - self.PADDING * 2,
             )
-
+            self._render_worker_overlay()
             self.renderer.present()
             current.update_required = False
             self._logger.debug("Rendered screen for current menu")
