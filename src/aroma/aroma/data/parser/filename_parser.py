@@ -4,8 +4,9 @@ import re
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from classes.base.class_singleton import ClassSingleton
-from constants import (
+from data.model.rom_detail import RomDetail
+from shared.classes.base.class_singleton import ClassSingleton
+from shared.constants import (
     FILE_ID_METHOD,
     NAMING_DISC_PATTERN,
     NAMING_EXCLUDE_SYSTEMS,
@@ -16,8 +17,7 @@ from constants import (
     NAMING_VERSION_PATTERN,
     NAMING_YEAR_PATTERN,
 )
-from model.rom_detail import RomDetail
-from tools import util
+from shared.tools import util
 
 REPLACE_STRINGS = {
     "New Zealand": "New|Zealand",

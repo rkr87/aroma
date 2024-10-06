@@ -4,7 +4,7 @@ import threading
 from collections.abc import Callable
 from typing import Any
 
-from classes.base.class_singleton import ClassSingleton
+from shared.classes.base.class_singleton import ClassSingleton
 
 
 class BackgroundWorker(ClassSingleton):

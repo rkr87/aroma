@@ -3,11 +3,11 @@
 from collections import OrderedDict
 from pathlib import Path
 
+from app.menu.menu_base import MenuBase
+from app.model.side_pane import SidePane
 from app.navigation.menu_downloader_item import MenuDownloaderItem
 from app.navigation.menu_stack import MenuStack
-from classes.menu.menu_base import MenuBase
-from model.side_pane import SidePane
-from tools import util
+from shared.tools import util
 
 
 class MenuDownloaderCategory(MenuBase):

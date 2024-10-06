@@ -3,9 +3,9 @@
 from collections import OrderedDict
 from pathlib import Path
 
-from classes.menu.menu_base import MenuBase
-from classes.menu.menu_item_base import MenuItemBase
-from classes.menu.menu_item_single import MenuItemSingle
+from app.menu.menu_base import MenuBase
+from app.menu.menu_item_base import MenuItemBase
+from app.menu.menu_item_single import MenuItemSingle
 
 
 class MenuNewCollection(MenuBase):

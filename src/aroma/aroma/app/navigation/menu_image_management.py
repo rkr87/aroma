@@ -4,16 +4,16 @@ from collections import OrderedDict
 from pathlib import Path
 
 from app.background_worker import BackgroundWorker
-from classes.menu.menu_action import MenuAction
-from classes.menu.menu_base import MenuBase
-from classes.menu.menu_item_base import MenuItemBase
-from classes.menu.menu_item_multi import MenuItemMulti
-from classes.menu.menu_item_single import MenuItemSingle
-from constants import SCRAPER_MEDIA_TYPES, SCRAPER_REGION_TREE
+from app.menu.menu_action import MenuAction
+from app.menu.menu_base import MenuBase
+from app.menu.menu_item_base import MenuItemBase
+from app.menu.menu_item_multi import MenuItemMulti
+from app.menu.menu_item_single import MenuItemSingle
+from app.model.side_pane import SidePane
+from app.strings import Strings
 from manager.rom_manager import RomManager
-from model.side_pane import SidePane
-from tools.app_config import AppConfig
-from tools.strings import Strings
+from shared.app_config import AppConfig
+from shared.constants import SCRAPER_MEDIA_TYPES, SCRAPER_REGION_TREE
 
 
 class MenuImageManagement(MenuBase):

@@ -4,16 +4,16 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from apsw import Connection, Cursor
-from classes.base.class_singleton import ClassSingleton
-from constants import (
+from data.model.rom_detail import RomDetail
+from manager.image_manager import ImageManager
+from shared.classes.base.class_singleton import ClassSingleton
+from shared.constants import (
     APP_NAME,
     ARCADE_NAMING_SYSTEMS,
     EMU_PATH,
     ROM_PATH,
     TSP_CACHE_DB_SUFFIX,
 )
-from manager.image_manager import ImageManager
-from model.rom_detail import RomDetail
 
 RESET_TABLE = """
     DROP TABLE IF EXISTS %s;

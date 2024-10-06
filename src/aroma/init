@@ -14,12 +14,8 @@ for d in path_dirs:
     sys.path.insert(0, str(path))
 
 # pylint: disable=wrong-import-position
-import constants  # noqa: E402
-from aroma_app import AromaApp  # noqa: E402
-from data.name_db import NameDB  # noqa: E402
-from manager.rom_manager import RomManager  # noqa: E402
-from tools.app_config import AppConfig  # noqa: E402
-from tools.strings import Strings  # noqa: E402
+from shared import constants  # noqa: E402
+from shared.app_config import AppConfig  # noqa: E402
 
 
 def parse_args() -> argparse.Namespace:
@@ -39,23 +35,28 @@ def init() -> None:
     config = AppConfig.load(constants.APP_CONFIG_PATH)
     logging.config.fileConfig(constants.APP_LOGGING_CONFIG_PATH)
     logging.getLogger().setLevel(config.logging_level)
-    Strings.load(
-        constants.APP_TRANSLATION_PATH / f"{config.language}.json",
-        constants.APP_TRANSLATION_PATH / "english.json",
-    )
 
 
 def refresh_roms() -> None:
     """Refresh the ROM database and system cache."""
     logging.info("Refreshing ROM database and system cache...")
-    RomManager().refresh_roms()
-    NameDB().remove_db()
+    from manager.rom_manager import (  # pylint: disable=import-outside-toplevel
+        RomManager,
+    )
+
+    rm = RomManager()
+    rm.refresh_roms()
+    rm.cleanup()
     sys.exit()
 
 
 def launch_aroma() -> None:
     """Initialise and starts the aroma."""
     logging.info("Launching aROMa.")
+    from app.aroma_app import (  # pylint: disable=import-outside-toplevel
+        AromaApp,
+    )
+
     app: AromaApp = AromaApp()
     app.start()
 

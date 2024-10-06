@@ -3,10 +3,9 @@
 from typing import TYPE_CHECKING
 
 from app.input.controller import Controller
+from app.model.current_menu import CurrentMenu
 from app.navigation.menu_main import MenuMain
 from app.navigation.menu_stack import MenuStack
-from classes.base.class_singleton import ClassSingleton
-from model.current_menu import CurrentMenu
 from sdl2 import (
     SDL_CONTROLLER_BUTTON_A,
     SDL_CONTROLLER_BUTTON_B,
@@ -18,6 +17,7 @@ from sdl2 import (
     SDL_CONTROLLER_BUTTON_RIGHTSHOULDER,
     SDL_Event,
 )
+from shared.classes.base.class_singleton import ClassSingleton
 
 if TYPE_CHECKING:
     from collections.abc import Callable

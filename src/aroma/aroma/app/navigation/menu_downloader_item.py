@@ -5,12 +5,12 @@ from functools import partial
 from pathlib import Path
 
 from app.background_worker import BackgroundWorker
-from classes.menu.menu_base import MenuBase
-from classes.menu.menu_item_single import MenuItemSingle
-from constants import ROM_PATH
-from data.archive_api import download_file
-from data.rom_db import RomDB
-from tools import util
+from app.menu.menu_base import MenuBase
+from app.menu.menu_item_single import MenuItemSingle
+from manager.download_manager import download_archive_org_file
+from manager.rom_manager import RomManager
+from shared.constants import ROM_PATH
+from shared.tools import util
 
 
 class MenuDownloaderItem(MenuBase):
@@ -29,14 +29,14 @@ class MenuDownloaderItem(MenuBase):
         self.breadcrumb = breadcrumb
         self.content.clear_items()
         data = util.load_simple_json(path)
-        existing_files = RomDB().data
+        existing_files = RomManager().data
         for item in data[identifier]:
             menu_item = MenuItemSingle(
                 item["name"].upper(),
                 partial(
                     BackgroundWorker().do_work,
                     partial(
-                        download_file,
+                        download_archive_org_file,
                         data["id"],
                         item["path"],
                         ROM_PATH / path.parent.name / item["name"],

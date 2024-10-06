@@ -2,14 +2,6 @@
 
 from enum import StrEnum
 
-from classes.base.class_singleton import ClassSingleton
-from constants import (
-    INACTIVE_COLOR,
-    INACTIVE_SEL,
-    PRIMARY_COLOR,
-    RESOURCES,
-    SECONDARY_COLOR,
-)
 from sdl2 import (
     SDL_BlitSurface,
     SDL_CreateRGBSurface,
@@ -17,7 +9,15 @@ from sdl2 import (
     SDL_Surface,
     ext,
 )
-from tools.util import tuple_to_sdl_color
+from shared.classes.base.class_singleton import ClassSingleton
+from shared.constants import (
+    INACTIVE_COLOR,
+    INACTIVE_SEL,
+    PRIMARY_COLOR,
+    RESOURCES,
+    SECONDARY_COLOR,
+)
+from shared.tools.util import tuple_to_sdl_color
 
 
 class Style(StrEnum):

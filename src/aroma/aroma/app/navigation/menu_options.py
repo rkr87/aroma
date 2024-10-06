@@ -4,13 +4,13 @@ import logging.config
 from collections import OrderedDict
 from pathlib import Path
 
-from classes.menu.menu_base import MenuBase
-from classes.menu.menu_item_base import MenuItemBase
-from classes.menu.menu_item_multi import MenuItemMulti
-from constants import APP_TRANSLATION_PATH
-from model.side_pane import SidePane
-from tools.app_config import AppConfig
-from tools.strings import Strings
+from app.menu.menu_base import MenuBase
+from app.menu.menu_item_base import MenuItemBase
+from app.menu.menu_item_multi import MenuItemMulti
+from app.model.side_pane import SidePane
+from app.strings import Strings
+from shared.app_config import AppConfig
+from shared.constants import APP_TRANSLATION_PATH
 
 
 class MenuOptions(MenuBase):
