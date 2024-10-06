@@ -9,7 +9,7 @@ from sdl2 import (
     SDL_IsGameController,
     SDL_NumJoysticks,
 )
-from shared.classes.base.class_singleton import ClassSingleton
+from shared.classes.class_singleton import ClassSingleton
 
 
 class Controller(ClassSingleton):

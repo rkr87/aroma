@@ -3,7 +3,7 @@
 from dataclasses import dataclass
 from enum import Enum, auto
 
-from shared.classes.base.class_base import ClassBase
+from shared.classes.class_base import ClassBase
 from shared.constants import MAX_ITEMS_PER_PAGE
 from shared.tools.util import clamp
 

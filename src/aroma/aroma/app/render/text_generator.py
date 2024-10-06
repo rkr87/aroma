@@ -9,7 +9,7 @@ from sdl2 import (
     SDL_Surface,
     ext,
 )
-from shared.classes.base.class_singleton import ClassSingleton
+from shared.classes.class_singleton import ClassSingleton
 from shared.constants import (
     INACTIVE_COLOR,
     INACTIVE_SEL,

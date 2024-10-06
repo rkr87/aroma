@@ -4,7 +4,7 @@ from dataclasses import dataclass, field
 
 from app.menu.menu_base import MenuBase
 from app.model.current_menu import CurrentMenu
-from shared.classes.base.class_singleton import ClassSingleton
+from shared.classes.class_singleton import ClassSingleton
 
 
 @dataclass

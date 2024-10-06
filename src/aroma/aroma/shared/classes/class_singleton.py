@@ -4,7 +4,7 @@ from abc import ABCMeta
 from collections import OrderedDict
 from typing import Any, Generic, Self, TypeVar
 
-from shared.classes.base.class_base import ClassBase
+from shared.classes.class_base import ClassBase
 
 _T = TypeVar("_T")
 

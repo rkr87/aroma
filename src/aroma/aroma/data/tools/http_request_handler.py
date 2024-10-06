@@ -4,7 +4,7 @@ import json
 from typing import Any
 
 import requests
-from shared.classes.base.class_singleton import ClassSingleton
+from shared.classes.class_singleton import ClassSingleton
 
 
 class HttpRequestHandler(ClassSingleton):

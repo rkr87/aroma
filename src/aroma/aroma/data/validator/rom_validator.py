@@ -3,7 +3,7 @@
 from pathlib import Path
 
 from manager.emu_manager import EmuManager
-from shared.classes.base.class_singleton import ClassSingleton
+from shared.classes.class_singleton import ClassSingleton
 from shared.constants import (
     ROM_DB_IGNORE_EXT,
     ROM_DB_IGNORE_WORDS,

@@ -3,7 +3,7 @@
 
 from dataclasses import dataclass
 
-from shared.classes.base.json_dataclass import JsonDataClass
+from shared.classes.json_dataclass import JsonDataClass
 
 
 @dataclass

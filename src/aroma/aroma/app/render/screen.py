@@ -24,7 +24,7 @@ from sdl2 import (
 )
 from sdl2.blendmode import SDL_BLENDMODE_BLEND
 from sdl2.ext import Color, Renderer, Window, load_image
-from shared.classes.base.class_singleton import ClassSingleton
+from shared.classes.class_singleton import ClassSingleton
 from shared.constants import (
     APP_NAME,
     BG_COLOR,

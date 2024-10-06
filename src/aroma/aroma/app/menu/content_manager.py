@@ -11,7 +11,7 @@ from collections import OrderedDict
 from app.menu.menu_item_base import MenuItemBase
 from app.menu.selection_manager import SelectionManager
 from app.model.side_pane import SidePane
-from shared.classes.base.class_base import ClassBase
+from shared.classes.class_base import ClassBase
 
 
 class ContentManager(ClassBase):

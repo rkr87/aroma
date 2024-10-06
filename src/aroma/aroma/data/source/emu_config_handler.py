@@ -3,7 +3,7 @@
 import re
 
 from data.model.emu_config import EmuConfig, Launchlist
-from shared.classes.base.class_singleton import ClassSingleton
+from shared.classes.class_singleton import ClassSingleton
 from shared.constants import (
     EMU_EXT_KEY,
     EMU_PATH,

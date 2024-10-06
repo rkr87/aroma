@@ -6,7 +6,7 @@ from pathlib import Path
 from apsw import Connection, Cursor
 from data.model.rom_detail import RomDetail
 from manager.image_manager import ImageManager
-from shared.classes.base.class_singleton import ClassSingleton
+from shared.classes.class_singleton import ClassSingleton
 from shared.constants import (
     APP_NAME,
     ARCADE_NAMING_SYSTEMS,

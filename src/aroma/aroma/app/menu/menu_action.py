@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from typing import Any
 
 from app.model.side_pane import SidePane
-from shared.classes.base.class_base import ClassBase
+from shared.classes.class_base import ClassBase
 from shared.constants import RUNNING_ON_TSP
 from shared.tools import util
 
