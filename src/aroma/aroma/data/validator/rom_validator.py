@@ -2,14 +2,13 @@
 
 from pathlib import Path
 
-from classes.base.class_singleton import ClassSingleton
-from constants import (
+from manager.emu_manager import EmuManager
+from shared.classes.base.class_singleton import ClassSingleton
+from shared.constants import (
     ROM_DB_IGNORE_EXT,
     ROM_DB_IGNORE_WORDS,
     ROM_PATH,
 )
-from data.emu_config_handler import EmuConfigHandler
-from manager.emu_manager import EmuManager
 
 
 class RomValidator(ClassSingleton):
@@ -49,7 +48,7 @@ class RomValidator(ClassSingleton):
         ext = path.suffix.lstrip(".").lower()
         system = path.relative_to(ROM_PATH).parts[0]
         return (
-            not (exts := EmuConfigHandler().get(system).valid_ext)
+            not (exts := EmuManager().get_system_config(system).valid_ext)
             or ext in exts
         )
 

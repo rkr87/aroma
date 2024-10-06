@@ -2,18 +2,27 @@
 
 from pathlib import Path
 
-from classes.base.class_singleton import ClassSingleton
-from constants import CUSTOM_STR, EMU_PATH, NON_CONFIGURABLE_SYSTEM_PREFIX
-from data.emu_config_handler import EmuConfigHandler
-from enums.cpu_governor import CPUGovernor
-from model.cpu_profile import CPUProfile
-from model.emu_config import EmuConfig
-from model.rom_detail import RomDetail
-from tools import util
+from data.enums.cpu_governor import CPUGovernor
+from data.model.cpu_profile import CPUProfile
+from data.model.emu_config import EmuConfig
+from data.model.rom_detail import RomDetail
+from data.source.emu_config_handler import EmuConfigHandler
+from shared.classes.base.class_singleton import ClassSingleton
+from shared.constants import (
+    CUSTOM_STR,
+    EMU_PATH,
+    NON_CONFIGURABLE_SYSTEM_PREFIX,
+)
+from shared.tools import util
 
 
 class EmuManager(ClassSingleton):
     """TODO."""
+
+    @staticmethod
+    def get_system_config(system: str) -> EmuConfig:
+        """TODO."""
+        return EmuConfigHandler().get(system)
 
     @staticmethod
     def _create_visibility_file() -> list[dict[str, str | int]]:

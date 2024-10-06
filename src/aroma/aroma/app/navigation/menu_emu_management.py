@@ -4,16 +4,16 @@ from collections import OrderedDict
 from pathlib import Path
 
 from app.background_worker import BackgroundWorker
+from app.menu.menu_base import MenuBase
+from app.menu.menu_item_base import MenuItemBase
+from app.menu.menu_item_multi import MenuItemMulti
+from app.menu.menu_item_single import MenuItemSingle
+from app.model.side_pane import SidePane
 from app.navigation.menu_emu_config import MenuEmuConfig
 from app.navigation.menu_stack import MenuStack
-from classes.menu.menu_base import MenuBase
-from classes.menu.menu_item_base import MenuItemBase
-from classes.menu.menu_item_multi import MenuItemMulti
-from classes.menu.menu_item_single import MenuItemSingle
+from app.strings import Strings
 from manager.emu_manager import EmuManager
 from manager.rom_manager import RomManager
-from model.side_pane import SidePane
-from tools.strings import Strings
 
 
 class MenuEmuManagement(MenuBase):

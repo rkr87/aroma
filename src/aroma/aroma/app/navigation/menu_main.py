@@ -4,6 +4,10 @@ from collections import OrderedDict
 from pathlib import Path
 
 from app.background_worker import BackgroundWorker
+from app.menu.menu_base import MenuBase
+from app.menu.menu_item_base import MenuItemBase
+from app.menu.menu_item_single import MenuItemSingle
+from app.model.side_pane import SidePane
 from app.navigation.menu_collections import MenuCollections
 from app.navigation.menu_downloader import MenuDownloader
 from app.navigation.menu_emu_management import MenuEmuManagement
@@ -11,13 +15,9 @@ from app.navigation.menu_image_management import MenuImageManagement
 from app.navigation.menu_options import MenuOptions
 from app.navigation.menu_rom_naming import MenuRomNaming
 from app.navigation.menu_stack import MenuStack
-from classes.menu.menu_base import MenuBase
-from classes.menu.menu_item_base import MenuItemBase
-from classes.menu.menu_item_single import MenuItemSingle
-from constants import APP_NAME
+from app.strings import Strings
 from manager.rom_manager import RomManager
-from model.side_pane import SidePane
-from tools.strings import Strings
+from shared.constants import APP_NAME
 
 
 class MenuMain(MenuBase):

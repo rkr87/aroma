@@ -2,9 +2,9 @@
 
 from dataclasses import dataclass, field
 
-from classes.base.class_singleton import ClassSingleton
-from classes.menu.menu_base import MenuBase
-from model.current_menu import CurrentMenu
+from app.menu.menu_base import MenuBase
+from app.model.current_menu import CurrentMenu
+from shared.classes.base.class_singleton import ClassSingleton
 
 
 @dataclass

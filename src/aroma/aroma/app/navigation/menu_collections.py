@@ -3,11 +3,11 @@
 from collections import OrderedDict
 from pathlib import Path
 
+from app.menu.menu_base import MenuBase
+from app.menu.menu_item_base import MenuItemBase
 from app.navigation.menu_new_collection import MenuNewCollection
 from app.navigation.menu_stack import MenuStack
-from classes.menu.menu_base import MenuBase
-from classes.menu.menu_item_base import MenuItemBase
-from tools.strings import Strings
+from app.strings import Strings
 
 
 class MenuCollections(MenuBase):

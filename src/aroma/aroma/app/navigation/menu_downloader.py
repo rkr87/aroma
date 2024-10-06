@@ -3,17 +3,17 @@
 from collections import OrderedDict
 from pathlib import Path
 
+from app.menu.menu_action import MenuAction
+from app.menu.menu_base import MenuBase
+from app.menu.menu_item_base import MenuItemBase
+from app.menu.menu_item_multi import MenuItemMulti
+from app.model.side_pane import SidePane
 from app.navigation.menu_downloader_list import MenuDownloaderList
 from app.navigation.menu_stack import MenuStack
-from classes.menu.menu_action import MenuAction
-from classes.menu.menu_base import MenuBase
-from classes.menu.menu_item_base import MenuItemBase
-from classes.menu.menu_item_multi import MenuItemMulti
-from constants import DOWNLOADER_PATH
+from app.strings import Strings
 from manager.emu_manager import EmuManager
-from model.side_pane import SidePane
-from tools.app_config import AppConfig
-from tools.strings import Strings
+from shared.app_config import AppConfig
+from shared.constants import DOWNLOADER_PATH
 
 
 class MenuDownloader(MenuBase):

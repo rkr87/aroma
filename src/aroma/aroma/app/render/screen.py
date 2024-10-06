@@ -3,22 +3,13 @@
 import ctypes
 
 from app.background_worker import BackgroundWorker
+from app.menu.menu_base import MenuBase
+from app.menu.menu_item_base import MenuItemBase
+from app.menu.menu_item_multi import MenuItemMulti
+from app.menu.menu_item_single import MenuItemSingle
+from app.model.current_menu import CurrentMenu
+from app.model.side_pane import SidePane
 from app.render.text_generator import Style, TextGenerator
-from classes.base.class_singleton import ClassSingleton
-from classes.menu.menu_base import MenuBase
-from classes.menu.menu_item_base import MenuItemBase
-from classes.menu.menu_item_multi import MenuItemMulti
-from classes.menu.menu_item_single import MenuItemSingle
-from constants import (
-    APP_NAME,
-    BG_COLOR,
-    RESOURCES,
-    SCREEN_HEIGHT,
-    SCREEN_WIDTH,
-    SECONDARY_COLOR,
-)
-from model.current_menu import CurrentMenu
-from model.side_pane import SidePane
 from sdl2 import (
     SDL_CreateTextureFromSurface,
     SDL_DestroyTexture,
@@ -33,7 +24,16 @@ from sdl2 import (
 )
 from sdl2.blendmode import SDL_BLENDMODE_BLEND
 from sdl2.ext import Color, Renderer, Window, load_image
-from tools.util import tuple_to_sdl_color
+from shared.classes.base.class_singleton import ClassSingleton
+from shared.constants import (
+    APP_NAME,
+    BG_COLOR,
+    RESOURCES,
+    SCREEN_HEIGHT,
+    SCREEN_WIDTH,
+    SECONDARY_COLOR,
+)
+from shared.tools.util import tuple_to_sdl_color
 
 
 class Screen(ClassSingleton):

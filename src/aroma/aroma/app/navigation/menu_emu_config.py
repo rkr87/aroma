@@ -5,22 +5,20 @@ from collections.abc import Callable
 from functools import partial
 from pathlib import Path
 
-from classes.menu.menu_action import MenuAction
-from classes.menu.menu_base import MenuBase
-from classes.menu.menu_item_multi import MenuItemMulti
-from constants import (
+from app.menu.menu_action import MenuAction
+from app.menu.menu_base import MenuBase
+from app.menu.menu_item_multi import MenuItemMulti
+from app.model.side_pane import SidePane
+from app.strings import Strings
+from data.enums.cpu_governor import CPUGovernor
+from data.model.cpu_profile import CPUProfile
+from data.model.emu_config import EmuConfig
+from manager.emu_manager import EmuManager
+from shared.constants import (
     CPU_FREQ_STEP,
-    CPU_PROFILES,
     MAX_CPU_FREQ,
     MIN_CPU_FREQ,
 )
-from data.emu_config_handler import EmuConfigHandler
-from enums.cpu_governor import CPUGovernor
-from manager.emu_manager import EmuManager
-from model.cpu_profile import CPUProfile
-from model.emu_config import EmuConfig
-from model.side_pane import SidePane
-from tools.strings import Strings
 
 
 class MenuEmuConfig(MenuBase):
@@ -41,7 +39,7 @@ class MenuEmuConfig(MenuBase):
         logger.debug("Building Emu Config menu options.")
         self.breadcrumb = breadcrumb
         self.content.clear_items()
-        config = EmuConfigHandler().get(path.name)
+        config = EmuManager().get_system_config(path.name)
         if config.launchlist:
             self.content.add_item("DEFAULT_EMU", self._default_emu(config))
 
@@ -84,9 +82,31 @@ class MenuEmuConfig(MenuBase):
             EmuManager.set_cpu_profile(config.system, profile)
             self.build_dynamic_menu(self.breadcrumb, config.system, None)
 
+        profiles = [
+            CPUProfile("CUSTOM"),
+            CPUProfile(
+                "BALANCED",
+                CPUGovernor.ON_DEMAND,
+                402000,
+                1608000,
+            ),
+            CPUProfile(
+                "POWERSAVE",
+                CPUGovernor.CONSERVATIVE,
+                402000,
+                1608000,
+            ),
+            CPUProfile(
+                "PERFOMANCE",
+                CPUGovernor.ON_DEMAND,
+                603000,
+                1809000,
+            ),
+        ]
+
         current = 0
         actions: list[MenuAction] = []
-        for index, item in enumerate(CPU_PROFILES):
+        for index, item in enumerate(profiles):
             if item.name == config.aroma_cpu_profile:
                 current = index
             actions.append(

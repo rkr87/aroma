@@ -6,8 +6,13 @@ from contextlib import suppress
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from classes.base.class_singleton import ClassSingleton
-from constants import (
+from data.model.media_item import MediaItem
+from data.model.rom_detail import RomDetail
+from data.parser.filename_parser import FilenameParser
+from data.source.screen_scraper_api import ScreenScraperAPI
+from shared.app_config import AppConfig
+from shared.classes.base.class_singleton import ClassSingleton
+from shared.constants import (
     ARCADE_NAMING_SYSTEMS,
     CONSOLE_ID_METHOD,
     IMG_PATH,
@@ -16,12 +21,7 @@ from constants import (
     SCRAPER_REGION_TREE,
     SCRAPER_SYSTEM_MAP,
 )
-from data.parser.filename_parser import FilenameParser
-from data.screen_scraper_api import ScreenScraperAPI
-from model.media_item import MediaItem
-from model.rom_detail import RomDetail
-from tools import util
-from tools.app_config import AppConfig
+from shared.tools import util
 
 if TYPE_CHECKING:
     from collections.abc import Awaitable

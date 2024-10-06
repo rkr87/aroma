@@ -4,10 +4,14 @@ from collections import OrderedDict
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from classes.menu.menu_base import MenuBase
-from classes.menu.menu_item_base import MenuItemBase
-from classes.menu.menu_item_multi import MenuItemMulti
-from constants import (
+from app.menu.menu_base import MenuBase
+from app.menu.menu_item_base import MenuItemBase
+from app.menu.menu_item_multi import MenuItemMulti
+from app.model.side_pane import SidePane
+from app.strings import Strings
+from app.tools.library_manager import LibraryManager
+from shared.app_config import AppConfig
+from shared.constants import (
     CUSTOM_STR,
     NAMING_ADDITIONAL_ID,
     NAMING_DISC_ID,
@@ -21,14 +25,10 @@ from constants import (
     NAMING_YEAR_ID,
     STOCK_STR,
 )
-from model.side_pane import SidePane
-from tools import util
-from tools.app_config import AppConfig
-from tools.library_manager import LibraryManager
-from tools.strings import Strings
+from shared.tools import util
 
 if TYPE_CHECKING:
-    from classes.menu.menu_action import MenuAction
+    from app.menu.menu_action import MenuAction
 
 
 class MenuRomNaming(MenuBase):
