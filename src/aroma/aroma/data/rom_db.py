@@ -92,7 +92,6 @@ class RomDB(ClassSingleton):
         path = APP_ROM_DB_PATH.parent / "unmatched_items.json"
         with path.open("w", encoding="utf8") as file:
             json.dump(unmatched, file, indent=4, cls=EnhancedJSONEncoder)
-        self.save_db()
 
     def _process_files_in_batches(
         self,
