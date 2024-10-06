@@ -31,6 +31,7 @@ class AppConfig(JsonDataClass):  # pylint: disable=too-many-instance-attributes
     _scrape_cpu_threads: int = 0
     archive_userid: str = ""
     archive_password: str = ""
+    clean_emu_on_refresh: bool = False
 
     @property
     def scrape_cpu_threads(self) -> int | None:
