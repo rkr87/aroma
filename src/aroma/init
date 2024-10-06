@@ -39,7 +39,10 @@ def init() -> None:
     config = AppConfig.load(constants.APP_CONFIG_PATH)
     logging.config.fileConfig(constants.APP_LOGGING_CONFIG_PATH)
     logging.getLogger().setLevel(config.logging_level)
-    Strings.load(constants.APP_TRANSLATION_PATH / f"{config.language}.json")
+    Strings.load(
+        constants.APP_TRANSLATION_PATH / f"{config.language}.json",
+        constants.APP_TRANSLATION_PATH / "english.json",
+    )
 
 
 def refresh_roms() -> None:
