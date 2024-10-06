@@ -1,4 +1,4 @@
-"""Defines the Image Management preferences menu."""
+"""TODO."""
 
 from collections import OrderedDict
 from pathlib import Path
@@ -16,7 +16,7 @@ from tools.strings import Strings
 
 
 class MenuEmuManagement(MenuBase):
-    """A menu for managing Image Management preferences."""
+    """TODO."""
 
     def __init__(self) -> None:
         self.menu_stack: MenuStack = MenuStack()
@@ -33,7 +33,7 @@ class MenuEmuManagement(MenuBase):
         )
 
     def _clean_emus(self) -> MenuItemSingle:
-        """Create option to remove broken images."""
+        """TODO."""
 
         def clean_emus() -> None:
             RomManager().clean_emus()
@@ -47,7 +47,7 @@ class MenuEmuManagement(MenuBase):
 
     @staticmethod
     def _clean_emus_on_refresh() -> MenuItemMulti:
-        """Create option to toggle removal of broken images on refresh."""
+        """TODO."""
         data: dict[bool, str] = {
             True: Strings().yes,
             False: Strings().no,
