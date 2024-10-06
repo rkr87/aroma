@@ -4,6 +4,7 @@ from collections import OrderedDict
 from functools import partial
 from pathlib import Path
 
+from app.background_worker import BackgroundWorker
 from classes.menu.menu_base import MenuBase
 from classes.menu.menu_item_single import MenuItemSingle
 from constants import ROM_PATH
@@ -33,11 +34,15 @@ class MenuDownloaderItem(MenuBase):
             menu_item = MenuItemSingle(
                 item["name"].upper(),
                 partial(
-                    download_file,
-                    data["id"],
-                    item["path"],
-                    ROM_PATH / path.parent.name / item["name"],
-                    auth_req=data["auth_req"],
+                    BackgroundWorker().do_work,
+                    partial(
+                        download_file,
+                        data["id"],
+                        item["path"],
+                        ROM_PATH / path.parent.name / item["name"],
+                        auth_req=data["auth_req"],
+                    ),
+                    "Downloading File...",
                 ),
             )
             menu_item.deactivated = (

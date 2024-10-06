@@ -3,6 +3,7 @@
 from collections import OrderedDict
 from pathlib import Path
 
+from app.background_worker import BackgroundWorker
 from classes.menu.menu_action import MenuAction
 from classes.menu.menu_base import MenuBase
 from classes.menu.menu_item_base import MenuItemBase
@@ -33,7 +34,7 @@ class MenuImageManagement(MenuBase):
                 ("SCRAPE_PASSWORD", self._scrape_password()),
                 ("SCRAPE_CPU_THREADS", self._scrape_cpu_threads()),
                 ("SCRAPE_MEDIA_TYPE", self._scrape_media_type()),
-                ("SCRAPE_REGION", self._scrape__region()),
+                ("SCRAPE_REGION", self._scrape_region()),
                 ("DAYS_TO_RESCRAPE", self._days_to_rescrape()),
                 ("SCRAPE_ON_REFRESH", self._scrape_on_refresh()),
                 ("REMOVE_BROKEN", self._remove_broken_images()),
@@ -45,9 +46,16 @@ class MenuImageManagement(MenuBase):
     @staticmethod
     def _scrape_missing() -> MenuItemSingle:
         """Create option to scrape missing images."""
+
+        def scrape() -> None:
+            """TODO."""
+            BackgroundWorker().do_work(
+                RomManager().scrape_missing_images, "Scraping Images..."
+            )
+
         return MenuItemSingle(
             Strings().scrape_missing,
-            RomManager().scrape_missing_images,
+            scrape,
             SidePane(Strings().scrape_missing, Strings().scrape_missing_desc),
         )
 
@@ -69,7 +77,7 @@ class MenuImageManagement(MenuBase):
         )
 
     @staticmethod
-    def _scrape__region() -> MenuItemMulti:
+    def _scrape_region() -> MenuItemMulti:
         """Create option to select scraping region."""
         data: dict[str, str] = {
             i: str(Strings().get_value(f"scrape_region_{i}")).upper()
@@ -180,9 +188,16 @@ class MenuImageManagement(MenuBase):
     @staticmethod
     def _remove_broken_images() -> MenuItemSingle:
         """Create option to remove broken images."""
+
+        def remove() -> None:
+            """TODO."""
+            BackgroundWorker().do_work(
+                RomManager().remove_broken_images, "Removing Broken Images..."
+            )
+
         return MenuItemSingle(
             Strings().remove_broken,
-            RomManager().remove_broken_images,
+            remove,
             SidePane(Strings().remove_broken, Strings().remove_broken_desc),
         )
 

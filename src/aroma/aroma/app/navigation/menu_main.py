@@ -3,6 +3,7 @@
 from collections import OrderedDict
 from pathlib import Path
 
+from app.background_worker import BackgroundWorker
 from app.navigation.menu_collections import MenuCollections
 from app.navigation.menu_downloader import MenuDownloader
 from app.navigation.menu_emu_management import MenuEmuManagement
@@ -110,9 +111,16 @@ class MenuMain(MenuBase):
     @staticmethod
     def _refresh_roms() -> MenuItemSingle:
         """Create a menu item that refreshes the ROM database."""
+
+        def refresh_roms() -> None:
+            """TODO."""
+            BackgroundWorker().do_work(
+                RomManager().refresh_roms, "Refreshing Roms..."
+            )
+
         return MenuItemSingle(
             Strings().refresh_roms,
-            RomManager().refresh_roms,
+            refresh_roms,
             SidePane(Strings().refresh_roms, Strings().refresh_roms_desc),
         )
 
