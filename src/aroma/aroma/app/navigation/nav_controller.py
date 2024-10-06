@@ -32,7 +32,7 @@ class NavController(ClassSingleton):
         self.main: MenuMain = MenuMain()
         self._logger.debug("NavController initialized with main menu")
 
-    def _current_menu(self, *, force_update: bool = False) -> CurrentMenu:
+    def current_menu(self, *, force_update: bool = False) -> CurrentMenu:
         """Return the current menu from the top of the stack."""
         if current := self.menu_stack.get_current(
             update_required=force_update,
@@ -48,14 +48,14 @@ class NavController(ClassSingleton):
         """Handle controller input events to navigate through menus."""
         if event is None:
             self._logger.debug("No event passed, updating current menu")
-            return self._current_menu(force_update=True)
+            return self.current_menu(force_update=True)
 
         if Controller.button_press(event, SDL_CONTROLLER_BUTTON_A):
             self._logger.debug("A button pressed, popping menu")
             self.menu_stack.pop()
-            return self._current_menu(force_update=True)
+            return self.current_menu(force_update=True)
 
-        current: CurrentMenu = self._current_menu()
+        current: CurrentMenu = self.current_menu()
         button_actions: dict[int, Callable[..., None]] = {
             SDL_CONTROLLER_BUTTON_DPAD_DOWN: current.menu.select.next_item,
             SDL_CONTROLLER_BUTTON_DPAD_UP: current.menu.select.prev_item,
@@ -73,5 +73,5 @@ class NavController(ClassSingleton):
                     button,
                 )
                 action()
-                return self._current_menu(force_update=True)
+                return self.current_menu(force_update=True)
         return current
