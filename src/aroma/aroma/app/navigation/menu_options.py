@@ -92,7 +92,10 @@ class MenuOptions(MenuBase):
     @staticmethod
     def _set_language(language: str) -> None:
         """Set the application language and update configuration."""
-        Strings.load(APP_TRANSLATION_PATH / f"{language}.json")
+        Strings.load(
+            APP_TRANSLATION_PATH / f"{language}.json",
+            APP_TRANSLATION_PATH / "english.json",
+        )
         for menu in reversed(MenuBase.get_children()):
             menu.reset_menu()
 
