@@ -3,6 +3,7 @@
 from collections import OrderedDict
 from pathlib import Path
 
+from app.background_worker import BackgroundWorker
 from app.navigation.menu_emu_config import MenuEmuConfig
 from app.navigation.menu_stack import MenuStack
 from classes.menu.menu_base import MenuBase
@@ -36,7 +37,9 @@ class MenuEmuManagement(MenuBase):
         """TODO."""
 
         def clean_emus() -> None:
-            RomManager().clean_emus()
+            BackgroundWorker().do_work(
+                RomManager().clean_emus, "Cleaning Emulators..."
+            )
             self.build_dynamic_menu(self.breadcrumb)
 
         return MenuItemSingle(
