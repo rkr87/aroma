@@ -11,6 +11,8 @@ console.db
 unmatched_items.json
 session.json
 test_dl_list.json
+log.txt
+scraper_log.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
