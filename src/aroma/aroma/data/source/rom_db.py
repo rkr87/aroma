@@ -10,7 +10,7 @@ from data.parser.filename_parser import FilenameParser
 from data.source.name_db import NameDB
 from data.validator.rom_validator import RomValidator
 from shared.app_config import AppConfig
-from shared.classes.base.class_singleton import ClassSingleton
+from shared.classes.class_singleton import ClassSingleton
 from shared.constants import (
     APP_ROM_DB_PATH,
     ARCADE_ID_METHOD,

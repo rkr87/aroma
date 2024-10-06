@@ -7,7 +7,7 @@ from manager.cache_manager import CacheManager
 from manager.emu_manager import EmuManager
 from manager.image_manager import ImageManager
 from shared.app_config import AppConfig
-from shared.classes.base.class_singleton import ClassSingleton
+from shared.classes.class_singleton import ClassSingleton
 
 
 class RomManager(ClassSingleton):

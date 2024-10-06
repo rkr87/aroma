@@ -1,7 +1,7 @@
 {
     "label": "aROMa",
-    "icon": "icon.png",
-    "iconsel": "icon.png",
+    "icon": "resources/ui/icon.png",
+    "iconsel": "resources/ui/icon.png",
     "launch": "launch.sh",
     "description": "aROMa",
     "language": "english",

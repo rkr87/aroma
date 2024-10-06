@@ -1,6 +1,6 @@
 """Manages installation and status of arcade ROM naming libraries."""
 
-from shared.classes.base.class_singleton import ClassSingleton
+from shared.classes.class_singleton import ClassSingleton
 from shared.constants import (
     ARCADE_LIBRARY_APP_RESOURCE,
     ARCADE_LIBRARY_NAME,

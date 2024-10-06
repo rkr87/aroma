@@ -2,7 +2,7 @@
 
 from dataclasses import dataclass
 
-from shared.classes.base.class_base import ClassBase
+from shared.classes.class_base import ClassBase
 
 
 @dataclass

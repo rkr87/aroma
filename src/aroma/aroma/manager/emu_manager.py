@@ -7,7 +7,7 @@ from data.model.cpu_profile import CPUProfile
 from data.model.emu_config import EmuConfig
 from data.model.rom_detail import RomDetail
 from data.source.emu_config_handler import EmuConfigHandler
-from shared.classes.base.class_singleton import ClassSingleton
+from shared.classes.class_singleton import ClassSingleton
 from shared.constants import (
     CUSTOM_STR,
     EMU_PATH,

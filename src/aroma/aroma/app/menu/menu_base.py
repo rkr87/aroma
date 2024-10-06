@@ -15,7 +15,7 @@ from app.menu.menu_item_single import MenuItemSingle
 from app.menu.selection_manager import SelectionManager
 from app.model.side_pane import SidePane
 from shared.app_config import AppConfig
-from shared.classes.base.class_singleton import ClassSingleton
+from shared.classes.class_singleton import ClassSingleton
 from shared.tools import util
 
 _T = TypeVar("_T", str, int, bool)

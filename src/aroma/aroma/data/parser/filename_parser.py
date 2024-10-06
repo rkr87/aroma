@@ -5,7 +5,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from data.model.rom_detail import RomDetail
-from shared.classes.base.class_singleton import ClassSingleton
+from shared.classes.class_singleton import ClassSingleton
 from shared.constants import (
     FILE_ID_METHOD,
     NAMING_DISC_PATTERN,

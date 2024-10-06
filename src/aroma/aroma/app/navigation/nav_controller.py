@@ -17,7 +17,7 @@ from sdl2 import (
     SDL_CONTROLLER_BUTTON_RIGHTSHOULDER,
     SDL_Event,
 )
-from shared.classes.base.class_singleton import ClassSingleton
+from shared.classes.class_singleton import ClassSingleton
 
 if TYPE_CHECKING:
     from collections.abc import Callable

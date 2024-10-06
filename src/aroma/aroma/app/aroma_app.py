@@ -23,7 +23,7 @@ from sdl2 import (
 from sdl2.ext import quit as ext_quit
 from shared import constants
 from shared.app_config import AppConfig
-from shared.classes.base.class_singleton import ClassSingleton
+from shared.classes.class_singleton import ClassSingleton
 from shared.constants import APP_NAME
 
 if TYPE_CHECKING:

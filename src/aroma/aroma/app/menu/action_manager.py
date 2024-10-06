@@ -5,7 +5,7 @@ from app.menu.menu_item_base import MenuItemBase
 from app.menu.menu_item_multi import MenuItemMulti
 from app.menu.menu_item_single import MenuItemSingle
 from app.menu.selection_manager import SelectionManager
-from shared.classes.base.class_base import ClassBase
+from shared.classes.class_base import ClassBase
 
 
 class ActionManager(ClassBase):

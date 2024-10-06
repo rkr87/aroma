@@ -11,7 +11,7 @@ from data.model.rom_detail import RomDetail
 from data.parser.filename_parser import FilenameParser
 from data.source.screen_scraper_api import ScreenScraperAPI
 from shared.app_config import AppConfig
-from shared.classes.base.class_singleton import ClassSingleton
+from shared.classes.class_singleton import ClassSingleton
 from shared.constants import (
     ARCADE_NAMING_SYSTEMS,
     CONSOLE_ID_METHOD,

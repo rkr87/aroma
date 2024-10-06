@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 
 from app.menu.menu_action import MenuAction
 from app.model.side_pane import SidePane
-from shared.classes.base.class_base import ClassBase
+from shared.classes.class_base import ClassBase
 
 
 class MenuItemBase(ClassBase, ABC):

@@ -6,7 +6,7 @@ from typing import Self
 
 import apsw
 from data.model.rom_detail import RomDetail
-from shared.classes.base.class_singleton import ClassSingleton
+from shared.classes.class_singleton import ClassSingleton
 from shared.constants import (
     ARCADE_ID_METHOD,
     ARCADE_NAMES_DB,
