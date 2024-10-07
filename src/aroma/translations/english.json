@@ -192,5 +192,10 @@
     ],
     "cpu_profile_balanced": "BALANCED",
     "cpu_profile_powersave": "POWERSAVE",
-    "cpu_profile_performance": "PERFORMANCE"
+    "cpu_profile_performance": "PERFORMANCE",
+    "downloading_file": "DOWNLOADING FILE...",
+    "cleaning_emus": "CLEANING EMULATORS...",
+    "scraping_imgs": "SCRAPING IMAGES...",
+    "removing_broken_imgs": "REMOVING BROKEN IMAGES...",
+    "refreshing_roms": "REFRESHING ROMS..."
 }
