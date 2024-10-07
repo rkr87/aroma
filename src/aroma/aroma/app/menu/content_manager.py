@@ -28,6 +28,10 @@ class ContentManager(ClassBase):
         self.select: SelectionManager = selection_manager
         self._side_pane: SidePane | None = side_pane
 
+    def deactivate_item(self, key: str) -> None:
+        """TODO."""
+        self._items[key].deactivated = True
+
     def add_item(self, key: str, item: MenuItemBase) -> None:
         """Add a menu item to the list."""
         self._items[key] = item
