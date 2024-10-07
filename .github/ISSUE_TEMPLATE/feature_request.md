@@ -1,8 +1,8 @@
 ---
-name: Feature
+name: Feature Request
 about: Suggest an idea for this project
-title: 'feat: ENTER REQUEST DETAILS'
-labels: ''
+title: '[FEATURE]: ENTER TITLE'
+labels: ['enhancement','triage']
 assignees: ''
 
 ---
