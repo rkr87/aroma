@@ -28,10 +28,6 @@
     "refresh_roms_desc": [
         "Add description of options here"
     ],
-    "naming_method": "NAMING METHOD",
-    "naming_method_desc": [
-        "Add description of options here"
-    ],
     "console_naming": "CONSOLE ROM NAMING",
     "console_naming_desc": [
         "Add description of options here"
@@ -49,10 +45,6 @@
     "naming_version_desc": "VERSION",
     "naming_year_desc": "YEAR",
     "naming_additional_desc": "ADDITIONAL",
-    "arcade_naming": "ARCADE ROM NAMING",
-    "arcade_naming_desc": [
-        "Add description of options here"
-    ],
     "options": "OPTIONS",
     "options_desc": [
         "Add description of options here"

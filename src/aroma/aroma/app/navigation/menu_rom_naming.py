@@ -2,14 +2,12 @@
 
 from collections import OrderedDict
 from pathlib import Path
-from typing import TYPE_CHECKING
 
 from app.menu.menu_base import MenuBase
 from app.menu.menu_item_base import MenuItemBase
 from app.menu.menu_item_multi import MenuItemMulti
 from app.model.side_pane import SidePane
 from app.strings import Strings
-from app.tools.library_manager import LibraryManager
 from shared.app_config import AppConfig
 from shared.constants import (
     CUSTOM_STR,
@@ -27,9 +25,6 @@ from shared.constants import (
 )
 from shared.tools import util
 
-if TYPE_CHECKING:
-    from app.menu.menu_action import MenuAction
-
 
 class MenuRomNaming(MenuBase):
     """A menu for managing ROM naming preferences."""
@@ -45,35 +40,11 @@ class MenuRomNaming(MenuBase):
 
         options: OrderedDict[str, MenuItemBase] = OrderedDict(
             [
-                ("NAMING_METHOD", self._naming_method()),
+                ("CONSOLE_NAMING", self._console_naming()),
+                ("NAME_FORMAT", self._name_format()),
             ],
         )
-
-        if AppConfig().naming_method == STOCK_STR:
-            options["ARCADE_NAMING"] = self._arcade_rom_naming()
-            return options
-
-        options["CONSOLE_NAMING"] = self._console_naming()
-        options["NAME_FORMAT"] = self._name_format()
         return options
-
-    def _naming_method(self) -> MenuItemMulti:
-        """Create a menu item for selecting the naming method."""
-        data: dict[str, str] = {
-            STOCK_STR: Strings().stock,
-            CUSTOM_STR: Strings().custom,
-        }
-        actions, current = self._generate_config_actions(
-            data,
-            "naming_method",
-            self._reset_menu_action,
-        )
-        return MenuItemMulti(
-            Strings().naming_method,
-            actions,
-            current,
-            SidePane(Strings().naming_method, Strings().naming_method_desc),
-        )
 
     @staticmethod
     def _console_naming() -> MenuItemMulti:
@@ -129,25 +100,6 @@ class MenuRomNaming(MenuBase):
             actions,
             current,
             SidePane(Strings().name_format, Strings().name_format_desc),
-        )
-
-    @staticmethod
-    def _arcade_rom_naming() -> MenuItemMulti:
-        """Create menu item for selecting arcade ROM naming libraries."""
-        data: dict[str, str] = {
-            STOCK_STR: Strings().stock,
-            CUSTOM_STR: Strings().custom,
-        }
-        actions: list[MenuAction] = MenuRomNaming._generate_actions(
-            data,
-            LibraryManager.install_arcade_library,
-            non_tsp_skip=True,
-        )
-        return MenuItemMulti(
-            Strings().arcade_naming,
-            actions,
-            LibraryManager.get_arcade_library_status(data),
-            SidePane(Strings().arcade_naming, Strings().arcade_naming_desc),
         )
 
     def build_dynamic_menu(  # noqa: D102  # Ignore missing docstring, it's inherited
