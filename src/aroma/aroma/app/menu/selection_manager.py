@@ -65,7 +65,6 @@ class SelectionManager(ClassBase):
                 return self._start
             if self.selected < self._start or self.selected >= self.end:
                 self._start = self.selected
-                return self._start
             self._start = min(self._start, self.total - self.max)
             return self._start
 
