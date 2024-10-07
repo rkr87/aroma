@@ -115,7 +115,7 @@ class MenuMain(MenuBase):
         def refresh_roms() -> None:
             """TODO."""
             BackgroundWorker().do_work(
-                RomManager().refresh_roms, "Refreshing Roms..."
+                RomManager().refresh_roms, Strings().refreshing_roms
             )
 
         return MenuItemSingle(

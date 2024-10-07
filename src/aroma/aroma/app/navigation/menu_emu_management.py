@@ -38,7 +38,7 @@ class MenuEmuManagement(MenuBase):
 
         def clean_emus() -> None:
             BackgroundWorker().do_work(
-                RomManager().clean_emus, "Cleaning Emulators..."
+                RomManager().clean_emus, Strings().cleaning_emus
             )
             self.build_dynamic_menu(self.breadcrumb)
 
