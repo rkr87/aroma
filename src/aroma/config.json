@@ -6,7 +6,6 @@
     "description": "aROMa",
     "language": "english",
     "logging_level": "WARNING",
-    "naming_method": "CUSTOM",
     "console_naming": "CUSTOM",
     "name_format": "$n ($h)",
     "db_rebuild_req": false,
