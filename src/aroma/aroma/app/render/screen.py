@@ -1,7 +1,5 @@
 """Handles screen rendering for the application."""
 
-import ctypes
-
 from app.background_worker import BackgroundWorker
 from app.menu.menu_base import MenuBase
 from app.menu.menu_item_base import MenuItemBase
@@ -9,21 +7,17 @@ from app.menu.menu_item_multi import MenuItemMulti
 from app.menu.menu_item_single import MenuItemSingle
 from app.model.current_menu import CurrentMenu
 from app.model.side_pane import SidePane
+from app.render.sdl_helpers import SDLHelpers
 from app.render.text_generator import Style, TextGenerator
 from sdl2 import (
-    SDL_CreateTextureFromSurface,
-    SDL_DestroyTexture,
     SDL_Rect,
-    SDL_RenderCopy,
-    SDL_RenderDrawLine,
     SDL_RenderFillRect,
     SDL_SetRenderDrawBlendMode,
     SDL_SetRenderDrawColor,
     SDL_Surface,
-    SDL_Texture,
 )
 from sdl2.blendmode import SDL_BLENDMODE_BLEND
-from sdl2.ext import Color, Renderer, Window, load_image
+from sdl2.ext import Renderer, Window, load_image
 from shared.classes.class_singleton import ClassSingleton
 from shared.constants import (
     APP_NAME,
@@ -56,95 +50,60 @@ class Screen(ClassSingleton):
         """Calculates the x-position for the side pane separator line."""
         return self.SPLIT_PANE - int(self.PADDING / 2)
 
-    def _draw_line(
+    def _get_button_info(
         self,
-        color: Color,
-        x: tuple[int, int],
-        y: tuple[int, int],
-    ) -> None:
-        """Draw a line on the screen using provided color and coordinates."""
-        SDL_SetRenderDrawColor(
-            self.renderer.sdlrenderer,
-            color.r,
-            color.g,
-            color.b,
-            color.a,
-        )
-        SDL_RenderDrawLine(
-            self.renderer.sdlrenderer,
-            x[0],
-            y[0],
-            x[1],
-            y[1],
-        )
-        self._logger.debug(
-            "Drawn line from %s to %s with color %s",
-            x,
-            y,
-            color,
-        )
-
-    def _render_surface(
-        self,
-        surface: SDL_Surface | None,
-        x: int,
-        y: int,
-    ) -> None:
-        """Render a given surface at the specified screen coordinates."""
-        if surface is None:
-            return
-
-        texture: SDL_Texture | None = SDL_CreateTextureFromSurface(
-            self.renderer.sdlrenderer,
-            surface,
-        )
-        if texture is None:
-            self._logger.error("Failed to create texture from surface")
-            return
-
-        if isinstance(surface, ctypes.POINTER(SDL_Surface)):
-            surface_width = surface.contents.w
-            surface_height = surface.contents.h
-        else:
-            surface_width = surface.w
-            surface_height = surface.h
-
-        dstrect = SDL_Rect(x, y, surface_width, surface_height)
-        SDL_RenderCopy(self.renderer.sdlrenderer, texture, None, dstrect)
-        SDL_DestroyTexture(texture)
-        self._logger.debug("Rendered surface at (%d, %d)", x, y)
-
-    def _render_background(self) -> int:
-        """Render the background with button icons and associated help text."""
-        self.renderer.clear(tuple_to_sdl_color(BG_COLOR))
-        buttons: list[tuple[str, str]] = [
+    ) -> tuple[list[tuple[SDL_Surface, SDL_Surface | None]], int]:
+        """TODO."""
+        buttons: list[tuple[str, str | None]] = [
+            (f"{RESOURCES}/ui/button-LEFT.png", None),
+            (f"{RESOURCES}/ui/button-RIGHT.png", "LEFT/RIGHT"),
+            (f"{RESOURCES}/ui/button-L.png", None),
+            (f"{RESOURCES}/ui/button-UP.png", None),
+            (f"{RESOURCES}/ui/button-DOWN.png", None),
+            (f"{RESOURCES}/ui/button-R.png", "UP/DOWN"),
             (f"{RESOURCES}/ui/button-A.png", "SELECT"),
             (f"{RESOURCES}/ui/button-B.png", "BACK"),
             (f"{RESOURCES}/ui/button-MENU.png", "EXIT"),
         ]
-
-        y: int = SCREEN_HEIGHT - self.SPACING
-        x: int = SCREEN_WIDTH - self.SPACING
-        min_y: int = y
+        max_height: int = 0
+        button_info: list[tuple[SDL_Surface, SDL_Surface | None]] = []
         for img, text in reversed(buttons):
             if surface := load_image(img):
+                max_height = max(surface.h, max_height)
+                if not text:
+                    button_info.append((surface, None))
+                    continue
                 text_surface: SDL_Surface | None = self.text_gen.get_text(
                     text,
                     Style.BUTTON_HELP_TEXT,
                 )
                 if text_surface:
-                    x -= text_surface.w
-                    y_adj: int = surface.h - (
-                        int((surface.h - text_surface.h) / 2)
-                    )
-                    self._render_surface(text_surface, x, y - y_adj)
-                    x -= surface.w + self.SPACING
-                    min_y = min(min_y, y - y_adj)
-                self._render_surface(surface, x, y - surface.h)
-                min_y = min(min_y, y - surface.h)
-                x -= 25
+                    max_height = max(text_surface.h, max_height)
+                button_info.append((surface, text_surface))
+        return button_info, max_height
+
+    def _render_background(self) -> int:
+        """Render the background with button icons and associated help text."""
+        self.renderer.clear(tuple_to_sdl_color(BG_COLOR))
+        button_info, max_height = self._get_button_info()
+        center_y: int = SCREEN_HEIGHT - self.SPACING - (max_height // 2)
+        x: int = SCREEN_WIDTH
+        for surface, text_surface in button_info:
+            if text_surface:
+                x -= text_surface.w + self.SPACING * 2
+                SDLHelpers.render_surface(
+                    self.renderer,
+                    text_surface,
+                    x,
+                    center_y - text_surface.h // 2,
+                )
+            x -= surface.w + self.SPACING
+            SDLHelpers.render_surface(
+                self.renderer, surface, x, center_y - surface.h // 2
+            )
+
         self._logger.debug("Rendered background with button icons")
-        return min_y
+        return center_y - self.SPACING - max_height // 2
 
     def _render_breadcrumbs(self, breadcrumbs: list[str]) -> int:
         """Render the breadcrumb trail for the current menu."""
@@ -157,7 +116,9 @@ class Screen(ClassSingleton):
                 Style.BREADCRUMB_TRAIL,
             )
             if trail_text:
-                self._render_surface(trail_text, self.SPACING, self.SPACING)
+                SDLHelpers.render_surface(
+                    self.renderer, trail_text, self.SPACING, self.SPACING
+                )
                 crumb_offset = trail_text.w
                 max_y = max(max_y, trail_text.h + self.SPACING)
         breadcrumb_text: SDL_Surface | None = self.text_gen.get_text(
@@ -165,7 +126,8 @@ class Screen(ClassSingleton):
             Style.BREADCRUMB,
         )
         if breadcrumb_text:
-            self._render_surface(
+            SDLHelpers.render_surface(
+                self.renderer,
                 breadcrumb_text,
                 self.SPACING + crumb_offset,
                 self.SPACING,
@@ -216,19 +178,22 @@ class Screen(ClassSingleton):
         y: int,
     ) -> None:
         """Render the item and its associated surfaces."""
-        self._render_surface(
+        SDLHelpers.render_surface(
+            self.renderer,
             text_surface,
             self.PADDING,
             y,
         )
         if multi_val:
-            self._render_surface(
+            SDLHelpers.render_surface(
+                self.renderer,
                 multi_val,
                 self.PADDING + text_surface.w + self.SPACING,
                 y,
             )
         if chevron:
-            self._render_surface(
+            SDLHelpers.render_surface(
+                self.renderer,
                 chevron,
                 self.SPLIT_PANE - chevron.w - self.PADDING,
                 y,
@@ -241,13 +206,15 @@ class Screen(ClassSingleton):
         """Render the side pane with header and content."""
         if not side_pane:
             return SCREEN_WIDTH
-        self._draw_line(
+        SDLHelpers.draw_line(
+            self.renderer,
             tuple_to_sdl_color(SECONDARY_COLOR),
             (self._side_pane_line_pos, self._side_pane_line_pos),
             (y, y_end),
         )
         if header := self._get_header_surface(side_pane.header):
-            self._render_surface(
+            SDLHelpers.render_surface(
+                self.renderer,
                 header,
                 self.SPLIT_PANE,
                 y,
@@ -257,7 +224,9 @@ class Screen(ClassSingleton):
             side_pane.content, content_height
         ):
             y += 0 if not header else header.h + self.SPACING // 2
-            self._render_surface(content, self.SPLIT_PANE, y)
+            SDLHelpers.render_surface(
+                self.renderer, content, self.SPLIT_PANE, y
+            )
         self._logger.debug("Rendered side pane")
         return self.SPLIT_PANE
 
@@ -315,7 +284,7 @@ class Screen(ClassSingleton):
         if msg_surface:
             msg_x = rect_xy[0] + (rect_wh[0] - msg_surface.w) // 2
             msg_y = rect_xy[1] + (rect_wh[1] - msg_surface.h) // 2
-            self._render_surface(msg_surface, msg_x, msg_y)
+            SDLHelpers.render_surface(self.renderer, msg_surface, msg_x, msg_y)
 
     def render_screen(
         self,
