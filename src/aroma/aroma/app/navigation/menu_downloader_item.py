@@ -8,6 +8,7 @@ from typing import Any
 from app.background_worker import BackgroundWorker
 from app.menu.menu_base import MenuBase
 from app.menu.menu_item_single import MenuItemSingle
+from app.strings import Strings
 from manager.download_manager import download_archive_org_file
 from shared.constants import ROM_PATH
 from shared.tools import util
@@ -58,7 +59,7 @@ class MenuDownloaderItem(MenuBase):
             partial(
                 BackgroundWorker().do_work,
                 download,
-                "Downloading File...",
+                Strings().downloading_file,
             ),
         )
         menu_item.deactivated = target_file.is_file()

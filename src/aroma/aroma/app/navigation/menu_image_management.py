@@ -50,7 +50,7 @@ class MenuImageManagement(MenuBase):
         def scrape() -> None:
             """TODO."""
             BackgroundWorker().do_work(
-                RomManager().scrape_missing_images, "Scraping Images..."
+                RomManager().scrape_missing_images, Strings().scraping_imgs
             )
 
         return MenuItemSingle(
@@ -192,7 +192,8 @@ class MenuImageManagement(MenuBase):
         def remove() -> None:
             """TODO."""
             BackgroundWorker().do_work(
-                RomManager().remove_broken_images, "Removing Broken Images..."
+                RomManager().remove_broken_images,
+                Strings().removing_broken_imgs,
             )
 
         return MenuItemSingle(
