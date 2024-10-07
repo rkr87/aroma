@@ -8,9 +8,7 @@ from typing import Any
 from app.background_worker import BackgroundWorker
 from app.menu.menu_base import MenuBase
 from app.menu.menu_item_single import MenuItemSingle
-from data.model.rom_detail import RomDetail
 from manager.download_manager import download_archive_org_file
-from manager.rom_manager import RomManager
 from shared.constants import ROM_PATH
 from shared.tools import util
 
@@ -31,26 +29,25 @@ class MenuDownloaderItem(MenuBase):
         self.breadcrumb = breadcrumb
         self.content.clear_items()
         data = util.load_simple_json(path)
-        existing_files = RomManager().data
         for item in data[identifier]:
-            self._create_menu_item(data, path, item, existing_files)
+            self._create_menu_item(data, path, item)
 
     def _create_menu_item(
         self,
         list_data: dict[str, Any],
         path: Path,
         item: dict[str, Any],
-        existing_files: dict[str, RomDetail],
     ) -> None:
         """TODO."""
         key = item["name"].upper()
+        target_file = ROM_PATH / path.parent.name / str(item["name"])
 
         def download() -> None:
             """TODO."""
             result = download_archive_org_file(
                 list_data["id"],
                 item["path"],
-                ROM_PATH / path.parent.name / item["name"],
+                target_file,
                 auth_req=list_data["auth_req"],
             )
             if result:
@@ -64,7 +61,5 @@ class MenuDownloaderItem(MenuBase):
                 "Downloading File...",
             ),
         )
-        menu_item.deactivated = (
-            f"{path.parent.name}/{item['name']}" in existing_files
-        )
+        menu_item.deactivated = target_file.is_file()
         self.content.add_item(key, menu_item)
