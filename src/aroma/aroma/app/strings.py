@@ -26,12 +26,8 @@ class Strings(JsonDataClass):  # pylint: disable=too-many-instance-attributes
     archive_password_desc: list[str] = field(default_factory=list)
     refresh_roms: str = ""
     refresh_roms_desc: list[str] = field(default_factory=list)
-    naming_method: str = ""
-    naming_method_desc: list[str] = field(default_factory=list)
     console_naming: str = ""
     console_naming_desc: list[str] = field(default_factory=list)
-    arcade_naming: str = ""
-    arcade_naming_desc: list[str] = field(default_factory=list)
     naming_title_desc: str = ""
     naming_name_desc: str = ""
     naming_region_desc: str = ""
