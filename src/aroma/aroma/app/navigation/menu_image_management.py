@@ -13,7 +13,11 @@ from app.model.side_pane import SidePane
 from app.strings import Strings
 from manager.rom_manager import RomManager
 from shared.app_config import AppConfig
-from shared.constants import SCRAPER_MEDIA_TYPES, SCRAPER_REGION_TREE
+from shared.constants import (
+    RESOURCES,
+    SCRAPER_MEDIA_TYPES,
+    SCRAPER_REGION_TREE,
+)
 
 
 class MenuImageManagement(MenuBase):
@@ -62,7 +66,16 @@ class MenuImageManagement(MenuBase):
     @staticmethod
     def _scrape_media_type() -> MenuItemMulti:
         """Create option to select media types for scraping."""
-        data: dict[str, str] = {i: i.upper() for i in SCRAPER_MEDIA_TYPES}
+        data: dict[str, tuple[str, SidePane]] = {
+            i: (
+                i.upper(),
+                SidePane(
+                    header=f"{Strings().scrape_media_type}: {i.upper()}",
+                    img=f"{RESOURCES}/scraping/{i}.png",
+                ),
+            )
+            for i in SCRAPER_MEDIA_TYPES
+        }
         actions, current = MenuImageManagement._generate_config_actions(
             data, "scrape_media_type"
         )
@@ -70,10 +83,7 @@ class MenuImageManagement(MenuBase):
             Strings().scrape_media_type,
             actions,
             current,
-            SidePane(
-                Strings().scrape_media_type,
-                Strings().scrape_media_type_desc,
-            ),
+            SidePane(content=Strings().scrape_media_type_desc),
         )
 
     @staticmethod
