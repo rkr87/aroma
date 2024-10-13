@@ -61,6 +61,8 @@ class EmuConfigHandler(ClassSingleton):
             EMU_PATH / system,
             config.get("label", ""),
             config.get("launch", ""),
+            config.get("background", ""),
+            config.get("icon", ""),
             [ext.lower() for ext in config.get(EMU_EXT_KEY, "").split("|")],
             [Launchlist.from_dict(y) for y in config.get("launchlist", [])],
             governor,

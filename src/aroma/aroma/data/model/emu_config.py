@@ -1,5 +1,6 @@
 """TODO."""
 
+import re
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -26,6 +27,8 @@ class EmuConfig:  # pylint: disable = too-many-instance-attributes
     system: Path
     label: str
     launch: str
+    background: str
+    icon: str
     valid_ext: list[str]
     launchlist: list[Launchlist]
     governor: str | None
@@ -33,3 +36,10 @@ class EmuConfig:  # pylint: disable = too-many-instance-attributes
     max_freq: int | None
     has_cpu_freq_file: bool
     aroma_cpu_profile: str | None = None
+
+    @property
+    def format_label(self) -> str:
+        """TODO."""
+        if not (label := re.sub(r"\s+", " ", self.label).strip()):
+            return self.system.name
+        return f"{label} ({self.system.name})"
