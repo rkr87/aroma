@@ -96,7 +96,7 @@ class MenuBase(ClassSingleton, ABC):
 
     @staticmethod
     def _generate_config_actions(
-        data: dict[_T, str],
+        data: dict[_T, str] | dict[_T, tuple[str, SidePane]],
         config_attr: str,
         function: Callable[[_T], None] | None = None,
         default: int = 0,
@@ -129,7 +129,7 @@ class MenuBase(ClassSingleton, ABC):
 
     @staticmethod
     def _generate_actions(
-        data: dict[_T, str],
+        data: dict[_T, str] | dict[_T, tuple[str, SidePane]],
         function: Callable[[_T], None] | None = None,
         *,
         non_tsp_skip: bool = False,
@@ -137,11 +137,18 @@ class MenuBase(ClassSingleton, ABC):
         """Create menu actions from the provided data mapping."""
         actions: list[MenuAction] = []
         for k, v in data.items():
+            if isinstance(v, tuple):
+                text = v[0]
+                sidepane = v[1]
+            else:
+                text = v
+                sidepane = None
             actions.append(
                 MenuAction(
-                    v,
+                    text,
                     None if not function else partial(function, k),
                     non_tsp_skip=non_tsp_skip,
+                    side_pane=sidepane,
                 ),
             )
         return actions
