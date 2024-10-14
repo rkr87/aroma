@@ -26,10 +26,12 @@ class MenuEmuManagement(MenuBase):
 
     def default_items(self) -> OrderedDict[str, MenuItemBase]:
         """TODO."""
+        clean_on_refresh = self._clean_emus_on_refresh()
+        clean_on_refresh.bottom_separator = True
         return OrderedDict(
             [
                 ("CLEAN_EMUS", self._clean_emus()),
-                ("CLEAN_EMUS_REFRESH", self._clean_emus_on_refresh()),
+                ("CLEAN_EMUS_REFRESH", clean_on_refresh),
             ]
         )
 

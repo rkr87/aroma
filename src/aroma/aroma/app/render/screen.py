@@ -134,6 +134,15 @@ class Screen(ClassSingleton):
         self._logger.debug("Rendered breadcrumbs: %s", breadcrumbs)
         return max_y
 
+    def _draw_menu_separator(self, y: int) -> None:
+        """TODO."""
+        SDLHelpers.draw_line(
+            self.renderer,
+            tuple_to_sdl_color(SECONDARY_COLOR),
+            (0, self.SPLIT_PANE),
+            (y, y),
+        )
+
     def _render_menu(
         self, menu: MenuBase, y_start: int, max_width: int
     ) -> None:
@@ -142,7 +151,12 @@ class Screen(ClassSingleton):
             surfaces = self._get_menu_surfaces(item, max_width)
             if surfaces[0]:
                 y: int = i * (surfaces[0].h + self.SPACING) + y_start
+                if item.bottom_separator:
+                    self._draw_menu_separator(
+                        y + surfaces[0].h + self.SPACING // 2
+                    )
                 self._render_item(surfaces[0], surfaces[1], surfaces[2], y)
+
         self._logger.debug("Rendered menu items")
 
     def _get_menu_surfaces(

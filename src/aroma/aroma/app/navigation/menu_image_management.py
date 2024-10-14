@@ -31,18 +31,27 @@ class MenuImageManagement(MenuBase):
         logger = MenuImageManagement.get_static_logger()
         logger.debug("Building Image Management menu options.")
 
+        remove_on_refresh = self._remove_on_refresh()
+        remove_on_refresh.bottom_separator = True
+
+        scrape_on_refresh = self._scrape_on_refresh()
+        scrape_on_refresh.bottom_separator = True
+
+        days_to_rescrape = self._days_to_rescrape()
+        days_to_rescrape.bottom_separator = True
+
         options: OrderedDict[str, MenuItemBase] = OrderedDict(
             [
+                ("REMOVE_BROKEN", self._remove_broken_images()),
+                ("REMOVE_BROKEN_REFRESH", remove_on_refresh),
                 ("SCRAPE_MISSING", self._scrape_missing()),
-                ("SCRAPE_USER", self._scrape_user()),
-                ("SCRAPE_PASSWORD", self._scrape_password()),
+                ("SCRAPE_ON_REFRESH", scrape_on_refresh),
                 ("SCRAPE_CPU_THREADS", self._scrape_cpu_threads()),
                 ("SCRAPE_MEDIA_TYPE", self._scrape_media_type()),
                 ("SCRAPE_REGION", self._scrape_region()),
-                ("DAYS_TO_RESCRAPE", self._days_to_rescrape()),
-                ("SCRAPE_ON_REFRESH", self._scrape_on_refresh()),
-                ("REMOVE_BROKEN", self._remove_broken_images()),
-                ("REMOVE_BROKEN_REFRESH", self._remove_on_refresh()),
+                ("DAYS_TO_RESCRAPE", days_to_rescrape),
+                ("SCRAPE_USER", self._scrape_user()),
+                ("SCRAPE_PASSWORD", self._scrape_password()),
             ],
         )
         return options
