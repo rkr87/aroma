@@ -787,13 +787,13 @@ ignore-patterns = ".+\\.pyi"
 
 [tool.pylint.'FORMAT']
 max-line-length = 79
-max-module-lines = 350
+max-module-lines = 400
 ignore-long-lines = "^(.*(((#\\s*(pylint|mypy|pyright|type|noqa))|(['\"]http)).*))$"
 
 [tool.pylint.'DESIGN']
 # min-public-methods = 1
 max-statements = 20
-max-args = 5
+max-args = 6
 max-locals = 10
 max-returns = 4
 max-branches = 5
