@@ -48,6 +48,7 @@ class MenuEmuConfig(MenuBase):
             self.content.add_item("CPU_GOVERNOR", self._cpu_governor(config))
             self.content.add_item("CPU_MIN_FREQ", self._cpu_min_freq(config))
             self.content.add_item("CPU_MAX_FREQ", self._cpu_max_freq(config))
+            self.content.add_item("CPU_CORES", self._cpu_cores(config))
 
     @staticmethod
     def _default_emu(config: EmuConfig) -> MenuItemMulti:
@@ -83,24 +84,26 @@ class MenuEmuConfig(MenuBase):
             self.build_dynamic_menu(self.breadcrumb, config.system, None)
 
         profiles = [
-            CPUProfile("CUSTOM"),
+            CPUProfile("CUSTOM", None, None, None, None),
             CPUProfile(
-                "BALANCED",
-                CPUGovernor.ON_DEMAND,
-                402000,
-                1608000,
-            ),
-            CPUProfile(
-                "POWERSAVE",
+                "SMART",
                 CPUGovernor.CONSERVATIVE,
                 402000,
-                1608000,
+                1809000,
+                4,
+                30,
+                70,
+                3,
+                1,
+                400000,
+                200000,
+            ),
+            CPUProfile("BALANCED", CPUGovernor.ON_DEMAND, 402000, 1608000, 4),
+            CPUProfile(
+                "POWERSAVE", CPUGovernor.CONSERVATIVE, 402000, 1608000, 4
             ),
             CPUProfile(
-                "PERFOMANCE",
-                CPUGovernor.ON_DEMAND,
-                603000,
-                1809000,
+                "PERFOMANCE", CPUGovernor.ON_DEMAND, 603000, 1809000, 4
             ),
         ]
 
@@ -189,6 +192,32 @@ class MenuEmuConfig(MenuBase):
             ),
         )
 
+    def _cpu_cores(self, config: EmuConfig) -> MenuItemMulti:
+        """TODO."""
+
+        def set_cores(cores: int) -> None:
+            """TODO."""
+            EmuManager.set_cpu_cores(config.system, cores)
+            self.build_dynamic_menu(self.breadcrumb, config.system, None)
+
+        data: OrderedDict[int, str] = OrderedDict(
+            (i + 1, f"{i + 1}") for i in range(4)
+        )
+        actions: list[MenuAction] = []
+        current: int = -1
+        for index, item in enumerate(data):
+            if item and item == config.cores:
+                current = index
+            actions.append(
+                MenuAction(str(data.get(item)), partial(set_cores, item))
+            )
+        return MenuItemMulti(
+            Strings().cpu_cores,
+            actions,
+            current,
+            SidePane(Strings().cpu_cores, Strings().cpu_cores_desc),
+        )
+
     def _cpu_governor(self, config: EmuConfig) -> MenuItemMulti:
         """TODO."""
 
@@ -214,8 +243,7 @@ class MenuEmuConfig(MenuBase):
                 current = index
             actions.append(
                 MenuAction(
-                    str(data.get(item)).upper(),
-                    partial(set_governor, item),
+                    str(data.get(item)).upper(), partial(set_governor, item)
                 ),
             )
         return MenuItemMulti(

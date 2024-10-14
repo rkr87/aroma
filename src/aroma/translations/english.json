@@ -186,6 +186,10 @@
     "cpu_max_frequency_desc": [
         "Add description of options here"
     ],
+    "cpu_cores": "ACTIVE CPU CORES",
+    "cpu_cores_desc": [
+        "Add description of options here"
+    ],
     "cpu_profile": "CPU PROFILE",
     "cpu_profile_desc": [
         "Add description of options here"

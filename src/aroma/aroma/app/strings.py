@@ -138,6 +138,8 @@ class Strings(JsonDataClass):  # pylint: disable=too-many-instance-attributes
     cpu_min_frequency_desc: list[str] = field(default_factory=list)
     cpu_max_frequency: str = ""
     cpu_max_frequency_desc: list[str] = field(default_factory=list)
+    cpu_cores: str = ""
+    cpu_cores_desc: list[str] = field(default_factory=list)
     cpu_profile: str = ""
     cpu_profile_desc: list[str] = field(default_factory=list)
     cpu_profile_balanced: str = ""
