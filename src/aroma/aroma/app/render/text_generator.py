@@ -2,9 +2,10 @@
 
 from enum import StrEnum
 
+from app.render.sdl_helpers import SDLHelpers
 from sdl2 import (
     SDL_BlitSurface,
-    SDL_CreateRGBSurface,
+    SDL_FreeSurface,
     SDL_Rect,
     SDL_Surface,
     ext,
@@ -81,17 +82,19 @@ class TextGenerator(ClassSingleton):
             self._logger.debug("Empty text provided for style %s", style)
             return None
 
-        if not (text_surface := self._render_surface(text, style)):
+        if not (text_surface := self._generate_surface(text, style)):
             self._logger.error("Failed to render text for style %s", style)
             return None
 
         if not max_width or text_surface.w < max_width:
             return text_surface
-
+        SDL_FreeSurface(text_surface)
         return self._wrap_text_to_width(text, style, max_width)
 
-    def _render_surface(self, text: str, style: Style) -> SDL_Surface | None:
+    def _generate_surface(self, text: str, style: Style) -> SDL_Surface | None:
         """Render text surface with the specified style."""
+        if not text:
+            return None
         return self.font.render_text(text, style.value)
 
     def _wrap_text_to_width(
@@ -101,30 +104,12 @@ class TextGenerator(ClassSingleton):
         new_text = ""
         for word in text.split(" "):
             test_line = f"{new_text} {word}".strip()
-            text_surface = self._render_surface(test_line, style)
+            text_surface = self._generate_surface(test_line, style)
             if text_surface and text_surface.w > max_width:
-                return self._render_surface(f"{new_text}...", style)
+                SDL_FreeSurface(text_surface)
+                return self._generate_surface(f"{new_text}...", style)
             new_text = test_line
-        return self._render_surface(new_text, style)
-
-    @staticmethod
-    def _create_fixed_surface(width: int, height: int) -> SDL_Surface:
-        """Create a fixed-size SDL_Surface."""
-        rmask = 0x000000FF
-        gmask = 0x0000FF00
-        bmask = 0x00FF0000
-        amask = 0xFF000000
-
-        return SDL_CreateRGBSurface(
-            0,
-            width,
-            height,
-            32,
-            rmask,
-            gmask,
-            bmask,
-            amask,
-        )
+        return self._generate_surface(new_text, style)
 
     def _process_paragraph(
         self,
@@ -143,6 +128,7 @@ class TextGenerator(ClassSingleton):
                 if current_line:
                     lines.append(current_line)
                 current_line = word
+                SDL_FreeSurface(text_surface)
             else:
                 current_line = test_line
         if current_line:
@@ -201,9 +187,10 @@ class TextGenerator(ClassSingleton):
         truncated_height = 0
         for surface in lines:
             if truncated_height + surface.h > max_height:
-                break
-            truncated_lines.append(surface)
-            truncated_height += surface.h
+                SDL_FreeSurface(surface)
+            else:
+                truncated_lines.append(surface)
+                truncated_height += surface.h
         return truncated_lines, truncated_height
 
     def get_wrapped_text(
@@ -227,9 +214,14 @@ class TextGenerator(ClassSingleton):
         if max_height is not None and total_height > max_height:
             lines, total_height = self._truncate_lines(lines, max_height)
 
-        final_surface = self._create_fixed_surface(max_width, total_height)
+        final_surface = SDLHelpers.create_fixed_surface(
+            max_width, total_height
+        )
 
         self._blit_lines_to_surface(final_surface, lines)
+
+        for surface in lines:
+            SDL_FreeSurface(surface)
 
         self._logger.debug(
             "Final wrapped text surface created with size %dx%d",
