@@ -41,7 +41,10 @@ class MenuEmuConfig(MenuBase):
         self.content.clear_items()
         config = EmuManager().get_system_config(path.name)
         if config.launchlist:
-            self.content.add_item("DEFAULT_EMU", self._default_emu(config))
+            item = self._default_emu(config)
+            if config.has_cpu_freq_file:
+                item.bottom_separator = True
+            self.content.add_item("DEFAULT_EMU", item)
 
         if config.has_cpu_freq_file:
             self.content.add_item("CPU_PROFILE", self._cpu_profile(config))

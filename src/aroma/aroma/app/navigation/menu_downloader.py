@@ -27,10 +27,12 @@ class MenuDownloader(MenuBase):
 
     def default_items(self) -> OrderedDict[str, MenuItemBase]:
         """TODO."""
+        a_pw = self._archive_password()
+        a_pw.bottom_separator = True
         return OrderedDict(
             [
                 ("ARCHIVE_USER_ID", self._archive_user()),
-                ("ARCHIVE_PASSWORD", self._archive_password()),
+                ("ARCHIVE_PASSWORD", a_pw),
             ]
         )
 
