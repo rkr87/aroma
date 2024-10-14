@@ -63,7 +63,11 @@ class EmuConfigHandler(ClassSingleton):
             config.get("launch", ""),
             util.tsp_path(config.get("background", "")),
             util.tsp_path(config.get("icon", "")),
-            [ext.lower() for ext in config.get(EMU_EXT_KEY, "").split("|")],
+            [
+                ext.lower()
+                for ext in config.get(EMU_EXT_KEY, "").split("|")
+                if ext
+            ],
             [Launchlist.from_dict(y) for y in config.get("launchlist", [])],
             governor,
             min_freq,
