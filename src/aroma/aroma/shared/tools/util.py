@@ -14,6 +14,7 @@ from zipfile import ZIP_LZMA, ZipFile, ZipInfo
 
 from py7zr import FileInfo, SevenZipFile
 from sdl2.ext import Color
+from shared.constants import RUNNING_ON_TSP, TSP_SD, WIN_SD
 from shared.tools.enhanced_json_encoder import EnhancedJSONEncoder
 
 
@@ -253,3 +254,10 @@ def remove_loop(text: str, pattern: re.Pattern[str]) -> str:
 def is_relative_path(path: Path, base_path: Path) -> bool:
     """Check whether a path is a sub-path of base path."""
     return str(path).startswith(str(base_path))
+
+
+def tsp_path(path: str) -> str:
+    """TODO."""
+    if RUNNING_ON_TSP:
+        return path
+    return path.replace(TSP_SD, WIN_SD)

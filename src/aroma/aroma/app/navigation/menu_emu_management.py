@@ -86,13 +86,15 @@ class MenuEmuManagement(MenuBase):
             self.content.add_item(
                 emu.system.name.upper(),
                 self.dynamic_sub_menu(
-                    f"{emu.label.upper()} ({emu.system.name.upper()})",
+                    emu.format_label,
                     emu.system,
                     None,
                     self.emu_config,
                     self.menu_stack.push,
                     side_pane=SidePane(
-                        emu.system.name.upper(),
+                        header=emu.format_label,
+                        img=emu.icon,
+                        bg_img=emu.background,
                     ),
                 ),
             )

@@ -26,7 +26,6 @@ SDL_FLIP_HORIZONTAL: int
 SDL_FLIP_VERTICAL: int
 
 class SDL_RendererInfo(Structure): ...
-
 class SDL_Renderer(c_void_p): ...
 class SDL_Texture(c_void_p): ...
 
@@ -40,7 +39,11 @@ SDL_RenderGetWindow: Incomplete
 SDL_GetRendererInfo: Incomplete
 SDL_GetRendererOutputSize: Incomplete
 SDL_CreateTexture: Incomplete
-def SDL_CreateTextureFromSurface(renderer: SDL_Renderer,surface: SDL_Surface) -> SDL_Texture | None: ...
+
+def SDL_CreateTextureFromSurface(
+    renderer: SDL_Renderer, surface: SDL_Surface
+) -> SDL_Texture | None: ...
+
 SDL_QueryTexture: Incomplete
 SDL_SetTextureColorMod: Incomplete
 SDL_GetTextureColorMod: Incomplete
@@ -76,7 +79,11 @@ SDL_RenderWindowToLogical: Incomplete
 SDL_RenderLogicalToWindow: Incomplete
 SDL_SetRenderDrawColor: Incomplete
 SDL_GetRenderDrawColor: Incomplete
-SDL_SetRenderDrawBlendMode: Incomplete
+
+def SDL_SetRenderDrawBlendMode(
+    renderer: SDL_Renderer, blendmode: int
+) -> int: ...
+
 SDL_GetRenderDrawBlendMode: Incomplete
 SDL_RenderClear: Incomplete
 SDL_RenderDrawPoint: Incomplete
@@ -87,7 +94,14 @@ SDL_RenderDrawRect: Incomplete
 SDL_RenderDrawRects: Incomplete
 SDL_RenderFillRect: Incomplete
 SDL_RenderFillRects: Incomplete
-def SDL_RenderCopy(renderer: SDL_Renderer,texture: SDL_Texture, r1: SDL_Rect| None= None, r2: SDL_Rect | None= None) -> int | None: ...
+
+def SDL_RenderCopy(
+    renderer: SDL_Renderer,
+    texture: SDL_Texture,
+    r1: SDL_Rect | None = None,
+    r2: SDL_Rect | None = None,
+) -> int | None: ...
+
 SDL_RenderCopyEx: Incomplete
 SDL_RenderDrawPointF: Incomplete
 SDL_RenderDrawPointsF: Incomplete

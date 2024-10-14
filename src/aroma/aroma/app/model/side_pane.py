@@ -11,6 +11,8 @@ class SidePane(ClassBase):
 
     header: str | None = None
     content: str | list[str] | None = None
+    bg_img: str | None = None
+    img: str | None = None
 
     @staticmethod
     def merge(
