@@ -31,33 +31,56 @@ class EmuConfigHandler(ClassSingleton):
         self._config_cache[system] = self._get_system(system)
 
     @staticmethod
+    def _get_cpufreq_val(item: str, content: str) -> str | None:
+        """TODO."""
+        if results := re.search(
+            r"echo (.+) > [\w\d/]+cpufreq/" + item, content
+        ):
+            return str(results.group(1))
+        return None
+
+    @staticmethod
+    def _get_cpufreq_vals(emu_config: EmuConfig, content: str) -> EmuConfig:
+        """TODO."""
+        if m := EmuConfigHandler._get_cpufreq_val("scaling_governor", content):
+            emu_config.governor = m
+        if m := EmuConfigHandler._get_cpufreq_val("scaling_min_freq", content):
+            emu_config.min_freq = int(m)
+        if m := EmuConfigHandler._get_cpufreq_val("scaling_max_freq", content):
+            emu_config.max_freq = int(m)
+        return emu_config
+
+    @staticmethod
+    def _get_cpucore_vals(emu_config: EmuConfig, content: str) -> EmuConfig:
+        """TODO."""
+        emu_config.cores = 4
+        if cores := re.findall(
+            r"echo\s+(1|0)\s+>\s+/sys/devices/system/cpu/cpu\d+/online",
+            content,
+        ):
+            emu_config.cores = sum(int(match) for match in cores)
+        return emu_config
+
+    @staticmethod
+    def _get_cpufreq(emu_config: EmuConfig, system: str) -> EmuConfig:
+        """TODO."""
+        if (
+            system.startswith(tuple(NON_CONFIGURABLE_SYSTEM_PREFIX))
+            or not (cpu := EMU_PATH / system / "cpufreq.sh").is_file()
+        ):
+            return emu_config
+        emu_config.has_cpu_freq_file = True
+        with cpu.open() as f:
+            content = f.read()
+        EmuConfigHandler._get_cpufreq_vals(emu_config, content)
+        EmuConfigHandler._get_cpucore_vals(emu_config, content)
+        return emu_config
+
+    @staticmethod
     def _get_system(system: str) -> "EmuConfig":
         """TODO."""
         config = util.load_simple_json(EMU_PATH / system / "config.json")
-        governor = None
-        min_freq = None
-        max_freq = None
-        cpu_freq_file = False
-        if (
-            not system.startswith(tuple(NON_CONFIGURABLE_SYSTEM_PREFIX))
-            and (cpu := EMU_PATH / system / "cpufreq.sh").is_file()
-        ):
-            cpu_freq_file = True
-            with cpu.open() as f:
-                content = f.read()
-            if m := re.search(
-                r"echo (.+) > [\w\d/]+cpufreq/scaling_governor", content
-            ):
-                governor = str(m.group(1))
-            if m := re.search(
-                r"echo (.+) > [\w\d/]+cpufreq/scaling_min_freq", content
-            ):
-                min_freq = int(m.group(1))
-            if m := re.search(
-                r"echo (.+) > [\w\d/]+cpufreq/scaling_max_freq", content
-            ):
-                max_freq = int(m.group(1))
-        return EmuConfig(
+        emu_config = EmuConfig(
             EMU_PATH / system,
             config.get("label", ""),
             config.get("launch", ""),
@@ -69,9 +92,6 @@ class EmuConfigHandler(ClassSingleton):
                 if ext
             ],
             [Launchlist.from_dict(y) for y in config.get("launchlist", [])],
-            governor,
-            min_freq,
-            max_freq,
-            cpu_freq_file,
             config.get("aroma_cpu_profile", None),
         )
+        return EmuConfigHandler._get_cpufreq(emu_config, system)
