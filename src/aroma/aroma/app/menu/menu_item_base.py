@@ -16,11 +16,13 @@ class MenuItemBase(ClassBase, ABC):
         *,
         selected: bool = False,
         deactivated: bool = False,
+        bottom_separator: bool = False,
     ) -> None:
         super().__init__()
         self.selected: bool = selected
         self._side_pane: SidePane | None = side_pane
         self.deactivated: bool = deactivated
+        self.bottom_separator = bottom_separator
 
     @abstractmethod
     def get_actions(self) -> list[MenuAction]:
