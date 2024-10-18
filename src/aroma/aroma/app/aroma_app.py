@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 
 from app.background_worker import BackgroundWorker
 from app.input.controller import Controller
+from app.input.keyboard_controller import KeyboardController
 from app.navigation.nav_controller import NavController
 from app.screen_manager import ScreenManager
 from app.strings import Strings
@@ -30,7 +31,7 @@ if TYPE_CHECKING:
     from app.model.current_menu import CurrentMenu
 
 
-class AromaApp(ClassSingleton):
+class AromaApp(ClassSingleton):  # pylint: disable=too-many-instance-attributes
     """Main application class for initialising and running the system."""
 
     def __init__(self) -> None:
@@ -47,6 +48,7 @@ class AromaApp(ClassSingleton):
         self.controller = Controller()
         self.screen = ScreenManager()
         self.navigator = NavController()
+        self.keyboard = KeyboardController()
         self.running = True
         self._logger.info("SDL and game controller initialised successfully.")
 
@@ -71,8 +73,15 @@ class AromaApp(ClassSingleton):
             self.stop()
             return
 
-        menu: CurrentMenu = self.navigator.handle_events(event)
-        self.screen.render(menu)
+        if self.keyboard.is_open:
+            req_update = self.keyboard.handle_events(event)
+            menu: CurrentMenu = self.navigator.current_menu(
+                force_update=req_update
+            )
+            self.screen.render(menu, self.keyboard.get_current_button()[0])
+        else:
+            menu = self.navigator.handle_events(event)
+            self.screen.render(menu)
 
     def _check_worker(self) -> None:
         """TODO."""
