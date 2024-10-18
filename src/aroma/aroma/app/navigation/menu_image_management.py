@@ -4,7 +4,6 @@ from collections import OrderedDict
 from pathlib import Path
 
 from app.background_worker import BackgroundWorker
-from app.menu.menu_action import MenuAction
 from app.menu.menu_base import MenuBase
 from app.menu.menu_item_base import MenuItemBase
 from app.menu.menu_item_multi import MenuItemMulti
@@ -12,7 +11,6 @@ from app.menu.menu_item_single import MenuItemSingle
 from app.model.side_pane import SidePane
 from app.strings import Strings
 from manager.rom_manager import RomManager
-from shared.app_config import AppConfig
 from shared.constants import (
     RESOURCES,
     SCRAPER_MEDIA_TYPES,
@@ -132,30 +130,22 @@ class MenuImageManagement(MenuBase):
             ),
         )
 
-    @staticmethod
-    def _scrape_user() -> MenuItemMulti:
+    def _scrape_user(self) -> MenuItemSingle:
         """Create option to input scraping user credentials."""
-        return MenuItemMulti(
+        return self._generate_keyboard_config_item(
+            "screenscraper_userid",
             Strings().scrape_user,
-            [MenuAction(AppConfig().screenscraper_userid.upper(), None)],
-            0,
-            SidePane(
-                Strings().scrape_user,
-                Strings().scrape_user_desc,
-            ),
+            Strings().scrape_user_desc,
+            Strings().scrape_user_prompt,
         )
 
-    @staticmethod
-    def _scrape_password() -> MenuItemMulti:
+    def _scrape_password(self) -> MenuItemSingle:
         """Create option to input scraping password."""
-        return MenuItemMulti(
+        return self._generate_keyboard_config_item(
+            "screenscraper_password",
             Strings().scrape_password,
-            [MenuAction(AppConfig().screenscraper_password, None)],
-            0,
-            SidePane(
-                Strings().scrape_password,
-                Strings().scrape_password_desc,
-            ),
+            Strings().scrape_password_desc,
+            Strings().scrape_password_prompt,
         )
 
     @staticmethod

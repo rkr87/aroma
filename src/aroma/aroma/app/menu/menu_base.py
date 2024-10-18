@@ -7,6 +7,7 @@ from functools import partial
 from pathlib import Path
 from typing import Any, TypeVar, cast
 
+from app.input.keyboard import Keyboard
 from app.menu.action_manager import ActionManager
 from app.menu.content_manager import ContentManager
 from app.menu.menu_action import MenuAction
@@ -92,6 +93,36 @@ class MenuBase(ClassSingleton, ABC):
             text,
             rebuild_and_push,
             side_pane=side_pane,
+        )
+
+    def _generate_keyboard_config_item(
+        self,
+        config_attr: str,
+        label: str,
+        desc: list[str],
+        prompt: str,
+    ) -> MenuItemSingle:
+        """TODO."""
+        current_val = str(AppConfig().get_value(config_attr))
+
+        def update_config(value: str) -> None:
+            AppConfig().update_value(config_attr, value)
+            self.reset_menu()
+
+        def get_user_input() -> None:
+            Keyboard().open(
+                prompt.upper(),
+                update_config,
+                current_val,
+            )
+
+        return MenuItemSingle(
+            label.upper(),
+            get_user_input,
+            SidePane(
+                label.upper(),
+                [f"CURRENT: {current_val or 'NOT SET'}", *desc],
+            ),
         )
 
     @staticmethod

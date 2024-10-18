@@ -3,16 +3,14 @@
 from collections import OrderedDict
 from pathlib import Path
 
-from app.menu.menu_action import MenuAction
 from app.menu.menu_base import MenuBase
 from app.menu.menu_item_base import MenuItemBase
-from app.menu.menu_item_multi import MenuItemMulti
+from app.menu.menu_item_single import MenuItemSingle
 from app.model.side_pane import SidePane
 from app.navigation.menu_downloader_list import MenuDownloaderList
 from app.navigation.menu_stack import MenuStack
 from app.strings import Strings
 from manager.emu_manager import EmuManager
-from shared.app_config import AppConfig
 from shared.constants import DOWNLOADER_PATH
 
 
@@ -36,30 +34,22 @@ class MenuDownloader(MenuBase):
             ]
         )
 
-    @staticmethod
-    def _archive_user() -> MenuItemMulti:
+    def _archive_user(self) -> MenuItemSingle:
         """TODO."""
-        return MenuItemMulti(
+        return self._generate_keyboard_config_item(
+            "archive_userid",
             Strings().archive_user,
-            [MenuAction(AppConfig().archive_userid.upper(), None)],
-            0,
-            SidePane(
-                Strings().archive_user,
-                Strings().archive_user_desc,
-            ),
+            Strings().archive_user_desc,
+            Strings().archive_user_prompt,
         )
 
-    @staticmethod
-    def _archive_password() -> MenuItemMulti:
+    def _archive_password(self) -> MenuItemSingle:
         """TODO."""
-        return MenuItemMulti(
+        return self._generate_keyboard_config_item(
+            "archive_password",
             Strings().archive_password,
-            [MenuAction(AppConfig().archive_password, None)],
-            0,
-            SidePane(
-                Strings().archive_password,
-                Strings().archive_password_desc,
-            ),
+            Strings().archive_password_desc,
+            Strings().archive_password_prompt,
         )
 
     def build_dynamic_menu(  # noqa: D102  # Ignore missing docstring, it's inherited

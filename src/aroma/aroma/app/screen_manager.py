@@ -1,8 +1,10 @@
 """Handles screen rendering for the application."""
 
 from app.model.current_menu import CurrentMenu
+from app.model.keyboard_button import KeyboardButton
 from app.render.breadcrumb_renderer import BreadcrumbRenderer
 from app.render.button_hint_renderer import ButtonHintRenderer
+from app.render.keyboard_renderer import KeyboardRenderer
 from app.render.menu_renderer import MenuRenderer
 from app.render.sidepane_renderer import SidepaneRenderer
 from app.render.work_overlay_renderer import WorkOverlayRenderer
@@ -37,11 +39,15 @@ class ScreenManager(ClassSingleton):
         )
         self._logger.info("Screen initialised")
 
-    def render(self, current: CurrentMenu) -> None:
+    def render(
+        self,
+        current: CurrentMenu,
+        keyboard_button: KeyboardButton | None = None,
+    ) -> None:
         """Render the screen background, breadcrumbs, menu, and side pane."""
         if current.update_required:
             self.renderer.clear(tuple_to_sdl_color(BG_COLOR))
-            button_hint_height = ButtonHintRenderer.render(
+            button_hint_start = ButtonHintRenderer.render(
                 self.renderer, _SPACING
             )
             breadcrumb_height = BreadcrumbRenderer.render(
@@ -55,9 +61,14 @@ class ScreenManager(ClassSingleton):
             self.sidepane.render(
                 current.menu.content.side_pane,
                 breadcrumb_height + _SPACING,
-                button_hint_height,
+                button_hint_start - _SPACING,
             )
             WorkOverlayRenderer.render(self.renderer)
+            KeyboardRenderer.render(
+                self.renderer,
+                keyboard_button,
+                SCREEN_HEIGHT - button_hint_start + _SPACING,
+            )
             self.renderer.present()
             current.update_required = False
             self._logger.debug("Rendered screen for current menu")

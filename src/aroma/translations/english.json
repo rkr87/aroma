@@ -16,14 +16,16 @@
     "downloader_desc": [
         "Add description of options here"
     ],
-    "archive_user": "ARCHIVE.ORG EMAIL",
+    "archive_user": "EMAIL",
     "archive_user_desc": [
         "Add description of options here"
     ],
-    "archive_password": "ARCHIVE.ORG PASSWORD",
+    "archive_user_prompt": "ENTER ARCHIVE.ORG EMAIL",
+    "archive_password": "PASSWORD",
     "archive_password_desc": [
         "Add description of options here"
     ],
+    "archive_password_prompt": "ENTER ARCHIVE.ORG PASSWORD",
     "refresh_roms": "REFRESH ROMS",
     "refresh_roms_desc": [
         "Add description of options here"
@@ -116,10 +118,12 @@
     "scrape_user_desc": [
         "Add description of options here"
     ],
+    "scrape_user_prompt": "ENTER SCREENSCRAPER.FR USERNAME",
     "scrape_password": "PASSWORD",
     "scrape_password_desc": [
         "Add description of options here"
     ],
+    "scrape_password_prompt": "ENTER SCREENSCRAPER.FR PASSWORD",
     "scrape_preferred_region": "REGION",
     "scrape_preferred_region_desc": [
         "Add description of options here"
