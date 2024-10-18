@@ -26,17 +26,19 @@ class MenuRenderer(ClassSingleton):
         super().__init__()
         self.renderer = renderer
         self.x_end = x_end
-        self.spacing = spacing
         self.padding = padding
+        self.spacing = spacing
 
     def _draw_menu_separator(self, y: int) -> None:
         """TODO."""
+        # pylint: disable=duplicate-code
         SDLHelpers.draw_line(
             self.renderer,
             tuple_to_sdl_color(SECONDARY_COLOR),
             (0, self.x_end),
             (y, y),
         )
+        # pylint: enable=duplicate-code
 
     def render(self, menu: MenuBase, y_start: int, max_width: int) -> None:
         """Render the current menu's items."""

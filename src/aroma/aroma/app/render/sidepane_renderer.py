@@ -24,18 +24,20 @@ class SidepaneRenderer(ClassSingleton):
     ) -> None:
         super().__init__()
         self.renderer = renderer
-        self.spacing = spacing
         self.x_start = x_start
         self.padding = padding
+        self.spacing = spacing
 
     def _draw_sidepane_separator(self, y: int, y_end: int) -> None:
         """TODO."""
+        # pylint: disable=duplicate-code
         SDLHelpers.draw_line(
             self.renderer,
             tuple_to_sdl_color(SECONDARY_COLOR),
             (self.x_start, self.x_start),
             (y, y_end),
         )
+        # pylint: enable=duplicate-code
 
     def _draw_sidepane_header(self, header_text: str | None, y: int) -> int:
         """TODO."""
