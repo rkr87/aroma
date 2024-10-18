@@ -22,8 +22,10 @@ class Strings(JsonDataClass):  # pylint: disable=too-many-instance-attributes
     downloader_desc: str = ""
     archive_user: str = ""
     archive_user_desc: list[str] = field(default_factory=list)
+    archive_user_prompt: str = ""
     archive_password: str = ""
     archive_password_desc: list[str] = field(default_factory=list)
+    archive_password_prompt: str = ""
     refresh_roms: str = ""
     refresh_roms_desc: list[str] = field(default_factory=list)
     console_naming: str = ""
@@ -70,8 +72,10 @@ class Strings(JsonDataClass):  # pylint: disable=too-many-instance-attributes
     scrape_max_cpu_threads_desc: list[str] = field(default_factory=list)
     scrape_user: str = ""
     scrape_user_desc: list[str] = field(default_factory=list)
+    scrape_user_prompt: str = ""
     scrape_password: str = ""
     scrape_password_desc: list[str] = field(default_factory=list)
+    scrape_password_prompt: str = ""
     scrape_preferred_region: str = ""
     scrape_preferred_region_desc: list[str] = field(default_factory=list)
     scrape_region_ae: str = ""
