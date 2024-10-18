@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 from app.background_worker import BackgroundWorker
 from app.input.controller import Controller
 from app.navigation.nav_controller import NavController
-from app.render.screen import Screen
+from app.screen_manager import ScreenManager
 from app.strings import Strings
 from manager.rom_manager import RomManager
 from sdl2 import (
@@ -45,7 +45,7 @@ class AromaApp(ClassSingleton):
             self._logger.error("Failed to initialize SDL")
             sys.exit(1)
         self.controller = Controller()
-        self.screen = Screen()
+        self.screen = ScreenManager()
         self.navigator = NavController()
         self.running = True
         self._logger.info("SDL and game controller initialised successfully.")
@@ -72,7 +72,7 @@ class AromaApp(ClassSingleton):
             return
 
         menu: CurrentMenu = self.navigator.handle_events(event)
-        self.screen.render_screen(menu)
+        self.screen.render(menu)
 
     def _check_worker(self) -> None:
         """TODO."""
@@ -81,7 +81,7 @@ class AromaApp(ClassSingleton):
         while BackgroundWorker().busy:  # pylint: disable=while-used
             time.sleep(0.01)
         menu = self.navigator.current_menu(force_update=True)
-        self.screen.render_screen(menu)
+        self.screen.render(menu)
 
     def poll_event(self) -> None:
         """Poll and process SDL events."""
@@ -97,5 +97,5 @@ class AromaApp(ClassSingleton):
         """Start the application."""
         self._logger.info("Application starting.")
         menu: CurrentMenu = self.navigator.handle_events()
-        self.screen.render_screen(menu)
+        self.screen.render(menu)
         self.poll_event()
