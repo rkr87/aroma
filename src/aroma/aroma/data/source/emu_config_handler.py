@@ -84,8 +84,8 @@ class EmuConfigHandler(ClassSingleton):
             EMU_PATH / system,
             config.get("label", ""),
             config.get("launch", ""),
-            util.tsp_path(config.get("background", "")),
-            util.tsp_path(config.get("icon", "")),
+            util.tsp_path(str(config.get("background", ""))),
+            util.tsp_path(str(config.get("icon", ""))),
             [
                 ext.lower()
                 for ext in config.get(EMU_EXT_KEY, "").split("|")
