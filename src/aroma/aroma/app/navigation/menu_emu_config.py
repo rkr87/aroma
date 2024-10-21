@@ -13,6 +13,7 @@ from app.strings import Strings
 from data.enums.cpu_governor import CPUGovernor
 from data.model.cpu_profile import CPUProfile
 from data.model.emu_config import EmuConfig
+from manager.emu_cpu_profile_manager import EmuCPUProfileManager
 from manager.emu_manager import EmuManager
 from shared.constants import (
     CPU_FREQ_STEP,
@@ -58,9 +59,13 @@ class MenuEmuConfig(MenuBase):
         """TODO."""
         actions: list[MenuAction] = []
         current = 0
+        ignored_items = 0
         for index, item in enumerate(config.launchlist):
+            if not item.launch:
+                ignored_items += 1
+                continue
             if item.launch == config.launch:
-                current = index
+                current = index - ignored_items
             actions.append(
                 MenuAction(
                     item.name.upper(),
@@ -83,7 +88,7 @@ class MenuEmuConfig(MenuBase):
 
         def set_profile(profile: CPUProfile) -> None:
             """TODO."""
-            EmuManager.set_cpu_profile(config.system, profile)
+            EmuCPUProfileManager.set_cpu_profile(config.system, profile)
             self.build_dynamic_menu(self.breadcrumb, config.system, None)
 
         profiles = [
@@ -162,7 +167,7 @@ class MenuEmuConfig(MenuBase):
             data,
             config.min_freq,
             config.system,
-            EmuManager.set_cpu_min_freq,
+            EmuCPUProfileManager.set_cpu_min_freq,
         )
         return MenuItemMulti(
             Strings().cpu_min_frequency,
@@ -184,7 +189,7 @@ class MenuEmuConfig(MenuBase):
             data,
             config.max_freq,
             config.system,
-            EmuManager.set_cpu_max_freq,
+            EmuCPUProfileManager.set_cpu_max_freq,
         )
         return MenuItemMulti(
             Strings().cpu_max_frequency,
@@ -200,7 +205,7 @@ class MenuEmuConfig(MenuBase):
 
         def set_cores(cores: int) -> None:
             """TODO."""
-            EmuManager.set_cpu_cores(config.system, cores)
+            EmuCPUProfileManager.set_cpu_cores(config.system, cores)
             self.build_dynamic_menu(self.breadcrumb, config.system, None)
 
         data: OrderedDict[int, str] = OrderedDict(
@@ -226,7 +231,7 @@ class MenuEmuConfig(MenuBase):
 
         def set_governor(governor: CPUGovernor | None) -> None:
             """TODO."""
-            EmuManager.set_cpu_governor(config.system, governor)
+            EmuCPUProfileManager.set_cpu_governor(config.system, governor)
             self.build_dynamic_menu(self.breadcrumb, config.system, None)
 
         data = {

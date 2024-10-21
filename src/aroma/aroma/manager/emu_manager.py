@@ -2,8 +2,6 @@
 
 from pathlib import Path
 
-from data.enums.cpu_governor import CPUGovernor
-from data.model.cpu_profile import CPUProfile
 from data.model.emu_config import EmuConfig
 from data.model.rom_detail import RomDetail
 from data.source.emu_config_handler import EmuConfigHandler
@@ -13,6 +11,10 @@ from shared.constants import (
     NON_CONFIGURABLE_SYSTEM_PREFIX,
 )
 from shared.tools import util
+
+_LAUNCH_MENU_SCRIPT = (
+    '/mnt/SDCARD/Apps/aroma/scripts/rom_launcher.sh "$1" "$0" && exit 0\n'
+)
 
 
 class EmuManager(ClassSingleton):
@@ -62,7 +64,10 @@ class EmuManager(ClassSingleton):
     @staticmethod
     def is_valid_system(system: str) -> bool:
         """TODO."""
-        return (EMU_PATH / system).is_dir()
+        return (
+            not system.startswith(tuple(NON_CONFIGURABLE_SYSTEM_PREFIX))
+            and (EMU_PATH / system / "config.json").is_file()
+        )
 
     @staticmethod
     def _is_visible_system(system: str) -> bool:
@@ -76,11 +81,8 @@ class EmuManager(ClassSingleton):
     @staticmethod
     def _is_configurable_system(system: str) -> bool:
         """TODO."""
-        return (
-            EmuManager.is_valid_system(system)
-            and not system.startswith(tuple(NON_CONFIGURABLE_SYSTEM_PREFIX))
-            and EmuManager._is_visible_system(system)
-        )
+        checks = [EmuManager.is_valid_system, EmuManager._is_visible_system]
+        return all(check(system) for check in checks)
 
     @staticmethod
     def get_configurable_systems() -> list[EmuConfig]:
@@ -94,6 +96,16 @@ class EmuManager(ClassSingleton):
         ]
 
     @staticmethod
+    def _get_valid_systems() -> list[EmuConfig]:
+        """TODO."""
+        return [
+            config
+            for path in EMU_PATH.iterdir()
+            if EmuManager.is_valid_system(path.name)
+            and (config := EmuConfigHandler().get(path.name))
+        ]
+
+    @staticmethod
     def set_default_emu(system_path: Path, launch_file: str) -> None:
         """TODO."""
         config = util.load_simple_json(system_path / "config.json")
@@ -102,109 +114,21 @@ class EmuManager(ClassSingleton):
         util.save_simple_json(config, system_path / "config.json")
 
     @staticmethod
-    def set_cpu_profile(system_path: Path, profile: CPUProfile) -> None:
+    def _add_launch_menu(path: Path) -> None:
         """TODO."""
-        config = EmuConfigHandler().get(system_path.name)
-        config.aroma_cpu_profile = profile.name
-        if profile.governor:
-            config.governor = profile.governor.value
-            config.down_threshold = profile.down_threshold
-            config.up_threshold = profile.up_threshold
-            config.freq_step = profile.freq_step
-            config.sampling_down_factor = profile.sampling_down_factor
-            config.sampling_rate = profile.sampling_rate
-            config.sampling_rate_min = profile.sampling_rate_min
-        if profile.min_freq:
-            config.min_freq = profile.min_freq
-        if profile.max_freq:
-            config.max_freq = profile.max_freq
-        if profile.cores:
-            config.cores = profile.cores
-        EmuManager._save_cpu_profile(system_path, config)
+        lines = util.read_text_file(path)
+        if _LAUNCH_MENU_SCRIPT in lines:
+            return
+        lines.insert(1, _LAUNCH_MENU_SCRIPT)
+        with path.open("w", newline="\n") as file:
+            file.writelines(lines)
 
-    @staticmethod
-    def set_cpu_governor(
-        system_path: Path, governor: CPUGovernor | None
-    ) -> None:
+    def add_emu_launch_menus(self) -> None:
         """TODO."""
-        config = EmuConfigHandler().get(system_path.name)
-        config.apply_custom_cpu_profile()
-        config.governor = governor.value if governor else None
-        EmuManager._save_cpu_profile(system_path, config)
-
-    @staticmethod
-    def set_cpu_min_freq(system_path: Path, frequency: int | None) -> None:
-        """TODO."""
-        config = EmuConfigHandler().get(system_path.name)
-        config.apply_custom_cpu_profile()
-        config.min_freq = frequency
-        EmuManager._save_cpu_profile(system_path, config)
-
-    @staticmethod
-    def set_cpu_max_freq(system_path: Path, frequency: int | None) -> None:
-        """TODO."""
-        config = EmuConfigHandler().get(system_path.name)
-        config.apply_custom_cpu_profile()
-        config.max_freq = frequency
-        EmuManager._save_cpu_profile(system_path, config)
-
-    @staticmethod
-    def set_cpu_cores(system_path: Path, cores: int) -> None:
-        """TODO."""
-        config = EmuConfigHandler().get(system_path.name)
-        config.apply_custom_cpu_profile()
-        config.cores = cores
-        EmuManager._save_cpu_profile(system_path, config)
-
-    @staticmethod
-    def _get_cpu_gov_lines(config: EmuConfig) -> list[str]:
-        """TODO."""
-        if not config.governor:
-            return []
-        gov_str: str = "echo %s > /sys/devices/system/cpu/cpufreq/%s/%s\n"
-        items: dict[int | None, str] = {
-            config.down_threshold: "down_threshold",
-            config.up_threshold: "up_threshold",
-            config.freq_step: "freq_step",
-            config.sampling_down_factor: "sampling_down_factor",
-            config.sampling_rate: "sampling_rate",
-            config.sampling_rate_min: "sampling_rate_min",
-        }
-        return [
-            gov_str % (k, config.governor, v) for k, v in items.items() if k
-        ]
-
-    @staticmethod
-    def _get_cpu_freq_lines(config: EmuConfig) -> list[str]:
-        """TODO."""
-        cpu_str: str = "echo %s > /sys/devices/system/cpu/cpu0/cpufreq/%s\n"
-        items: dict[int | str | None, str] = {
-            config.min_freq: "scaling_min_freq",
-            config.max_freq: "scaling_max_freq",
-            config.governor: "scaling_governor",
-        }
-        return [cpu_str % (k, v) for k, v in items.items() if k]
-
-    @staticmethod
-    def _get_cpu_core_lines(config: EmuConfig) -> list[str]:
-        """TODO."""
-        if not config.cores:
-            return []
-        core_str: str = "echo %s > /sys/devices/system/cpu/cpu%s/online\n"
-        return [core_str % (int(i < config.cores), i) for i in range(4)]
-
-    @staticmethod
-    def _save_cpu_profile(system_path: Path, config: EmuConfig) -> None:
-        """TODO."""
-        with (system_path / "cpufreq.sh").open(mode="w") as f:
-            f.write("#!/bin/sh\n")
-            for line in EmuManager._get_cpu_core_lines(config):
-                f.write(line)
-            for line in EmuManager._get_cpu_freq_lines(config):
-                f.write(line)
-            for line in EmuManager._get_cpu_gov_lines(config):
-                f.write(line)
-
-        config_file = util.load_simple_json(system_path / "config.json")
-        config_file["aroma_cpu_profile"] = config.aroma_cpu_profile
-        util.save_simple_json(config_file, system_path / "config.json")
+        systems = self._get_valid_systems()
+        for config in systems:
+            self._add_launch_menu(config.system / config.launch)
+            for item in config.launchlist:
+                if item.launch == config.launch or not item.launch:
+                    continue
+                self._add_launch_menu(config.system / item.launch)
