@@ -71,6 +71,10 @@
     "clean_emus_desc": [
         "Add description of options here"
     ],
+    "add_launch_menus": "ADD LAUNCH MENUS",
+    "add_launch_menus_desc": [
+        "Add description of options here"
+    ],
     "default_emu": "DEFAULT EMU",
     "default_emu_desc": [
         "Add description of options here"
@@ -203,7 +207,11 @@
     "cpu_profile_performance": "PERFORMANCE",
     "downloading_file": "DOWNLOADING FILE...",
     "cleaning_emus": "CLEANING EMULATORS...",
+    "adding_launch_menus": "ADDING LAUNCH MENUS...",
     "scraping_imgs": "SCRAPING IMAGES...",
     "removing_broken_imgs": "REMOVING BROKEN IMAGES...",
-    "refreshing_roms": "REFRESHING ROMS..."
+    "refreshing_roms": "REFRESHING ROMS...",
+    "launch_rom": "LAUNCH ROM",
+    "rom": "ROM",
+    "emu": "EMU"
 }
