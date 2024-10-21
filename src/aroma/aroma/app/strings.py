@@ -125,6 +125,8 @@ class Strings(JsonDataClass):  # pylint: disable=too-many-instance-attributes
     emu_management_desc: list[str] = field(default_factory=list)
     clean_emus: str = ""
     clean_emus_desc: list[str] = field(default_factory=list)
+    add_launch_menus: str = ""
+    add_launch_menus_desc: list[str] = field(default_factory=list)
     clean_emus_refresh: str = ""
     clean_emus_refresh_desc: list[str] = field(default_factory=list)
     default_emu: str = ""
@@ -152,6 +154,10 @@ class Strings(JsonDataClass):  # pylint: disable=too-many-instance-attributes
     none_set: str = ""
     downloading_file: str = ""
     cleaning_emus: str = ""
+    adding_launch_menus: str = ""
     scraping_imgs: str = ""
     removing_broken_imgs: str = ""
     refreshing_roms: str = ""
+    launch_rom: str = ""
+    rom: str = ""
+    emu: str = ""

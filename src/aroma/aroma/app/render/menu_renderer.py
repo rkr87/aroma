@@ -54,24 +54,34 @@ class MenuRenderer(ClassSingleton):
 
         self._logger.debug("Rendered menu items")
 
-    @staticmethod
     def _get_menu_surfaces(
-        item: MenuItemBase, max_width: int
+        self, item: MenuItemBase, max_width: int
     ) -> tuple[SDL_Surface | None, SDL_Surface | None, SDL_Surface | None]:
         """Generate the text surfaces for the given menu item."""
-        select_surface = TextGenerator().get_selectable(
-            item.get_text(),
-            selected=item.selected,
-            deactivated=item.deactivated,
-            max_width=max_width,
-        )
         if isinstance(item, MenuItemSingle):
+            select_surface = TextGenerator().get_selectable(
+                item.get_text(),
+                selected=item.selected,
+                deactivated=item.deactivated,
+                max_width=max_width - self.padding - self.spacing,
+            )
             return select_surface, None, None
         if isinstance(item, MenuItemMulti):
+            w_adj = 0
             pfx_surface = TextGenerator().get_text(item.get_prefix_text())
+            if pfx_surface:
+                w_adj += pfx_surface.w + self.spacing + self.padding
             chevron_surface = TextGenerator().get_selectable(
                 "›",  # noqa: RUF001
                 selected=item.selected,
+            )
+            if chevron_surface:
+                w_adj += chevron_surface.w + self.spacing
+            select_surface = TextGenerator().get_selectable(
+                item.get_text(),
+                selected=item.selected,
+                deactivated=item.deactivated,
+                max_width=max_width - w_adj,
             )
             return pfx_surface, select_surface, chevron_surface
         return None, None, None

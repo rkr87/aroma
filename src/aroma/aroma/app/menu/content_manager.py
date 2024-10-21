@@ -38,6 +38,13 @@ class ContentManager(ClassBase):
         self.select.state.total += 1
         self._logger.debug("Added item %s to list", item)
 
+    def update_item(self, key: str, item: MenuItemBase) -> None:
+        """Add a menu item to the list."""
+        if key not in self._items:
+            self.add_item(key, item)
+            return
+        self._items[key] = item
+
     def remove_item(self, key: str) -> None:
         """Remove a menu item by index."""
         if key in self._items:

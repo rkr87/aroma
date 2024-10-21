@@ -27,6 +27,12 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Refresh ROM DB and system cache.",
     )
+    parser.add_argument(
+        "-l",
+        "--launch",
+        type=Path,
+        help="Provide the file path to a rom/shortcut.",
+    )
     return parser.parse_args()
 
 
@@ -51,14 +57,25 @@ def refresh_roms() -> None:
 
 
 def launch_aroma() -> None:
-    """Initialise and starts the aroma."""
+    """Initialise and starts aroma."""
     logging.info("Launching aROMa.")
     from app.aroma_app import (  # pylint: disable=import-outside-toplevel
         AromaApp,
     )
 
     app: AromaApp = AromaApp()
-    app.start()
+    app.start_main()
+
+
+def rom_launch_menu(file_path: str) -> None:
+    """TODO."""
+    logging.info("Launching aROMa.")
+    from app.aroma_app import (  # pylint: disable=import-outside-toplevel
+        AromaApp,
+    )
+
+    app: AromaApp = AromaApp()
+    app.start_launch_menu(Path(file_path))
 
 
 if __name__ == "__main__":
@@ -66,5 +83,7 @@ if __name__ == "__main__":
     init()
     if args.refresh:
         refresh_roms()
+    elif args.launch:
+        rom_launch_menu(args.launch)
     else:
         launch_aroma()

@@ -28,10 +28,13 @@ class MenuEmuManagement(MenuBase):
         """TODO."""
         clean_on_refresh = self._clean_emus_on_refresh()
         clean_on_refresh.bottom_separator = True
+        add_launch_menus = self._add_launch_menus()
+        add_launch_menus.bottom_separator = True
         return OrderedDict(
             [
                 ("CLEAN_EMUS", self._clean_emus()),
                 ("CLEAN_EMUS_REFRESH", clean_on_refresh),
+                ("ADD_LAUNCH_MENUS", add_launch_menus),
             ]
         )
 
@@ -67,6 +70,24 @@ class MenuEmuManagement(MenuBase):
             SidePane(
                 Strings().clean_emus_refresh,
                 Strings().clean_emus_refresh_desc,
+            ),
+        )
+
+    @staticmethod
+    def _add_launch_menus() -> MenuItemSingle:
+        """TODO."""
+
+        def add_launch_menus() -> None:
+            BackgroundWorker().do_work(
+                EmuManager().add_emu_launch_menus,
+                Strings().adding_launch_menus,
+            )
+
+        return MenuItemSingle(
+            Strings().add_launch_menus,
+            add_launch_menus,
+            SidePane(
+                Strings().add_launch_menus, Strings().add_launch_menus_desc
             ),
         )
 

@@ -3,6 +3,7 @@
 from typing import TYPE_CHECKING
 
 from app.input.controller import Controller
+from app.menu.menu_base import MenuBase
 from app.model.current_menu import CurrentMenu
 from app.navigation.menu_main import MenuMain
 from app.navigation.menu_stack import MenuStack
@@ -29,27 +30,26 @@ class NavController(ClassSingleton):
     def __init__(self) -> None:
         super().__init__()
         self.menu_stack: MenuStack = MenuStack()
-        self.main: MenuMain = MenuMain()
         self._logger.debug("NavController initialized with main menu")
 
-    def current_menu(self, *, force_update: bool = False) -> CurrentMenu:
+    def current_menu(
+        self, *, force_update: bool = False, start_menu: MenuBase | None = None
+    ) -> CurrentMenu:
         """Return the current menu from the top of the stack."""
         if current := self.menu_stack.get_current(
             update_required=force_update,
         ):
             return current
-        self._logger.info("Menu stack is empty, pushing main menu")
-        return self.menu_stack.push(self.main)
+        self._logger.info("Menu stack is empty, pushing start menu")
+        if not start_menu:
+            start_menu = MenuMain()
+        return self.menu_stack.push(start_menu)
 
     def handle_events(
         self,
-        event: SDL_Event | None = None,
+        event: SDL_Event,
     ) -> CurrentMenu:
         """Handle controller input events to navigate through menus."""
-        if event is None:
-            self._logger.debug("No event passed, updating current menu")
-            return self.current_menu(force_update=True)
-
         if Controller.button_press(event, SDL_CONTROLLER_BUTTON_A):
             self._logger.debug("A button pressed, popping menu")
             self.menu_stack.pop()

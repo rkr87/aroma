@@ -256,8 +256,17 @@ def is_relative_path(path: Path, base_path: Path) -> bool:
     return str(path).startswith(str(base_path))
 
 
-def tsp_path(path: str) -> str:
+def tsp_path(path: str | Path) -> str:
     """TODO."""
+    path_str = str(path)
     if RUNNING_ON_TSP:
-        return path
-    return path.replace(TSP_SD, WIN_SD)
+        return path_str
+    return path_str.replace(TSP_SD, WIN_SD)
+
+
+def read_text_file(file_path: Path) -> list[str]:
+    """TODO."""
+    if not file_path.is_file():
+        return []
+    with file_path.open("r", encoding="utf-8") as f:
+        return list(f)

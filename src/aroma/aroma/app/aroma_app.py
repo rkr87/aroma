@@ -2,11 +2,13 @@
 
 import sys
 import time
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 from app.background_worker import BackgroundWorker
 from app.input.controller import Controller
 from app.input.keyboard_controller import KeyboardController
+from app.navigation.menu_launch_options import MenuLaunchOptions
 from app.navigation.nav_controller import NavController
 from app.screen_manager import ScreenManager
 from app.strings import Strings
@@ -102,9 +104,22 @@ class AromaApp(ClassSingleton):  # pylint: disable=too-many-instance-attributes
                 self.handle_event(event)
         self._logger.info("Event polling stopped.")
 
-    def start(self) -> None:
+    def start_main(self) -> None:
         """Start the application."""
         self._logger.info("Application starting.")
-        menu: CurrentMenu = self.navigator.handle_events()
+        menu: CurrentMenu = self.navigator.current_menu()
+        self.screen.render(menu)
+        self.poll_event()
+
+    def start_launch_menu(self, shortcut_path: Path) -> None:
+        """TODO."""
+        self._logger.info("Application starting.")
+        shortcut_menu = MenuLaunchOptions()
+        shortcut_menu.build_dynamic_menu(
+            f"LAUNCHING {shortcut_path.stem.upper()}", shortcut_path, None
+        )
+        menu: CurrentMenu = self.navigator.current_menu(
+            start_menu=shortcut_menu
+        )
         self.screen.render(menu)
         self.poll_event()
