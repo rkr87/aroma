@@ -5,6 +5,7 @@ from enum import Enum, auto
 
 from shared.classes.class_base import ClassBase
 from shared.constants import MAX_ITEMS_PER_PAGE
+from shared.tools import util
 from shared.tools.util import clamp
 
 
@@ -19,13 +20,24 @@ class SelectionManager(ClassBase):
     """Manages selection and pagination for menu items."""
 
     @dataclass
-    class _SelectionState:
+    class _SelectionState:  # pylint: disable = R0902:too-many-instance-attributes
         """Stores metadata about the selection state and pagination."""
 
         total: int
-        selected: int = 0
+        _selected: int = 0
         pos: _MenuPos = _MenuPos.BOTTOM
         _start: int = 0
+
+        @property
+        def selected(self) -> int:
+            """TODO."""
+            self._selected = util.clamp(self._selected, 0, self.total - 1)
+            return self._selected
+
+        @selected.setter
+        def selected(self, value: int) -> None:
+            """TODO."""
+            self._selected = util.clamp(value, 0, self.total - 1)
 
         def cycle_items(
             self,
