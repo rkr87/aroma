@@ -109,11 +109,34 @@ class MenuBase(ClassSingleton, ABC):
             AppConfig().update_value(config_attr, value)
             self.reset_menu()
 
+        return self._generate_keyboard_menu_item(
+            update_config,
+            label,
+            [f"CURRENT: {current_val or 'NOT SET'}", *desc],
+            prompt,
+            current_val,
+        )
+
+    @staticmethod
+    def _generate_keyboard_menu_item(  # pylint: disable=too-many-arguments  # noqa: PLR0913
+        on_submit: Callable[[str], None],
+        label: str,
+        desc: list[str],
+        prompt: str,
+        current_val: str = "",
+        *,
+        keep_open: bool = False,
+        on_close: Callable[[], None] | None = None,
+    ) -> MenuItemSingle:
+        """TODO."""
+
         def get_user_input() -> None:
             Keyboard().open(
                 prompt.upper(),
-                update_config,
+                on_submit,
                 current_val,
+                keep_open=keep_open,
+                on_close=on_close,
             )
 
         return MenuItemSingle(
@@ -121,7 +144,7 @@ class MenuBase(ClassSingleton, ABC):
             get_user_input,
             SidePane(
                 label.upper(),
-                [f"CURRENT: {current_val or 'NOT SET'}", *desc],
+                [*desc],
             ),
         )
 
