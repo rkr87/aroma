@@ -4,7 +4,6 @@ from collections import OrderedDict
 from pathlib import Path
 
 from app.menu.menu_base import MenuBase
-from app.menu.menu_item_base import MenuItemBase
 from app.menu.menu_item_multi import MenuItemMulti
 from app.model.side_pane import SidePane
 from app.strings import Strings
@@ -31,20 +30,15 @@ class MenuRomNaming(MenuBase):
 
     def __init__(self) -> None:
         """Initialise the ROM naming menu with arcade ROM naming options."""
-        super().__init__(Strings().rom_naming, self._build_menu())
+        super().__init__(Strings().rom_naming, OrderedDict())
+        self._build_menu()
 
-    def _build_menu(self) -> OrderedDict[str, MenuItemBase]:
+    def _build_menu(self) -> None:
         """Build the menu."""
         logger = MenuRomNaming.get_static_logger()
         logger.debug("Building Rom Naming menu options.")
-
-        options: OrderedDict[str, MenuItemBase] = OrderedDict(
-            [
-                ("CONSOLE_NAMING", self._console_naming()),
-                ("NAME_FORMAT", self._name_format()),
-            ],
-        )
-        return options
+        self.content.add_item("CONSOLE_NAMING", self._console_naming())
+        self.content.add_item("NAME_FORMAT", self._name_format())
 
     @staticmethod
     def _console_naming() -> MenuItemMulti:
@@ -102,7 +96,10 @@ class MenuRomNaming(MenuBase):
             SidePane(Strings().name_format, Strings().name_format_desc),
         )
 
-    def build_dynamic_menu(  # noqa: D102  # Ignore missing docstring, it's inherited
-        self, breadcrumb: str, path: Path | None, identifier: str | None
+    def _build_dynamic_menu(
+        self, path: Path | None, identifier: str | None
     ) -> None:
+        pass
+
+    def _dynamic_menu_default_items(self) -> None:
         pass

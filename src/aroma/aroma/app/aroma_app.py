@@ -115,7 +115,7 @@ class AromaApp(ClassSingleton):  # pylint: disable=too-many-instance-attributes
         """TODO."""
         self._logger.info("Application starting.")
         shortcut_menu = MenuLaunchOptions()
-        shortcut_menu.build_dynamic_menu(
+        shortcut_menu.init_dynamic_menu(
             f"LAUNCHING {shortcut_path.stem.upper()}", shortcut_path, None
         )
         menu: CurrentMenu = self.navigator.current_menu(

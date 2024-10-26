@@ -5,7 +5,6 @@ from collections import OrderedDict
 from pathlib import Path
 
 from app.menu.menu_base import MenuBase
-from app.menu.menu_item_base import MenuItemBase
 from app.menu.menu_item_multi import MenuItemMulti
 from app.model.side_pane import SidePane
 from app.strings import Strings
@@ -21,18 +20,15 @@ class MenuOptions(MenuBase):
 
     def __init__(self) -> None:
         self._config = AppConfig()
-        super().__init__(Strings().options, self._build_menu())
+        super().__init__(Strings().options, OrderedDict())
+        self._build_menu()
 
-    def _build_menu(self) -> OrderedDict[str, MenuItemBase]:  # pylint: disable=no-self-use
+    def _build_menu(self) -> None:  # pylint: disable=no-self-use
         """Build the options menu with predefined settings choices."""
         logger = MenuOptions.get_static_logger()
         logger.debug("Building Options menu options.")
-        return OrderedDict(
-            [
-                ("LANGUAGE", self._language()),
-                ("LOGGING", self._logging_level()),
-            ],
-        )
+        self.content.add_item("LANGUAGE", self._language())
+        self.content.add_item("LOGGING", self._logging_level())
 
     def _language(self) -> MenuItemMulti:
         """Create menu item for selecting the language."""
@@ -99,7 +95,10 @@ class MenuOptions(MenuBase):
         for menu in reversed(MenuBase.get_children()):
             menu.reset_menu()
 
-    def build_dynamic_menu(  # noqa: D102  # Ignore missing docstring, it's inherited
-        self, breadcrumb: str, path: Path | None, identifier: str | None
+    def _build_dynamic_menu(
+        self, path: Path | None, identifier: str | None
     ) -> None:
+        pass
+
+    def _dynamic_menu_default_items(self) -> None:
         pass

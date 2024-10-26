@@ -226,7 +226,10 @@ class MenuImageManagement(MenuBase):
             ),
         )
 
-    def build_dynamic_menu(  # noqa: D102  # Ignore missing docstring, it's inherited
-        self, breadcrumb: str, path: Path | None, identifier: str | None
+    def _build_dynamic_menu(
+        self, path: Path | None, identifier: str | None
     ) -> None:
+        pass
+
+    def _dynamic_menu_default_items(self) -> None:
         pass

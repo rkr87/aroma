@@ -19,18 +19,16 @@ class MenuDownloaderCategory(MenuBase):
 
         super().__init__("DOWNLOADER CATEGORY", OrderedDict())
 
-    def build_dynamic_menu(  # noqa: D102  # Ignore missing docstring, it's inherited
+    def _dynamic_menu_default_items(self) -> None:
+        pass
+
+    def _build_dynamic_menu(
         self,
-        breadcrumb: str,
         path: Path | None,
         identifier: str | None = None,  # noqa: ARG002
     ) -> None:
         if not path:
             raise FileNotFoundError
-        logger = MenuDownloaderCategory.get_static_logger()
-        logger.debug("Building System Downloader menu options.")
-        self.breadcrumb = breadcrumb
-        self.content.clear_items()
         for category, items in util.load_simple_json(path).items():
             if category in {"id", "desc", "auth_req"}:
                 continue
