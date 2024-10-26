@@ -45,21 +45,29 @@ class Keyboard(ClassSingleton):  # pylint: disable=too-many-instance-attributes
         self.is_open = False
         self.current_input = ""
         self.on_submit: Callable[[str], None] | None = None
+        self.on_close: Callable[[], None] | None = None
         self.prompt = ""
         self.update_req = False
+        self.keep_open = False
 
     def open(
         self,
         prompt: str,
         on_submit: Callable[[str], None] | None = None,
         current_val: str = "",
+        *,
+        keep_open: bool = False,
+        on_close: Callable[[], None] | None = None,
     ) -> None:
         """TODO."""
         self.current_input = current_val
         self.prompt = prompt
         self.on_submit = on_submit
         self.update_req = True
+        self.keep_open = keep_open or self.keep_open
         self.is_open = True
+        if on_close:
+            self.on_close = on_close
 
     def toggle_capslock(self) -> None:
         """TODO."""
@@ -94,13 +102,19 @@ class Keyboard(ClassSingleton):  # pylint: disable=too-many-instance-attributes
         if self.shift_on:
             self.toggle_shift()
 
-    def close(self) -> None:
+    def close(self, *, force_close: bool = False) -> None:
         """TODO."""
         self.current_input = ""
+        self.update_req = True
+        if self.keep_open and not force_close:
+            return
+        if self.on_close:
+            self.on_close()
+            self.on_close = None
         self.prompt = ""
         self.on_submit = None
-        self.update_req = True
         self.is_open = False
+        self.keep_open = False
 
     def submit(self) -> None:
         """Submit the current input and clear it."""
