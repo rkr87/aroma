@@ -29,13 +29,15 @@ class MenuStack(ClassSingleton):
         for menu in self.menus:
             menu.reset_menu()
 
-    def pop(self) -> None:
+    def pop(self, *, regenerate: bool = False) -> None:
         """Remove the top menu from the stack, if more than one menu exists."""
         logger = MenuStack.get_static_logger()
         if len(self.menus) > 1:
             logger.info("Menu popped: %s", self.menus[-1].breadcrumb)
             self.menus[-1].select.state.reset()
             self.menus.pop()
+            if regenerate:
+                self.menus[-1].regenerate_dynamic_menu()
 
     def clear(self) -> None:
         """Clear all menus from the stack."""
