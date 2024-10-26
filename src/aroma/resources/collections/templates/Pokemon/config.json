@@ -1,0 +1,7 @@
+{
+    "label": "Pokemon",
+    "include": [
+        "pokemon",
+        "pocket monsters"
+    ]
+}

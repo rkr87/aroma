@@ -1,0 +1,8 @@
+{
+    "label": "Mega Man",
+    "include": [
+        "megaman",
+        "mega-man",
+        "mega man"
+    ]
+}
