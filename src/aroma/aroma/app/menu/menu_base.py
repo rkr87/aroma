@@ -22,7 +22,7 @@ from shared.tools import util
 _T = TypeVar("_T", str, int, bool)
 
 
-class MenuBase(ClassSingleton, ABC):
+class MenuBase(ClassSingleton, ABC):  # pylint: disable=too-many-instance-attributes
     """Base class for managing menu items, navigation, and user actions."""
 
     def __init__(
@@ -41,6 +41,8 @@ class MenuBase(ClassSingleton, ABC):
         )
         self.action: ActionManager = ActionManager(self.select, self.content)
         self._logger.info("Initialised %s menu", breadcrumb)
+        self.dynamic_path: Path | None = None
+        self.dynamic_identifier: str | None = None
 
     def reset_menu(self) -> None:
         """Rebuild the menu and restore the previously selected item."""
@@ -86,7 +88,7 @@ class MenuBase(ClassSingleton, ABC):
 
         def rebuild_and_push() -> None:
             """TODO."""
-            menu.build_dynamic_menu(text, path, identifier)
+            menu.init_dynamic_menu(text, path, identifier)
             stack_push(menu)
 
         return MenuItemSingle(
@@ -213,8 +215,30 @@ class MenuBase(ClassSingleton, ABC):
         logger.info("Rebuilding %s menu, reason: %s", type(self), reason)
         self.reset_menu()
 
-    @abstractmethod
-    def build_dynamic_menu(
+    def init_dynamic_menu(
         self, breadcrumb: str, path: Path | None, identifier: str | None
+    ) -> None:
+        """TODO."""
+        self.breadcrumb = breadcrumb.upper()
+        self.dynamic_path = path
+        self.dynamic_identifier = identifier
+        self.regenerate_dynamic_menu()
+
+    def regenerate_dynamic_menu(self) -> None:
+        """TODO."""
+        self._logger.debug(
+            "Generating %s menu options.", self.__class__.__name__
+        )
+        self.content.clear_items()
+        self._dynamic_menu_default_items()
+        self._build_dynamic_menu(self.dynamic_path, self.dynamic_identifier)
+
+    @abstractmethod
+    def _dynamic_menu_default_items(self) -> None:
+        """TODO."""
+
+    @abstractmethod
+    def _build_dynamic_menu(
+        self, path: Path | None, identifier: str | None
     ) -> None:
         """TODO."""

@@ -23,7 +23,7 @@ class MenuEmuManagement(MenuBase):
         self.emu_config: MenuEmuConfig = MenuEmuConfig()
         super().__init__(Strings().emu_management, OrderedDict())
 
-    def default_items(self) -> None:
+    def _dynamic_menu_default_items(self) -> None:
         """TODO."""
         self.content.add_section(
             ("CLEAN_EMUS", self._clean_emus()),
@@ -40,7 +40,7 @@ class MenuEmuManagement(MenuBase):
             BackgroundWorker().do_work(
                 RomManager().clean_emus, Strings().cleaning_emus
             )
-            self.build_dynamic_menu(self.breadcrumb)
+            self.regenerate_dynamic_menu()
 
         return MenuItemSingle(
             Strings().clean_emus,
@@ -86,18 +86,11 @@ class MenuEmuManagement(MenuBase):
             ),
         )
 
-    def build_dynamic_menu(  # noqa: D102  # Ignore missing docstring, it's inherited
+    def _build_dynamic_menu(
         self,
-        breadcrumb: str,
-        path: Path | None = None,  # noqa: ARG002
-        identifier: str | None = None,  # noqa: ARG002
+        path: Path | None,  # noqa: ARG002
+        identifier: str | None,  # noqa: ARG002
     ) -> None:
-        logger = MenuEmuManagement.get_static_logger()
-        logger.debug("Building Emu Management menu options.")
-
-        self.breadcrumb = breadcrumb
-        self.content.clear_items()
-        self.default_items()
         for emu in sorted(
             EmuManager.get_configurable_systems(), key=lambda item: item.label
         ):

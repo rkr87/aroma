@@ -22,8 +22,7 @@ class MenuDownloader(MenuBase):
         self.list_menu: MenuDownloaderList = MenuDownloaderList()
         super().__init__(Strings().downloader, OrderedDict())
 
-    def default_items(self) -> None:
-        """TODO."""
+    def _dynamic_menu_default_items(self) -> None:
         self.content.add_section(
             ("ARCHIVE_USER_ID", self._archive_user()),
             ("ARCHIVE_PASSWORD", self._archive_password()),
@@ -47,18 +46,11 @@ class MenuDownloader(MenuBase):
             Strings().archive_password_prompt,
         )
 
-    def build_dynamic_menu(  # noqa: D102  # Ignore missing docstring, it's inherited
+    def _build_dynamic_menu(
         self,
-        breadcrumb: str,
         path: Path | None = None,  # noqa: ARG002
         identifier: str | None = None,  # noqa: ARG002
     ) -> None:
-        logger = MenuDownloader.get_static_logger()
-        logger.debug("Building Downloader menu options.")
-
-        self.breadcrumb = breadcrumb
-        self.content.clear_items()
-        self.default_items()
         for child_path in DOWNLOADER_PATH.iterdir():
             if not child_path.is_dir() or not EmuConfigHandler.is_valid_system(
                 child_path.name

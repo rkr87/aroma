@@ -20,19 +20,17 @@ class MenuDownloaderList(MenuBase):
         self.category_menu: MenuDownloaderCategory = MenuDownloaderCategory()
         super().__init__("DOWNLOADER LIST", OrderedDict())
 
-    def build_dynamic_menu(  # noqa: D102  # Ignore missing docstring, it's inherited
+    def _dynamic_menu_default_items(self) -> None:
+        pass
+
+    def _build_dynamic_menu(
         self,
-        breadcrumb: str,
         path: Path | None,
         identifier: str | None = None,  # noqa: ARG002
     ) -> None:
         if not path:
             raise FileNotFoundError
-        logger = MenuDownloaderList.get_static_logger()
-        logger.debug("Building System Downloader menu options.")
-        self.breadcrumb = breadcrumb
         file_type: str = ".json"
-        self.content.clear_items()
         for list_file in path.iterdir():
             if not list_file.is_file() or list_file.suffix != file_type:
                 continue

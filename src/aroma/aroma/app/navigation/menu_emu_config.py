@@ -28,18 +28,13 @@ class MenuEmuConfig(MenuBase):
     def __init__(self) -> None:
         super().__init__("EMU CONFIG", OrderedDict())
 
-    def build_dynamic_menu(  # noqa: D102  # Ignore missing docstring, it's inherited
+    def _build_dynamic_menu(
         self,
-        breadcrumb: str,
         path: Path | None,
         identifier: str | None,  # noqa: ARG002
     ) -> None:
         if not path:
             raise FileNotFoundError
-        logger = MenuEmuConfig.get_static_logger()
-        logger.debug("Building Emu Config menu options.")
-        self.breadcrumb = breadcrumb
-        self.content.clear_items()
         config = EmuManager().get_system_config(path.name)
         if config.launchlist:
             self.content.add_section(
@@ -88,7 +83,7 @@ class MenuEmuConfig(MenuBase):
         def set_profile(profile: CPUProfile) -> None:
             """TODO."""
             EmuCPUProfileManager.set_cpu_profile(config.system, profile)
-            self.build_dynamic_menu(self.breadcrumb, config.system, None)
+            self.regenerate_dynamic_menu()
 
         profiles = [
             CPUProfile("CUSTOM", None, None, None, None),
@@ -205,7 +200,7 @@ class MenuEmuConfig(MenuBase):
         def set_cores(cores: int) -> None:
             """TODO."""
             EmuCPUProfileManager.set_cpu_cores(config.system, cores)
-            self.build_dynamic_menu(self.breadcrumb, config.system, None)
+            self.regenerate_dynamic_menu()
 
         data: OrderedDict[int, str] = OrderedDict(
             (i + 1, f"{i + 1}") for i in range(4)
@@ -231,7 +226,7 @@ class MenuEmuConfig(MenuBase):
         def set_governor(governor: CPUGovernor | None) -> None:
             """TODO."""
             EmuCPUProfileManager.set_cpu_governor(config.system, governor)
-            self.build_dynamic_menu(self.breadcrumb, config.system, None)
+            self.regenerate_dynamic_menu()
 
         data = {
             None: Strings().none_set,
@@ -271,7 +266,7 @@ class MenuEmuConfig(MenuBase):
 
         def update_freq(freq: int | None) -> None:
             function(system_path, freq)
-            self.build_dynamic_menu(self.breadcrumb, system_path, None)
+            self.regenerate_dynamic_menu()
 
         actions: list[MenuAction] = []
         current: int = -1
@@ -282,3 +277,6 @@ class MenuEmuConfig(MenuBase):
                 MenuAction(str(data.get(item)), partial(update_freq, item))
             )
         return actions, current
+
+    def _dynamic_menu_default_items(self) -> None:
+        pass

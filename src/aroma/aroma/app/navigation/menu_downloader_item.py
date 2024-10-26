@@ -20,15 +20,14 @@ class MenuDownloaderItem(MenuBase):
     def __init__(self) -> None:
         super().__init__("DOWNLOADER ITEM", OrderedDict())
 
-    def build_dynamic_menu(  # noqa: D102  # Ignore missing docstring, it's inherited
-        self, breadcrumb: str, path: Path | None, identifier: str | None
+    def _dynamic_menu_default_items(self) -> None:
+        pass
+
+    def _build_dynamic_menu(
+        self, path: Path | None, identifier: str | None
     ) -> None:
         if not identifier or not path:
             raise FileNotFoundError
-        logger = MenuDownloaderItem.get_static_logger()
-        logger.debug("Building Item Downloader menu options.")
-        self.breadcrumb = breadcrumb
-        self.content.clear_items()
         data = util.load_simple_json(path)
         for item in data[identifier]:
             self._create_menu_item(data, path, item)

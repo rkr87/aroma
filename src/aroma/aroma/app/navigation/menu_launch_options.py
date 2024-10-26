@@ -26,18 +26,13 @@ class MenuLaunchOptions(MenuBase):
         self._roms: list[Path] = []
         self._selected_emu = ""
 
-    def build_dynamic_menu(  # noqa: D102  # Ignore missing docstring, it's inherited
+    def _build_dynamic_menu(
         self,
-        breadcrumb: str,
         path: Path | None,
         identifier: str | None,  # noqa: ARG002
     ) -> None:
         if not path:
             raise FileNotFoundError
-        logger = MenuLaunchOptions.get_static_logger()
-        logger.debug("Building Shortcut Options menu options.")
-        self.breadcrumb = breadcrumb
-        self.content.clear_items()
         self._build_rom_list(path)
         self._launch_option()
         self._rom_selector()
@@ -132,3 +127,6 @@ class MenuLaunchOptions(MenuBase):
             SidePane(Strings().emu, [item.text for item in actions]),
         )
         self.content.update_item("EMU_SELECTOR", menu_item)
+
+    def _dynamic_menu_default_items(self) -> None:
+        pass
