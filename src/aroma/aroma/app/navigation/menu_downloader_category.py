@@ -45,6 +45,7 @@ class MenuDownloaderCategory(MenuBase):
                     side_pane=SidePane(
                         category.upper(),
                         [item["name"] for item in items],
+                        trim_long_lines=True,
                     ),
                 ),
             )
