@@ -4,7 +4,6 @@ from collections import OrderedDict
 from pathlib import Path
 
 from app.menu.menu_base import MenuBase
-from app.menu.menu_item_base import MenuItemBase
 from app.menu.menu_item_single import MenuItemSingle
 from app.model.side_pane import SidePane
 from app.navigation.menu_downloader_list import MenuDownloaderList
@@ -21,17 +20,13 @@ class MenuDownloader(MenuBase):
         """TODO."""
         self.menu_stack: MenuStack = MenuStack()
         self.list_menu: MenuDownloaderList = MenuDownloaderList()
-        super().__init__(Strings().downloader, self.default_items())
+        super().__init__(Strings().downloader, OrderedDict())
 
-    def default_items(self) -> OrderedDict[str, MenuItemBase]:
+    def default_items(self) -> None:
         """TODO."""
-        a_pw = self._archive_password()
-        a_pw.bottom_separator = True
-        return OrderedDict(
-            [
-                ("ARCHIVE_USER_ID", self._archive_user()),
-                ("ARCHIVE_PASSWORD", a_pw),
-            ]
+        self.content.add_section(
+            ("ARCHIVE_USER_ID", self._archive_user()),
+            ("ARCHIVE_PASSWORD", self._archive_password()),
         )
 
     def _archive_user(self) -> MenuItemSingle:
@@ -63,7 +58,7 @@ class MenuDownloader(MenuBase):
 
         self.breadcrumb = breadcrumb
         self.content.clear_items()
-        self.content.items = self.default_items()
+        self.default_items()
         for child_path in DOWNLOADER_PATH.iterdir():
             if not child_path.is_dir() or not EmuConfigHandler.is_valid_system(
                 child_path.name

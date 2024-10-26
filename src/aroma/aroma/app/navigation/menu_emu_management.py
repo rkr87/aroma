@@ -5,7 +5,6 @@ from pathlib import Path
 
 from app.background_worker import BackgroundWorker
 from app.menu.menu_base import MenuBase
-from app.menu.menu_item_base import MenuItemBase
 from app.menu.menu_item_multi import MenuItemMulti
 from app.menu.menu_item_single import MenuItemSingle
 from app.model.side_pane import SidePane
@@ -22,20 +21,16 @@ class MenuEmuManagement(MenuBase):
     def __init__(self) -> None:
         self.menu_stack: MenuStack = MenuStack()
         self.emu_config: MenuEmuConfig = MenuEmuConfig()
-        super().__init__(Strings().emu_management, self.default_items())
+        super().__init__(Strings().emu_management, OrderedDict())
 
-    def default_items(self) -> OrderedDict[str, MenuItemBase]:
+    def default_items(self) -> None:
         """TODO."""
-        clean_on_refresh = self._clean_emus_on_refresh()
-        clean_on_refresh.bottom_separator = True
-        add_launch_menus = self._add_launch_menus()
-        add_launch_menus.bottom_separator = True
-        return OrderedDict(
-            [
-                ("CLEAN_EMUS", self._clean_emus()),
-                ("CLEAN_EMUS_REFRESH", clean_on_refresh),
-                ("ADD_LAUNCH_MENUS", add_launch_menus),
-            ]
+        self.content.add_section(
+            ("CLEAN_EMUS", self._clean_emus()),
+            ("CLEAN_EMUS_REFRESH", self._clean_emus_on_refresh()),
+        )
+        self.content.add_section(
+            ("ADD_LAUNCH_MENUS", self._add_launch_menus())
         )
 
     def _clean_emus(self) -> MenuItemSingle:
@@ -102,7 +97,7 @@ class MenuEmuManagement(MenuBase):
 
         self.breadcrumb = breadcrumb
         self.content.clear_items()
-        self.content.items = self.default_items()
+        self.default_items()
         for emu in sorted(
             EmuManager.get_configurable_systems(), key=lambda item: item.label
         ):

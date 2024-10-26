@@ -5,7 +5,6 @@ from pathlib import Path
 
 from app.background_worker import BackgroundWorker
 from app.menu.menu_base import MenuBase
-from app.menu.menu_item_base import MenuItemBase
 from app.menu.menu_item_multi import MenuItemMulti
 from app.menu.menu_item_single import MenuItemSingle
 from app.model.side_pane import SidePane
@@ -22,37 +21,33 @@ class MenuImageManagement(MenuBase):
     """A menu for managing Image Management preferences."""
 
     def __init__(self) -> None:
-        super().__init__(Strings().image_management, self._build_menu())
+        super().__init__(Strings().image_management, OrderedDict())
+        self._build_menu()
 
-    def _build_menu(self) -> OrderedDict[str, MenuItemBase]:
+    def _build_menu(self) -> None:
         """Build and return the menu items."""
         logger = MenuImageManagement.get_static_logger()
         logger.debug("Building Image Management menu options.")
-
-        remove_on_refresh = self._remove_on_refresh()
-        remove_on_refresh.bottom_separator = True
-
-        scrape_on_refresh = self._scrape_on_refresh()
-        scrape_on_refresh.bottom_separator = True
-
-        days_to_rescrape = self._days_to_rescrape()
-        days_to_rescrape.bottom_separator = True
-
-        options: OrderedDict[str, MenuItemBase] = OrderedDict(
-            [
-                ("REMOVE_BROKEN", self._remove_broken_images()),
-                ("REMOVE_BROKEN_REFRESH", remove_on_refresh),
-                ("SCRAPE_MISSING", self._scrape_missing()),
-                ("SCRAPE_ON_REFRESH", scrape_on_refresh),
-                ("SCRAPE_CPU_THREADS", self._scrape_cpu_threads()),
-                ("SCRAPE_MEDIA_TYPE", self._scrape_media_type()),
-                ("SCRAPE_REGION", self._scrape_region()),
-                ("DAYS_TO_RESCRAPE", days_to_rescrape),
-                ("SCRAPE_USER", self._scrape_user()),
-                ("SCRAPE_PASSWORD", self._scrape_password()),
-            ],
+        self.content.add_section(
+            ("REMOVE_BROKEN", self._remove_broken_images()),
+            ("REMOVE_BROKEN_REFRESH", self._remove_on_refresh()),
         )
-        return options
+        self.content.add_section(
+            ("SCRAPE_MISSING", self._scrape_missing()),
+            ("SCRAPE_ON_REFRESH", self._scrape_on_refresh()),
+        )
+        self.content.add_section(
+            ("SCRAPE_MISSING", self._scrape_missing()),
+            ("SCRAPE_ON_REFRESH", self._scrape_on_refresh()),
+        )
+        self.content.add_section(
+            ("SCRAPE_CPU_THREADS", self._scrape_cpu_threads()),
+            ("SCRAPE_MEDIA_TYPE", self._scrape_media_type()),
+            ("SCRAPE_REGION", self._scrape_region()),
+            ("DAYS_TO_RESCRAPE", self._days_to_rescrape()),
+        )
+        self.content.add_item("SCRAPE_USER", self._scrape_user())
+        self.content.add_item("SCRAPE_PASSWORD", self._scrape_password())
 
     @staticmethod
     def _scrape_missing() -> MenuItemSingle:
