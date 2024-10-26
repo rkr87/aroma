@@ -10,10 +10,8 @@ line_count=0
 extension="${rom_file##*.}"
 if [ "$extension" = "txt" ]; then
     while IFS= read -r line; do
-        if [ -n "$line" ] && [ "$line" != " " ]; then
-            line_count=$((line_count + 1))
-        fi
-    done < "$1"
+        [ -n "$line" ] && [ "$line" != " " ] && line_count=$((line_count + 1))
+    done < "$rom_file"
 fi
 
 button_state.sh R
@@ -29,20 +27,13 @@ if [ $? -eq 10 ] || [ "$line_count" -gt 1 ]; then
     launch_script=$(echo "$result" | jq -r '.launch')
     rom_file=$(echo "$result" | jq -r '.rom')
 else
-    if [ "$extension" = "txt" ]; then
-        rom_file=$(head -n 1 "$1")
-    fi
-    if ! [ -f "$launch_script" ]; then
-        rel_path="${rom_file#"/mnt/SDCARD/Roms/"}"
-        system="${rel_path%%/*}"
-        emu_config="/mnt/SDCARD/Emus/$system/config.json"
-        launcher=$(jq -r '.launch' "$emu_config")
-        launch_script="/mnt/SDCARD/Emus/$system/$launcher"
-    else
-        exit 1
-    fi
+    [ -f "$launch_script" ] && exit 1
+    [ "$extension" = "txt" ] && rom_file=$(head -n 1 "$rom_file")
+    rel_path="${rom_file#"/mnt/SDCARD/Roms/"}"
+    system="${rel_path%%/*}"
+    emu_config="/mnt/SDCARD/Emus/$system/config.json"
+    launcher=$(jq -r '.launch' "$emu_config")
+    launch_script="/mnt/SDCARD/Emus/$system/$launcher"
 fi
 
-if [ -f "$rom_file" ] && [ -f "$launch_script" ]; then
-    "$launch_script" "$rom_file"
-fi
+[ -f "$rom_file" ] && [ -f "$launch_script" ] && "$launch_script" "$rom_file"
