@@ -116,12 +116,11 @@ class TextGenerator(ClassSingleton):
         paragraph: str,
         max_width: int,
         style: Style,
-    ) -> list[str]:
+    ) -> list[SDL_Surface]:
         """Process paragraph, reducing line length to fit in provided width."""
         lines: list[str] = []
         current_line = ""
-        words = paragraph.split(" ")
-        for word in words:
+        for word in paragraph.split(" "):
             test_line = f"{current_line} {word}".strip()
             text_surface = self.get_text(test_line, style)
             if text_surface and text_surface.w > max_width:
@@ -134,34 +133,37 @@ class TextGenerator(ClassSingleton):
         if current_line:
             lines.append(current_line)
         self._logger.debug("Processed paragraph into lines: %s", lines)
-        return lines
-
-    def _get_wrapped_lines(
-        self,
-        text: str,
-        max_width: int,
-        style: Style,
-    ) -> list[SDL_Surface]:
-        """Break text into lines that fit within provided width."""
-        lines: list[str] = []
-        blocks = text.split("\n\n")
-        for block in enumerate(blocks):
-            for paragraph in block[1].split("\n"):
-                lines.extend(
-                    self._process_paragraph(paragraph, max_width, style),
-                )
-            if block[0] < len(blocks) - 1:
-                lines.append(" ")
-        wrapped_lines = [
+        return [
             surface
             for line in lines
             if (surface := self.get_text(line, style))
         ]
-        self._logger.debug(
-            "Wrapped text into SDL_Surfaces: %d surfaces created",
-            len(wrapped_lines),
-        )
-        return wrapped_lines
+
+    def _process_line(
+        self, text: str, max_width: int, style: Style, *, trim: bool
+    ) -> list[SDL_Surface]:
+        """TODO."""
+        if not trim:
+            return self._process_paragraph(text, max_width, style)
+        if line := self.get_text(text, style, max_width):
+            return [line]
+        return []
+
+    def _get_wrapped_lines(
+        self, text: str, max_width: int, style: Style, *, trim: bool = False
+    ) -> list[SDL_Surface]:
+        """Break text into lines that fit within provided width."""
+        lines: list[SDL_Surface] = []
+        blocks = text.split("\n\n")
+        blank_line = self.get_text(" ", style)
+        for block in enumerate(blocks):
+            for paragraph in block[1].split("\n"):
+                lines.extend(
+                    self._process_line(paragraph, max_width, style, trim=trim)
+                )
+            if block[0] < len(blocks) - 1 and blank_line:
+                lines.append(blank_line)
+        return lines
 
     @staticmethod
     def _blit_lines_to_surface(
@@ -199,9 +201,15 @@ class TextGenerator(ClassSingleton):
         max_width: int,
         style: Style,
         max_height: int | None = None,
+        *,
+        trim_long_line: bool = False,
     ) -> SDL_Surface | None:
         """Wrap text within the given width and optional maximum height."""
-        if not (lines := self._get_wrapped_lines(text, max_width, style)):
+        if not (
+            lines := self._get_wrapped_lines(
+                text, max_width, style, trim=trim_long_line
+            )
+        ):
             self._logger.info(
                 "No text surfaces created for the given width %d and style %s",
                 max_width,
