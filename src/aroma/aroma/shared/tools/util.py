@@ -227,6 +227,7 @@ def save_simple_json(
     """Save a simple dictionary as a JSON file."""
     if isinstance(data, dict):
         data = {str(key): value for key, value in data.items()}
+    path.parent.mkdir(parents=True, exist_ok=True)
     try:
         with path.open("w", encoding="utf8") as file:
             json.dump(
