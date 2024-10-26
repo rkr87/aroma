@@ -98,7 +98,9 @@ class MenuLaunchOptions(MenuBase):
         menu_item = MenuItemMulti(
             Strings().rom,
             actions,
-            side_pane=SidePane(Strings().rom, list(roms.values())),
+            side_pane=SidePane(
+                Strings().rom, list(roms.values()), trim_long_lines=True
+            ),
         )
         self.content.add_item("ROM_SELECTOR", menu_item)
 
