@@ -1,5 +1,6 @@
 """TODO."""
 
+from functools import partial
 from typing import TYPE_CHECKING
 
 from app.input.controller import Controller
@@ -40,10 +41,8 @@ class KeyboardController(ClassSingleton):
         """TODO."""
         return self.keyboard.is_open
 
-    def handle_events(self, event: SDL_Event | None = None) -> bool:
+    def handle_events(self, event: SDL_Event) -> bool:
         """Handle SDL events and map them to keyboard actions."""
-        if not event:
-            return False
         if event.type == SDL_CONTROLLERBUTTONDOWN:
             self._handle_button_down(event)
             return True
@@ -93,7 +92,9 @@ class KeyboardController(ClassSingleton):
             SDL_CONTROLLER_BUTTON_DPAD_LEFT: self._nav_left,
             SDL_CONTROLLER_BUTTON_LEFTSHOULDER: self.keyboard.toggle_shift,
             SDL_CONTROLLER_BUTTON_RIGHTSHOULDER: self.keyboard.toggle_capslock,
-            SDL_CONTROLLER_BUTTON_A: self.keyboard.close,
+            SDL_CONTROLLER_BUTTON_A: partial(
+                self.keyboard.close, force_close=True
+            ),
             SDL_CONTROLLER_BUTTON_B: self._select_key,
             SDL_CONTROLLER_BUTTON_X: self.keyboard.backspace,
             SDL_CONTROLLER_BUTTON_Y: self.keyboard.space,
