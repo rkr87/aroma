@@ -6,13 +6,14 @@ from shared.classes.class_base import ClassBase
 
 
 @dataclass
-class SidePane(ClassBase):
+class SidePane(ClassBase):  # pylint: disable=too-many-instance-attributes
     """Represents a side pane with an optional header and content."""
 
     header: str | None = None
     content: str | list[str] | None = None
     bg_img: str | None = None
     img: str | None = None
+    trim_long_lines: bool = False
 
     @staticmethod
     def merge(
