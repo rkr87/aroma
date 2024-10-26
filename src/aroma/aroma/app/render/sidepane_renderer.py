@@ -105,7 +105,11 @@ class SidepaneRenderer(ClassSingleton):
         y = self._draw_sidepane_header(side_pane.header, y)
         y = self._draw_sidepane_images(side_pane.bg_img, side_pane.img, y)
 
-        if content := self._get_content_surface(side_pane.content, y_end - y):
+        if content := self._get_content_surface(
+            side_pane.content,
+            y_end - y,
+            trim_long_text=side_pane.trim_long_lines,
+        ):
             SDLHelpers.render_surface(
                 self.renderer, content, self.x_start + self.spacing, y
             )
@@ -122,7 +126,9 @@ class SidepaneRenderer(ClassSingleton):
     def _get_content_surface(
         self,
         content_text: str | list[str] | None,
-        max_height: int | None = None,
+        max_height: int | None,
+        *,
+        trim_long_text: bool,
     ) -> SDL_Surface | None:
         """Get the surface for the content text."""
         if not content_text:
@@ -131,7 +137,8 @@ class SidepaneRenderer(ClassSingleton):
             content_text = "\n".join(content_text)
         return TextGenerator().get_wrapped_text(
             content_text,
-            SCREEN_WIDTH - self.x_start - self.padding,
+            SCREEN_WIDTH - self.x_start - self.padding - self.spacing,
             Style.SIDEPANE_CONTENT,
             max_height=max_height,
+            trim_long_line=trim_long_text,
         )
