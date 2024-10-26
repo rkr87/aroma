@@ -6,10 +6,7 @@ from data.model.emu_config import EmuConfig
 from data.model.rom_detail import RomDetail
 from data.source.emu_config_handler import EmuConfigHandler
 from shared.classes.class_singleton import ClassSingleton
-from shared.constants import (
-    EMU_PATH,
-    NON_CONFIGURABLE_SYSTEM_PREFIX,
-)
+from shared.constants import EMU_PATH
 from shared.tools import util
 
 _LAUNCH_MENU_SCRIPT = (
@@ -62,14 +59,6 @@ class EmuManager(ClassSingleton):
         EmuManager._save_visibility_file(entries)
 
     @staticmethod
-    def is_valid_system(system: str) -> bool:
-        """TODO."""
-        return (
-            not system.startswith(tuple(NON_CONFIGURABLE_SYSTEM_PREFIX))
-            and (EMU_PATH / system / "config.json").is_file()
-        )
-
-    @staticmethod
     def _is_visible_system(system: str) -> bool:
         """TODO."""
         label = EmuConfigHandler().get(system).label
@@ -79,18 +68,13 @@ class EmuManager(ClassSingleton):
         return False
 
     @staticmethod
-    def _is_configurable_system(system: str) -> bool:
-        """TODO."""
-        checks = [EmuManager.is_valid_system, EmuManager._is_visible_system]
-        return all(check(system) for check in checks)
-
-    @staticmethod
     def get_configurable_systems() -> list[EmuConfig]:
         """TODO."""
         return [
             config
             for path in EMU_PATH.iterdir()
-            if EmuManager._is_configurable_system(path.name)
+            if EmuConfigHandler.is_configurable_system(path.name)
+            and EmuManager._is_visible_system(path.name)
             and (config := EmuConfigHandler().get(path.name))
             and (config.has_cpu_freq_file or config.launchlist)
         ]
@@ -101,7 +85,7 @@ class EmuManager(ClassSingleton):
         return [
             config
             for path in EMU_PATH.iterdir()
-            if EmuManager.is_valid_system(path.name)
+            if EmuConfigHandler.is_valid_system(path.name)
             and (config := EmuConfigHandler().get(path.name))
         ]
 
@@ -125,8 +109,7 @@ class EmuManager(ClassSingleton):
 
     def add_emu_launch_menus(self) -> None:
         """TODO."""
-        systems = self._get_valid_systems()
-        for config in systems:
+        for config in self._get_valid_systems():
             self._add_launch_menu(config.system / config.launch)
             for item in config.launchlist:
                 if item.launch == config.launch or not item.launch:

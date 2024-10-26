@@ -2,6 +2,7 @@
 
 from pathlib import Path
 
+from data.source.emu_config_handler import EmuConfigHandler
 from manager.emu_manager import EmuManager
 from shared.classes.class_singleton import ClassSingleton
 from shared.constants import (
@@ -40,7 +41,7 @@ class RomValidator(ClassSingleton):
     def _has_valid_system_directory(path: Path) -> bool:
         """Check if the emu directory exists for the ROM."""
         system = path.relative_to(ROM_PATH).parts[0]
-        return EmuManager.is_valid_system(system)
+        return EmuConfigHandler.is_valid_system(system)
 
     @staticmethod
     def has_valid_ext(path: Path) -> bool:
