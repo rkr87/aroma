@@ -111,5 +111,5 @@ class EmuConfigHandler(ClassSingleton):
         """TODO."""
         return (
             EmuConfigHandler.is_valid_system(system)
-            and system in NON_CONFIGURABLE_SYSTEMS
+            and system not in NON_CONFIGURABLE_SYSTEMS
         )
