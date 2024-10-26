@@ -1,0 +1,8 @@
+{
+    "label": "Mario",
+    "include": [
+        "mario",
+        "wario",
+        "luigi"
+    ]
+}
