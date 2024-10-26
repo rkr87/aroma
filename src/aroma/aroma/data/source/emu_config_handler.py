@@ -7,7 +7,8 @@ from shared.classes.class_singleton import ClassSingleton
 from shared.constants import (
     EMU_EXT_KEY,
     EMU_PATH,
-    NON_CONFIGURABLE_SYSTEM_PREFIX,
+    INVALID_SYSTEM_PREFIX,
+    NON_CONFIGURABLE_SYSTEMS,
 )
 from shared.tools import util
 
@@ -44,9 +45,13 @@ class EmuConfigHandler(ClassSingleton):
         """TODO."""
         if m := EmuConfigHandler._get_cpufreq_val("scaling_governor", content):
             emu_config.governor = m
-        if m := EmuConfigHandler._get_cpufreq_val("scaling_min_freq", content):
+        if (
+            m := EmuConfigHandler._get_cpufreq_val("scaling_min_freq", content)
+        ) and m.isnumeric():
             emu_config.min_freq = int(m)
-        if m := EmuConfigHandler._get_cpufreq_val("scaling_max_freq", content):
+        if (
+            m := EmuConfigHandler._get_cpufreq_val("scaling_max_freq", content)
+        ) and m.isnumeric():
             emu_config.max_freq = int(m)
         return emu_config
 
@@ -64,10 +69,7 @@ class EmuConfigHandler(ClassSingleton):
     @staticmethod
     def _get_cpufreq(emu_config: EmuConfig, system: str) -> EmuConfig:
         """TODO."""
-        if (
-            system.startswith(tuple(NON_CONFIGURABLE_SYSTEM_PREFIX))
-            or not (cpu := EMU_PATH / system / "cpufreq.sh").is_file()
-        ):
+        if not (cpu := EMU_PATH / system / "cpufreq.sh").is_file():
             return emu_config
         emu_config.has_cpu_freq_file = True
         with cpu.open() as f:
@@ -95,3 +97,19 @@ class EmuConfigHandler(ClassSingleton):
             config.get("aroma_cpu_profile", None),
         )
         return EmuConfigHandler._get_cpufreq(emu_config, system)
+
+    @staticmethod
+    def is_valid_system(system: str) -> bool:
+        """TODO."""
+        return (
+            not system.startswith(INVALID_SYSTEM_PREFIX)
+            and (EMU_PATH / system / "config.json").is_file()
+        )
+
+    @staticmethod
+    def is_configurable_system(system: str) -> bool:
+        """TODO."""
+        return (
+            EmuConfigHandler.is_valid_system(system)
+            and system in NON_CONFIGURABLE_SYSTEMS
+        )

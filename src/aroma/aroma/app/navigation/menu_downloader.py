@@ -10,7 +10,7 @@ from app.model.side_pane import SidePane
 from app.navigation.menu_downloader_list import MenuDownloaderList
 from app.navigation.menu_stack import MenuStack
 from app.strings import Strings
-from manager.emu_manager import EmuManager
+from data.source.emu_config_handler import EmuConfigHandler
 from shared.constants import DOWNLOADER_PATH
 
 
@@ -65,7 +65,7 @@ class MenuDownloader(MenuBase):
         self.content.clear_items()
         self.content.items = self.default_items()
         for child_path in DOWNLOADER_PATH.iterdir():
-            if not child_path.is_dir() or not EmuManager.is_valid_system(
+            if not child_path.is_dir() or not EmuConfigHandler.is_valid_system(
                 child_path.name
             ):
                 continue
