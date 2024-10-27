@@ -49,8 +49,10 @@ class Keyboard(ClassSingleton):  # pylint: disable=too-many-instance-attributes
         self.prompt = ""
         self.update_req = False
         self.keep_open = False
+        self.input_history: list[str] = []
+        self.help_text: list[str] = []
 
-    def open(
+    def open(  # pylint: disable=too-many-arguments  # noqa: PLR0913
         self,
         prompt: str,
         on_submit: Callable[[str], None] | None = None,
@@ -58,6 +60,7 @@ class Keyboard(ClassSingleton):  # pylint: disable=too-many-instance-attributes
         *,
         keep_open: bool = False,
         on_close: Callable[[], None] | None = None,
+        help_text: list[str] | None = None,
     ) -> None:
         """TODO."""
         self.current_input = current_val
@@ -66,6 +69,7 @@ class Keyboard(ClassSingleton):  # pylint: disable=too-many-instance-attributes
         self.update_req = True
         self.keep_open = keep_open or self.keep_open
         self.is_open = True
+        self.help_text = help_text or []
         if on_close:
             self.on_close = on_close
 
@@ -81,6 +85,12 @@ class Keyboard(ClassSingleton):  # pylint: disable=too-many-instance-attributes
         """TODO."""
         self.current_input = self.current_input[:-1]
 
+    def clear_input(self) -> None:
+        """TODO."""
+        self.current_input = ""
+        if self.shift_on:
+            self.shift_on = False
+
     def space(self) -> None:
         """TODO."""
         self.current_input = f"{self.current_input} "
@@ -93,6 +103,7 @@ class Keyboard(ClassSingleton):  # pylint: disable=too-many-instance-attributes
             "CAPS": self.toggle_capslock,
             "SHIFT": self.toggle_shift,
             "SPACE": self.space,
+            "CLEAR": self.clear_input,
         }
 
         if button.key in special_actions:
@@ -111,6 +122,7 @@ class Keyboard(ClassSingleton):  # pylint: disable=too-many-instance-attributes
         if self.on_close:
             self.on_close()
             self.on_close = None
+        self.input_history.clear()
         self.prompt = ""
         self.on_submit = None
         self.is_open = False
@@ -120,11 +132,8 @@ class Keyboard(ClassSingleton):  # pylint: disable=too-many-instance-attributes
         """Submit the current input and clear it."""
         if self.on_submit:
             self.on_submit(self.current_input)
+        self.input_history.append(self.current_input)
         self.close()
-
-    def get_current_input(self) -> str:
-        """Return the current input string."""
-        return self.current_input
 
     def _map_keys(
         self,
@@ -162,7 +171,11 @@ class Keyboard(ClassSingleton):  # pylint: disable=too-many-instance-attributes
             KeyboardButton(
                 "SPACE", 4, hint_img=f"{RESOURCES}/ui/button-X.png"
             ),
-            KeyboardButton("BKSP", 2, hint_img=f"{RESOURCES}/ui/button-Y.png"),
+            KeyboardButton(
+                "CLEAR" if self.shift_on else "BKSP",
+                2,
+                hint_img=f"{RESOURCES}/ui/button-Y.png",
+            ),
             KeyboardButton(
                 "ENTER", 2, hint_img=f"{RESOURCES}/ui/button-START.png"
             ),

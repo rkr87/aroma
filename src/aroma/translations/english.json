@@ -4,10 +4,6 @@
     "stock": "STOCK",
     "custom": "CUSTOM",
     "none_set": "NONE SET",
-    "collections": "COLLECTIONS",
-    "collections_desc": [
-        "Add description of options here"
-    ],
     "rom_naming": "ROM NAMING",
     "rom_naming_desc": [
         "Add description of options here"
@@ -215,11 +211,12 @@
     "cpu_profile_performance": "PERFORMANCE",
     "downloading_file": "DOWNLOADING FILE...",
     "cleaning_emus": "CLEANING EMULATORS...",
-    "adding_launch_menus": "ADDING LAUNCH MENUS...",
     "scraping_imgs": "SCRAPING IMAGES...",
     "removing_broken_imgs": "REMOVING BROKEN IMAGES...",
     "refreshing_roms": "REFRESHING ROMS...",
     "launch_rom": "LAUNCH ROM",
     "rom": "ROM",
-    "emu": "EMU"
+    "emu": "EMU",
+    "keyboard_input_history": "INPUT HISTORY",
+    "keyboard_help_info": "INFORMATION"
 }

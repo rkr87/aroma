@@ -14,8 +14,6 @@ class Strings(JsonDataClass):  # pylint: disable=too-many-instance-attributes
     no: str = ""
     stock: str = ""
     custom: str = ""
-    collections: str = ""
-    collections_desc: list[str] = field(default_factory=list)
     rom_naming: str = ""
     rom_naming_desc: list[str] = field(default_factory=list)
     downloader: str = ""
@@ -158,10 +156,11 @@ class Strings(JsonDataClass):  # pylint: disable=too-many-instance-attributes
     none_set: str = ""
     downloading_file: str = ""
     cleaning_emus: str = ""
-    adding_launch_menus: str = ""
     scraping_imgs: str = ""
     removing_broken_imgs: str = ""
     refreshing_roms: str = ""
     launch_rom: str = ""
     rom: str = ""
     emu: str = ""
+    keyboard_input_history: str = ""
+    keyboard_help_info: str = ""

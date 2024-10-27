@@ -102,7 +102,7 @@ class MenuBase(ClassSingleton, ABC):  # pylint: disable=too-many-instance-attrib
             side_pane=side_pane,
         )
 
-    def _generate_keyboard_config_item(
+    def _generate_keyboard_config_item(  # pylint: disable=too-many-arguments # noqa: PLR0913
         self,
         config_attr: str,
         label: str,
@@ -110,6 +110,7 @@ class MenuBase(ClassSingleton, ABC):  # pylint: disable=too-many-instance-attrib
         prompt: str,
         *,
         side_pane: SidePane | None = None,
+        help_info: list[str] | None = None,
     ) -> MenuItemSingle:
         """TODO."""
         current_val = str(AppConfig().get_value(config_attr))
@@ -125,6 +126,7 @@ class MenuBase(ClassSingleton, ABC):  # pylint: disable=too-many-instance-attrib
             prompt,
             current_val,
             side_pane=side_pane,
+            help_info=help_info,
         )
 
     @staticmethod
@@ -138,6 +140,7 @@ class MenuBase(ClassSingleton, ABC):  # pylint: disable=too-many-instance-attrib
         keep_open: bool = False,
         on_close: Callable[[], None] | None = None,
         side_pane: SidePane | None = None,
+        help_info: list[str] | None = None,
     ) -> MenuItemSingle:
         """TODO."""
 
@@ -148,16 +151,13 @@ class MenuBase(ClassSingleton, ABC):  # pylint: disable=too-many-instance-attrib
                 current_val,
                 keep_open=keep_open,
                 on_close=on_close,
+                help_text=help_info,
             )
 
-        default_side_pane = SidePane(
-            label.upper(),
-            desc,
-        )
         return MenuItemSingle(
             label.upper(),
             get_user_input,
-            SidePane.merge(side_pane, default_side_pane),
+            SidePane.merge(side_pane, SidePane(label.upper(), desc)),
         )
 
     @staticmethod
