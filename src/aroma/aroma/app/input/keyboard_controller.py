@@ -96,7 +96,11 @@ class KeyboardController(ClassSingleton):
                 self.keyboard.close, force_close=True
             ),
             SDL_CONTROLLER_BUTTON_B: self._select_key,
-            SDL_CONTROLLER_BUTTON_X: self.keyboard.backspace,
+            SDL_CONTROLLER_BUTTON_X: (
+                self.keyboard.clear_input
+                if self.keyboard.shift_on
+                else self.keyboard.backspace
+            ),
             SDL_CONTROLLER_BUTTON_Y: self.keyboard.space,
             SDL_CONTROLLER_BUTTON_START: self.keyboard.submit,
         }
