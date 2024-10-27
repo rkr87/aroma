@@ -81,6 +81,12 @@ class Keyboard(ClassSingleton):  # pylint: disable=too-many-instance-attributes
         """TODO."""
         self.current_input = self.current_input[:-1]
 
+    def clear_input(self) -> None:
+        """TODO."""
+        self.current_input = ""
+        if self.shift_on:
+            self.shift_on = False
+
     def space(self) -> None:
         """TODO."""
         self.current_input = f"{self.current_input} "
@@ -93,6 +99,7 @@ class Keyboard(ClassSingleton):  # pylint: disable=too-many-instance-attributes
             "CAPS": self.toggle_capslock,
             "SHIFT": self.toggle_shift,
             "SPACE": self.space,
+            "CLEAR": self.clear_input,
         }
 
         if button.key in special_actions:
@@ -121,10 +128,6 @@ class Keyboard(ClassSingleton):  # pylint: disable=too-many-instance-attributes
         if self.on_submit:
             self.on_submit(self.current_input)
         self.close()
-
-    def get_current_input(self) -> str:
-        """Return the current input string."""
-        return self.current_input
 
     def _map_keys(
         self,
@@ -162,7 +165,11 @@ class Keyboard(ClassSingleton):  # pylint: disable=too-many-instance-attributes
             KeyboardButton(
                 "SPACE", 4, hint_img=f"{RESOURCES}/ui/button-X.png"
             ),
-            KeyboardButton("BKSP", 2, hint_img=f"{RESOURCES}/ui/button-Y.png"),
+            KeyboardButton(
+                "CLEAR" if self.shift_on else "BKSP",
+                2,
+                hint_img=f"{RESOURCES}/ui/button-Y.png",
+            ),
             KeyboardButton(
                 "ENTER", 2, hint_img=f"{RESOURCES}/ui/button-START.png"
             ),
