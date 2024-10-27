@@ -130,9 +130,9 @@ class Keyboard(ClassSingleton):  # pylint: disable=too-many-instance-attributes
 
     def submit(self) -> None:
         """Submit the current input and clear it."""
+        self.input_history.append(self.current_input)
         if self.on_submit:
             self.on_submit(self.current_input)
-        self.input_history.append(self.current_input)
         self.close()
 
     def _map_keys(
