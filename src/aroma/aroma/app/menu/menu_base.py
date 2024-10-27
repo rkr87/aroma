@@ -41,11 +41,15 @@ class MenuBase(ClassSingleton, ABC):  # pylint: disable=too-many-instance-attrib
         )
         self.action: ActionManager = ActionManager(self.select, self.content)
         self._logger.info("Initialised %s menu", breadcrumb)
-        self.dynamic_path: Path | None = None
-        self.dynamic_identifier: str | None = None
+        self._is_dynamic: bool = False
+        self._dynamic_path: Path | None = None
+        self._dynamic_identifier: str | None = None
 
     def reset_menu(self) -> None:
         """Rebuild the menu and restore the previously selected item."""
+        if self._is_dynamic:
+            self.regenerate_dynamic_menu()
+            return
         selected = self.select.state.selected
         self.reset_instance()
         self.select.state.selected = selected
@@ -219,19 +223,22 @@ class MenuBase(ClassSingleton, ABC):  # pylint: disable=too-many-instance-attrib
         self, breadcrumb: str, path: Path | None, identifier: str | None
     ) -> None:
         """TODO."""
+        self._is_dynamic = True
         self.breadcrumb = breadcrumb.upper()
-        self.dynamic_path = path
-        self.dynamic_identifier = identifier
+        self._dynamic_path = path
+        self._dynamic_identifier = identifier
         self.regenerate_dynamic_menu()
 
     def regenerate_dynamic_menu(self) -> None:
         """TODO."""
+        if not self._is_dynamic:
+            return
         self._logger.debug(
             "Generating %s menu options.", self.__class__.__name__
         )
         self.content.clear_items()
         self._dynamic_menu_default_items()
-        self._build_dynamic_menu(self.dynamic_path, self.dynamic_identifier)
+        self._build_dynamic_menu(self._dynamic_path, self._dynamic_identifier)
 
     @abstractmethod
     def _dynamic_menu_default_items(self) -> None:
