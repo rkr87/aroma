@@ -4,6 +4,7 @@ from app.input.keyboard import Keyboard
 from app.model.keyboard_button import KeyboardButton
 from app.render.sdl_helpers import SDLHelpers
 from app.render.text_generator import Style, TextGenerator
+from app.strings import Strings
 from sdl2 import (
     SDL_BLENDMODE_BLEND,
     SDL_Rect,
@@ -22,7 +23,7 @@ from shared.constants import (
 )
 from shared.tools import util
 
-_BUTTON_SIZE: int = 80
+_BUTTON_SIZE: int = int(SCREEN_WIDTH * 0.75 / 12)
 _BUTTON_SPACING: int = 5
 _INPUT_BOX_PADDING: int = 10
 
@@ -88,20 +89,84 @@ class KeyboardRenderer(ClassSingleton):
         return width
 
     @staticmethod
+    def _render_input_history(
+        renderer: Renderer, items: list[str], max_y: int
+    ) -> None:
+        """TODO."""
+        max_w = int(SCREEN_WIDTH * 0.4)
+        start_y = _INPUT_BOX_PADDING
+        if header := TextGenerator().get_text(
+            Strings().keyboard_input_history, Style.BREADCRUMB, max_w
+        ):
+            start_y += header.h
+            SDLHelpers.render_surface(
+                renderer,
+                header,
+                SCREEN_WIDTH - header.w - _INPUT_BOX_PADDING,
+                _INPUT_BOX_PADDING,
+            )
+        for item in reversed(items):
+            if surface := TextGenerator().get_text(
+                item, Style.BREADCRUMB_TRAIL, max_w
+            ):
+                if (start_y := start_y + surface.h) > max_y:
+                    break
+                SDLHelpers.render_surface(
+                    renderer,
+                    surface,
+                    SCREEN_WIDTH - surface.w - _INPUT_BOX_PADDING,
+                    start_y - surface.h,
+                )
+                start_y += _BUTTON_SPACING
+
+    @staticmethod
+    def _render_help_text(
+        renderer: Renderer, text: list[str], max_y: int
+    ) -> None:
+        """TODO."""
+        if not text:
+            return
+        max_w = int(SCREEN_WIDTH * 0.5)
+        start_y = _INPUT_BOX_PADDING
+        if header := TextGenerator().get_text(
+            Strings().keyboard_help_info, Style.BREADCRUMB, max_w
+        ):
+            start_y += header.h
+            SDLHelpers.render_surface(
+                renderer,
+                header,
+                _INPUT_BOX_PADDING,
+                _INPUT_BOX_PADDING,
+            )
+        content_text = "\n".join(text)
+        if surface := TextGenerator().get_wrapped_text(
+            content_text,
+            max_w,
+            Style.BREADCRUMB_TRAIL,
+            max_y - start_y - _BUTTON_SPACING,
+        ):
+            SDLHelpers.render_surface(
+                renderer,
+                surface,
+                _INPUT_BOX_PADDING,
+                start_y + _BUTTON_SPACING,
+            )
+
+    @staticmethod
     def _render_input_box(
         renderer: Renderer,
         text: str,
         prompt: str,
         width: int,
         y_end: int,
-    ) -> None:
+    ) -> int:
         """TODO."""
         if not (
             input_surface := TextGenerator().get_text(
                 text, Style.SIDEPANE_HEADING
             )
         ):
-            return
+            return y_end
         box_height = input_surface.h + 2 * _INPUT_BOX_PADDING
         box_x = (SCREEN_WIDTH - width) // 2
         box_y = y_end - box_height - _BUTTON_SPACING
@@ -124,12 +189,14 @@ class KeyboardRenderer(ClassSingleton):
             box_y + _INPUT_BOX_PADDING,
         )
         if prompt_surface := TextGenerator().get_text(prompt):
+            box_y = box_y - prompt_surface.h - _BUTTON_SPACING
             SDLHelpers.render_surface(
                 renderer,
                 prompt_surface,
                 (SCREEN_WIDTH - prompt_surface.w) // 2,
-                box_y - prompt_surface.h - _BUTTON_SPACING,
+                box_y,
             )
+        return box_y
 
     @staticmethod
     def render(
@@ -146,18 +213,23 @@ class KeyboardRenderer(ClassSingleton):
         SDL_RenderFillRect(
             renderer.sdlrenderer, SDL_Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
         )
-        total_width, total_height = KeyboardRenderer._calculate_keyboard_size()
+        kb_wh = KeyboardRenderer._calculate_keyboard_size()
 
-        y_offset = SCREEN_HEIGHT - total_height - y_offset
-        KeyboardRenderer._render_input_box(
+        y_offset = SCREEN_HEIGHT - kb_wh[1] - _INPUT_BOX_PADDING
+        max_y = KeyboardRenderer._render_input_box(
             renderer,
             keyboard.current_input or " ",
             keyboard.prompt or "INPUT",
-            total_width,
+            kb_wh[0],
             y_offset,
         )
+        if keyboard.keep_open and keyboard.input_history:
+            KeyboardRenderer._render_input_history(
+                renderer, keyboard.input_history, max_y
+            )
+        KeyboardRenderer._render_help_text(renderer, keyboard.help_text, max_y)
         for row in keyboard.available_keys():
-            x_offset = (SCREEN_WIDTH - total_width) // 2
+            x_offset = (SCREEN_WIDTH - kb_wh[0]) // 2
             for button in row:
                 button_width = KeyboardRenderer._draw_button(
                     renderer,
