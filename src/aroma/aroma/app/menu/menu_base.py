@@ -87,12 +87,13 @@ class MenuBase(ClassSingleton, ABC):  # pylint: disable=too-many-instance-attrib
         stack_push: Callable[["MenuBase"], Any],
         *,
         side_pane: SidePane | None = None,
+        children_side_pane: SidePane | None = None,
     ) -> MenuItemSingle:
         """Create a menu item that pushes a submenu onto the menu stack."""
 
         def rebuild_and_push() -> None:
             """TODO."""
-            menu.init_dynamic_menu(text, path, identifier)
+            menu.init_dynamic_menu(text, path, identifier, children_side_pane)
             stack_push(menu)
 
         return MenuItemSingle(
@@ -107,6 +108,8 @@ class MenuBase(ClassSingleton, ABC):  # pylint: disable=too-many-instance-attrib
         label: str,
         desc: list[str],
         prompt: str,
+        *,
+        side_pane: SidePane | None = None,
     ) -> MenuItemSingle:
         """TODO."""
         current_val = str(AppConfig().get_value(config_attr))
@@ -121,6 +124,7 @@ class MenuBase(ClassSingleton, ABC):  # pylint: disable=too-many-instance-attrib
             [f"CURRENT: {current_val or 'NOT SET'}", *desc],
             prompt,
             current_val,
+            side_pane=side_pane,
         )
 
     @staticmethod
@@ -133,6 +137,7 @@ class MenuBase(ClassSingleton, ABC):  # pylint: disable=too-many-instance-attrib
         *,
         keep_open: bool = False,
         on_close: Callable[[], None] | None = None,
+        side_pane: SidePane | None = None,
     ) -> MenuItemSingle:
         """TODO."""
 
@@ -145,13 +150,14 @@ class MenuBase(ClassSingleton, ABC):  # pylint: disable=too-many-instance-attrib
                 on_close=on_close,
             )
 
+        default_side_pane = SidePane(
+            label.upper(),
+            desc,
+        )
         return MenuItemSingle(
             label.upper(),
             get_user_input,
-            SidePane(
-                label.upper(),
-                [*desc],
-            ),
+            SidePane.merge(side_pane, default_side_pane),
         )
 
     @staticmethod
@@ -220,11 +226,16 @@ class MenuBase(ClassSingleton, ABC):  # pylint: disable=too-many-instance-attrib
         self.reset_menu()
 
     def init_dynamic_menu(
-        self, breadcrumb: str, path: Path | None, identifier: str | None
+        self,
+        breadcrumb: str,
+        path: Path | None,
+        identifier: str | None,
+        side_pane: SidePane | None = None,
     ) -> None:
         """TODO."""
         self._is_dynamic = True
         self.breadcrumb = breadcrumb.upper()
+        self.content.side_pane = side_pane
         self._dynamic_path = path
         self._dynamic_identifier = identifier
         self.regenerate_dynamic_menu()
