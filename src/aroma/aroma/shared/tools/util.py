@@ -4,6 +4,7 @@ import binascii
 import json
 import logging
 import re
+import shutil
 from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import UTC, datetime
@@ -14,7 +15,7 @@ from zipfile import ZIP_LZMA, ZipFile, ZipInfo
 
 from py7zr import FileInfo, SevenZipFile
 from sdl2.ext import Color
-from shared.constants import RUNNING_ON_TSP, TSP_SD, WIN_SD
+from shared.constants import BACKUP_EXT, RUNNING_ON_TSP, TSP_SD, WIN_SD
 from shared.tools.enhanced_json_encoder import EnhancedJSONEncoder
 
 
@@ -271,3 +272,16 @@ def read_text_file(file_path: Path) -> list[str]:
         return []
     with file_path.open("r", encoding="utf-8") as f:
         return list(f)
+
+
+def create_backup_file(file_path: Path) -> None:
+    """TODO."""
+    new_file_path = file_path.with_suffix(BACKUP_EXT)
+    shutil.copy(file_path, new_file_path)
+
+
+def restore_backup_file(file_path: Path) -> None:
+    """TODO."""
+    backup_file = file_path.with_suffix(BACKUP_EXT)
+    if backup_file.is_file():
+        shutil.move(backup_file, file_path)
