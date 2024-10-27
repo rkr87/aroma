@@ -30,7 +30,9 @@ class MenuEmuManagement(MenuBase):
             ("CLEAN_EMUS_REFRESH", self._clean_emus_on_refresh()),
         )
         self.content.add_section(
-            ("ADD_LAUNCH_MENUS", self._add_launch_menus())
+            ("ADD_LAUNCH_MENUS", self._add_launch_menus()),
+            ("REMOVE_LAUNCH_MENUS", self._remove_launch_menus()),
+            ("RESTORE_LAUNCH_SCRIPTS", self._restore_launch_scripts()),
         )
 
     def _clean_emus(self) -> MenuItemSingle:
@@ -71,18 +73,35 @@ class MenuEmuManagement(MenuBase):
     @staticmethod
     def _add_launch_menus() -> MenuItemSingle:
         """TODO."""
-
-        def add_launch_menus() -> None:
-            BackgroundWorker().do_work(
-                EmuManager().add_emu_launch_menus,
-                Strings().adding_launch_menus,
-            )
-
         return MenuItemSingle(
             Strings().add_launch_menus,
-            add_launch_menus,
+            EmuManager().add_emu_launch_menus,
             SidePane(
                 Strings().add_launch_menus, Strings().add_launch_menus_desc
+            ),
+        )
+
+    @staticmethod
+    def _remove_launch_menus() -> MenuItemSingle:
+        """TODO."""
+        return MenuItemSingle(
+            Strings().remove_launch_menus,
+            EmuManager().remove_emu_launch_menus,
+            SidePane(
+                Strings().remove_launch_menus,
+                Strings().remove_launch_menus_desc,
+            ),
+        )
+
+    @staticmethod
+    def _restore_launch_scripts() -> MenuItemSingle:
+        """TODO."""
+        return MenuItemSingle(
+            Strings().restore_launch_scripts,
+            EmuManager().restore_backup_launch_scripts,
+            SidePane(
+                Strings().restore_launch_scripts,
+                Strings().restore_launch_scripts_desc,
             ),
         )
 

@@ -75,6 +75,14 @@
     "add_launch_menus_desc": [
         "Add description of options here"
     ],
+    "remove_launch_menus": "REMOVE LAUNCH MENUS",
+    "remove_launch_menus_desc": [
+        "Add description of options here"
+    ],
+    "restore_launch_scripts": "RESTORE FROM BACKUP",
+    "restore_launch_scripts_desc": [
+        "Add description of options here"
+    ],
     "default_emu": "DEFAULT EMU",
     "default_emu_desc": [
         "Add description of options here"
