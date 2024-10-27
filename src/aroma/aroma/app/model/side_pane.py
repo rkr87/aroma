@@ -44,11 +44,15 @@ class SidePane(ClassBase):  # pylint: disable=too-many-instance-attributes
 
         primary.header = primary.header or secondary.header
         primary.content = primary.content or secondary.content
+        primary.bg_img = primary.bg_img or secondary.bg_img
+        primary.img = primary.img or secondary.img
 
         logger.debug(
-            "Merged pane header: %s, content: %s.",
+            "Merged pane header: %s, content: %s, img: %s, bg: %s.",
             primary.header,
             primary.content,
+            primary.img,
+            primary.bg_img,
         )
 
         return primary

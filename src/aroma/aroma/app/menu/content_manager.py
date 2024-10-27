@@ -93,6 +93,10 @@ class ContentManager(ClassBase):
         self._logger.debug("Merged side pane: %s", merged_pane)
         return merged_pane
 
+    @side_pane.setter
+    def side_pane(self, side_pane: SidePane | None) -> None:
+        self._side_pane = side_pane
+
     def _get_current_item(self) -> MenuItemBase:
         """Retrieve the currently selected menu item."""
         item_list = list(self._items.values())
