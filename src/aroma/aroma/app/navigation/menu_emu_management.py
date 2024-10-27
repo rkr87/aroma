@@ -107,5 +107,9 @@ class MenuEmuManagement(MenuBase):
                         img=emu.icon,
                         bg_img=emu.background,
                     ),
+                    children_side_pane=SidePane(
+                        img=emu.icon,
+                        bg_img=emu.background,
+                    ),
                 ),
             )
