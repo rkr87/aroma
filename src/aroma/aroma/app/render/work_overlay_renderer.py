@@ -28,7 +28,7 @@ class WorkOverlayRenderer(ClassSingleton):
         if not (worker := BackgroundWorker()).busy:
             return
         SDL_SetRenderDrawBlendMode(renderer.sdlrenderer, SDL_BLENDMODE_BLEND)
-        SDL_SetRenderDrawColor(renderer.sdlrenderer, 0, 0, 0, 225)
+        SDL_SetRenderDrawColor(renderer.sdlrenderer, 0, 0, 0, 240)
         overlay_rect = SDL_Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
         SDL_RenderFillRect(renderer.sdlrenderer, overlay_rect)
         wh = (480, 270)
