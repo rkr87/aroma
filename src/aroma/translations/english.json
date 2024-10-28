@@ -4,6 +4,8 @@
     "stock": "STOCK",
     "custom": "CUSTOM",
     "none_set": "NONE SET",
+    "current": "CURRENT",
+    "formatted": "FORMATTED",
     "rom_naming": "ROM NAMING",
     "rom_naming_desc": [
         "Add description of options here"
@@ -34,6 +36,7 @@
     "name_format_desc": [
         "Add description of options here"
     ],
+    "name_format_prompt": "ENTER ROM NAME FORMAT",
     "naming_title_desc": "TITLE",
     "naming_name_desc": "NAME",
     "naming_region_desc": "REGION",

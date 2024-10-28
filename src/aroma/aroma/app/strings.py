@@ -1,14 +1,25 @@
 # pylint: disable=too-many-arguments
-"""Module for handling string translations."""
+"""Module for handling string translation."""
 
 from dataclasses import dataclass, field
 
 from shared.classes.json_dataclass import JsonDataClass
+from shared.constants import (
+    NAMING_ADDITIONAL_ID,
+    NAMING_DISC_ID,
+    NAMING_FORMAT_ID,
+    NAMING_HACK_ID,
+    NAMING_NAME_ID,
+    NAMING_REGION_ID,
+    NAMING_TITLE_ID,
+    NAMING_VERSION_ID,
+    NAMING_YEAR_ID,
+)
 
 
 @dataclass
 class Strings(JsonDataClass):  # pylint: disable=too-many-instance-attributes
-    """Singleton class for managing various string translations."""
+    """Singleton class for managing various string translation."""
 
     yes: str = ""
     no: str = ""
@@ -39,6 +50,7 @@ class Strings(JsonDataClass):  # pylint: disable=too-many-instance-attributes
     naming_additional_desc: str = ""
     name_format: str = ""
     name_format_desc: list[str] = field(default_factory=list)
+    name_format_prompt: str = ""
     options: str = ""
     options_desc: list[str] = field(default_factory=list)
     logging_level: str = ""
@@ -154,6 +166,8 @@ class Strings(JsonDataClass):  # pylint: disable=too-many-instance-attributes
     cpu_profile_powersave: str = ""
     cpu_profile_performance: str = ""
     none_set: str = ""
+    current: str = ""
+    formatted: str = ""
     downloading_file: str = ""
     cleaning_emus: str = ""
     scraping_imgs: str = ""
@@ -164,3 +178,33 @@ class Strings(JsonDataClass):  # pylint: disable=too-many-instance-attributes
     emu: str = ""
     keyboard_input_history: str = ""
     keyboard_help_info: str = ""
+
+    @property
+    def _format_mapping(self) -> dict[str, str]:
+        """TODO."""
+        return {
+            NAMING_TITLE_ID: self.naming_title_desc,
+            NAMING_NAME_ID: self.naming_name_desc,
+            NAMING_REGION_ID: self.naming_region_desc,
+            NAMING_DISC_ID: self.naming_disc_desc,
+            NAMING_FORMAT_ID: self.naming_format_desc,
+            NAMING_HACK_ID: self.naming_hack_desc,
+            NAMING_VERSION_ID: self.naming_version_desc,
+            NAMING_YEAR_ID: self.naming_year_desc,
+            NAMING_ADDITIONAL_ID: self.naming_additional_desc,
+        }
+
+    def get_format_mapping(self, join_str: str = "=") -> list[str]:
+        """TODO."""
+        return [join_str.join(pair) for pair in self._format_mapping.items()]
+
+    def get_mapped_name_format(
+        self, unformatted: str, *, include_prefix: bool = False
+    ) -> str:
+        """TODO."""
+        formatted = unformatted.lower()
+        for k, v in self._format_mapping.items():
+            formatted = formatted.replace(k, v)
+        return (
+            f"{self.formatted}: {formatted}" if include_prefix else formatted
+        )
