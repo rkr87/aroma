@@ -155,13 +155,14 @@ class TextGenerator(ClassSingleton):
         """Break text into lines that fit within provided width."""
         lines: list[SDL_Surface] = []
         blocks = text.split("\n\n")
-        blank_line = self.get_text(" ", style)
         for block in enumerate(blocks):
             for paragraph in block[1].split("\n"):
                 lines.extend(
                     self._process_line(paragraph, max_width, style, trim=trim)
                 )
-            if block[0] < len(blocks) - 1 and blank_line:
+            if block[0] < len(blocks) - 1 and (
+                blank_line := self.get_text(" ", style)
+            ):
                 lines.append(blank_line)
         return lines
 
