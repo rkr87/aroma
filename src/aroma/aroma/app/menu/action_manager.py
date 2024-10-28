@@ -26,7 +26,7 @@ class ActionManager(ClassBase):
         if isinstance(item, MenuItemMulti):
             self._logger.debug(
                 "Running next action for item %s",
-                item,
+                item.prefix,
             )
             item.next_action()
 
@@ -36,7 +36,7 @@ class ActionManager(ClassBase):
         if isinstance(item, MenuItemMulti):
             self._logger.debug(
                 "Running previous action for item %s",
-                item,
+                item.prefix,
             )
             item.prev_action()
 
@@ -46,7 +46,7 @@ class ActionManager(ClassBase):
         if isinstance(item, MenuItemSingle):
             self._logger.debug(
                 "Running selected action for item %s",
-                item,
+                item.get_text(),
             )
             item.run_action()
 
