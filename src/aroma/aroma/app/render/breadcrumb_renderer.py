@@ -14,10 +14,12 @@ if TYPE_CHECKING:
 class BreadcrumbRenderer(ClassSingleton):
     """TODO."""
 
-    @staticmethod
-    def render(
-        renderer: Renderer, breadcrumbs: list[str], spacing: int
-    ) -> int:
+    def __init__(self, renderer: Renderer, spacing: int) -> None:
+        super().__init__()
+        self.renderer = renderer
+        self.spacing = spacing
+
+    def render(self, breadcrumbs: list[str]) -> int:
         """Render the breadcrumb trail for the current menu."""
         crumb_offset = 0
         max_y: int = 0
@@ -29,9 +31,9 @@ class BreadcrumbRenderer(ClassSingleton):
             )
             if trail_text:
                 crumb_offset = trail_text.w
-                max_y = max(max_y, trail_text.h + spacing)
+                max_y = max(max_y, trail_text.h + self.spacing)
                 SDLHelpers.render_surface(
-                    renderer, trail_text, spacing, spacing
+                    self.renderer, trail_text, self.spacing, self.spacing
                 )
 
         breadcrumb_text: SDL_Surface | None = TextGenerator().get_text(
@@ -39,12 +41,12 @@ class BreadcrumbRenderer(ClassSingleton):
             Style.BREADCRUMB,
         )
         if breadcrumb_text:
-            max_y = max(max_y, breadcrumb_text.h + spacing)
+            max_y = max(max_y, breadcrumb_text.h + self.spacing)
             SDLHelpers.render_surface(
-                renderer,
+                self.renderer,
                 breadcrumb_text,
-                spacing + crumb_offset,
-                spacing,
+                self.spacing + crumb_offset,
+                self.spacing,
             )
         BreadcrumbRenderer.get_static_logger().debug(
             "Rendered breadcrumbs: %s", breadcrumbs

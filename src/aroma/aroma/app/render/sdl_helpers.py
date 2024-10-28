@@ -20,7 +20,8 @@ from sdl2 import (
     SDL_Surface,
     SDL_Texture,
 )
-from sdl2.ext import Color, Renderer, load_image
+from sdl2.ext import Color, Renderer
+from sdl2.ext.image import load_image
 from shared.classes.class_singleton import ClassSingleton
 
 
@@ -81,6 +82,8 @@ class SDLHelpers(ClassSingleton):
         surface: SDL_Surface | None,
         x: int,
         y: int,
+        *,
+        free_surface: bool = True,
     ) -> None:
         """Render a given surface at the specified screen coordinates."""
         if surface is None:
@@ -104,7 +107,8 @@ class SDLHelpers(ClassSingleton):
             surface_width = surface.w
             surface_height = surface.h
 
-        SDL_FreeSurface(surface)
+        if free_surface:
+            SDL_FreeSurface(surface)
         dstrect = SDL_Rect(x, y, surface_width, surface_height)
         SDL_RenderCopy(renderer.sdlrenderer, texture, None, dstrect)
         SDL_DestroyTexture(texture)

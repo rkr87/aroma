@@ -23,7 +23,7 @@ _PADDING = 39
 _SPLIT_PANE = int((SCREEN_WIDTH / 7 * 3) + _PADDING + _SPACING)
 
 
-class ScreenManager(ClassSingleton):
+class ScreenManager(ClassSingleton):  # pylint: disable=too-many-instance-attributes
     """Manages the screen rendering process."""
 
     def __init__(self) -> None:
@@ -31,6 +31,8 @@ class ScreenManager(ClassSingleton):
         window = Window(APP_NAME, size=(SCREEN_WIDTH, SCREEN_HEIGHT))
         window.show()
         self.renderer = Renderer(window)
+        self.button_hint = ButtonHintRenderer(self.renderer, _SPACING)
+        self.breadcrumb = BreadcrumbRenderer(self.renderer, _SPACING)
         self.sidepane = SidepaneRenderer(
             self.renderer, _SPLIT_PANE, _PADDING, _SPACING
         )
@@ -47,12 +49,8 @@ class ScreenManager(ClassSingleton):
         """Render the screen background, breadcrumbs, menu, and side pane."""
         if current.update_required:
             self.renderer.clear(tuple_to_sdl_color(BG_COLOR))
-            button_hint_start = ButtonHintRenderer.render(
-                self.renderer, _SPACING
-            )
-            breadcrumb_height = BreadcrumbRenderer.render(
-                self.renderer, current.breadcrumbs, _SPACING
-            )
+            button_hint_start = self.button_hint.render()
+            breadcrumb_height = self.breadcrumb.render(current.breadcrumbs)
             self.menu.render(
                 current.menu,
                 breadcrumb_height + _SPACING,

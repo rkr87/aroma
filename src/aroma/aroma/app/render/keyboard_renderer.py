@@ -12,7 +12,8 @@ from sdl2 import (
     SDL_SetRenderDrawBlendMode,
     SDL_SetRenderDrawColor,
 )
-from sdl2.ext import Renderer, load_image
+from sdl2.ext import Renderer
+from sdl2.ext.image import load_image
 from shared.classes.class_singleton import ClassSingleton
 from shared.constants import (
     BG_COLOR,
