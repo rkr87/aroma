@@ -20,7 +20,8 @@ from sdl2 import (
     SDL_Surface,
     SDL_Texture,
 )
-from sdl2.ext import Color, Renderer, load_image
+from sdl2.ext import Color, Renderer
+from sdl2.ext.image import load_image
 from shared.classes.class_singleton import ClassSingleton
 
 
