@@ -67,7 +67,7 @@ class MenuOptions(MenuBase):
         actions, current = self._generate_config_actions(
             data,
             "logging_level",
-            self._set_logging_level,
+            logging.getLogger().setLevel,
             1,
         )
         return MenuItemMulti(
@@ -79,11 +79,6 @@ class MenuOptions(MenuBase):
                 Strings().logging_desc,
             ),
         )
-
-    @staticmethod
-    def _set_logging_level(level: str) -> None:
-        """Set the logging level and update configuration."""
-        logging.getLogger().setLevel(level)
 
     @staticmethod
     def _set_language(language: str) -> None:

@@ -4,6 +4,7 @@ from abc import ABC, abstractmethod
 from collections import OrderedDict
 from collections.abc import Callable
 from functools import partial
+from inspect import signature
 from pathlib import Path
 from typing import Any, TypeVar, cast
 
@@ -168,7 +169,7 @@ class MenuBase(ClassSingleton, ABC):  # pylint: disable=too-many-instance-attrib
     def _generate_config_actions(
         data: dict[_T, str] | dict[_T, tuple[str, SidePane]],
         config_attr: str,
-        function: Callable[[_T], None] | None = None,
+        function: Callable[[_T], None] | Callable[[], None] | None = None,
         default: int = 0,
         *,
         non_tsp_skip: bool = False,
@@ -184,7 +185,10 @@ class MenuBase(ClassSingleton, ABC):  # pylint: disable=too-many-instance-attrib
                     util.get_callable_name(function),
                     val,
                 )
-                function(val)
+                if signature(function).parameters:
+                    cast(Callable[[_T], None], function)(val)
+                else:
+                    cast(Callable[[], None], function)()
 
         if (config := cast(_T, AppConfig().get_value(config_attr))) in data:
             options: list[_T] = list(data.keys())
