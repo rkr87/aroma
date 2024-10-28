@@ -15,6 +15,7 @@ from app.menu.menu_item_base import MenuItemBase
 from app.menu.menu_item_single import MenuItemSingle
 from app.menu.selection_manager import SelectionManager
 from app.model.side_pane import SidePane
+from app.strings import Strings
 from shared.app_config import AppConfig
 from shared.classes.class_singleton import ClassSingleton
 from shared.tools import util
@@ -122,7 +123,10 @@ class MenuBase(ClassSingleton, ABC):  # pylint: disable=too-many-instance-attrib
         return self._generate_keyboard_menu_item(
             update_config,
             label,
-            [f"CURRENT: {current_val or 'NOT SET'}", *desc],
+            [
+                f"{Strings().current}: {current_val or Strings().none_set}",
+                *desc,
+            ],
             prompt,
             current_val,
             side_pane=side_pane,

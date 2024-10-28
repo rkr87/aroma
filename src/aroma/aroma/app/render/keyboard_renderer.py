@@ -210,7 +210,7 @@ class KeyboardRenderer(ClassSingleton):
         if not (keyboard := Keyboard()).is_open:
             return
         SDL_SetRenderDrawBlendMode(renderer.sdlrenderer, SDL_BLENDMODE_BLEND)
-        SDL_SetRenderDrawColor(renderer.sdlrenderer, 0, 0, 0, 225)
+        SDL_SetRenderDrawColor(renderer.sdlrenderer, 0, 0, 0, 240)
         SDL_RenderFillRect(
             renderer.sdlrenderer, SDL_Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
         )
