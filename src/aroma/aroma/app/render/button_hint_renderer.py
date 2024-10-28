@@ -7,7 +7,8 @@ from app.render.text_generator import Style, TextGenerator
 from sdl2 import (
     SDL_Surface,
 )
-from sdl2.ext import Renderer, load_image
+from sdl2.ext import Renderer
+from sdl2.ext.image import load_image
 from shared.classes.class_singleton import ClassSingleton
 from shared.constants import (
     RESOURCES,
@@ -28,8 +29,15 @@ _BUTTONS = [
 ]
 
 
-class ButtonHintRenderer(ClassSingleton):
+class ButtonHintRenderer(ClassSingleton):  # pylint: disable=too-many-instance-attributes
     """TODO."""
+
+    def __init__(self, renderer: Renderer, spacing: int) -> None:
+        super().__init__()
+        self.renderer = renderer
+        self.spacing = spacing
+        self.button_info, self.max_height = self._get_button_info()
+        self.centre = SCREEN_HEIGHT - spacing - (self.max_height // 2)
 
     @staticmethod
     def _get_button_info() -> (
@@ -53,27 +61,29 @@ class ButtonHintRenderer(ClassSingleton):
             button_info.append((surface, text_surface))
         return button_info, max_height
 
-    @staticmethod
-    def render(renderer: Renderer, spacing: int) -> int:
+    def render(self) -> int:
         """Render button icons and associated help text."""
-        button_info, max_height = ButtonHintRenderer._get_button_info()
-        center_y: int = SCREEN_HEIGHT - spacing - (max_height // 2)
         x: int = SCREEN_WIDTH
-        for surface, text_surface in button_info:
+        for surface, text_surface in self.button_info:
             if text_surface:
-                x -= text_surface.w + spacing * 2
+                x -= text_surface.w + self.spacing * 2
                 SDLHelpers.render_surface(
-                    renderer,
+                    self.renderer,
                     text_surface,
                     x,
-                    center_y - text_surface.h // 2,
+                    self.centre - text_surface.h // 2,
+                    free_surface=False,
                 )
-            x -= surface.w + spacing
+            x -= surface.w + self.spacing
             SDLHelpers.render_surface(
-                renderer, surface, x, center_y - surface.h // 2
+                self.renderer,
+                surface,
+                x,
+                self.centre - surface.h // 2,
+                free_surface=False,
             )
 
         ButtonHintRenderer.get_static_logger().debug(
             "Rendered background with button icons"
         )
-        return SCREEN_HEIGHT - spacing - max_height
+        return SCREEN_HEIGHT - self.spacing - self.max_height
