@@ -5,24 +5,14 @@ from pathlib import Path
 
 from app.menu.menu_base import MenuBase
 from app.menu.menu_item_multi import MenuItemMulti
+from app.menu.menu_item_single import MenuItemSingle
 from app.model.side_pane import SidePane
 from app.strings import Strings
 from shared.app_config import AppConfig
 from shared.constants import (
     CUSTOM_STR,
-    NAMING_ADDITIONAL_ID,
-    NAMING_DISC_ID,
-    NAMING_FORMAT_ID,
-    NAMING_FORMATS_RESOURCE,
-    NAMING_HACK_ID,
-    NAMING_NAME_ID,
-    NAMING_REGION_ID,
-    NAMING_TITLE_ID,
-    NAMING_VERSION_ID,
-    NAMING_YEAR_ID,
     STOCK_STR,
 )
-from shared.tools import util
 
 
 class MenuRomNaming(MenuBase):
@@ -59,41 +49,22 @@ class MenuRomNaming(MenuBase):
             SidePane(Strings().console_naming, Strings().console_naming_desc),
         )
 
-    @staticmethod
-    def _name_format() -> MenuItemMulti:
+    def _name_format(self) -> MenuItemSingle:
         """Create a menu item for selecting the naming format for ROMs."""
-        formats: list[str] = util.load_simple_json(NAMING_FORMATS_RESOURCE)[
-            "formats"
-        ]
-
-        def _replace_var(unformatted: str) -> str:
-            s = Strings()
-            mapping: dict[str, str] = {
-                NAMING_TITLE_ID: s.naming_title_desc,
-                NAMING_NAME_ID: s.naming_name_desc,
-                NAMING_REGION_ID: s.naming_region_desc,
-                NAMING_DISC_ID: s.naming_disc_desc,
-                NAMING_FORMAT_ID: s.naming_format_desc,
-                NAMING_HACK_ID: s.naming_hack_desc,
-                NAMING_VERSION_ID: s.naming_version_desc,
-                NAMING_YEAR_ID: s.naming_year_desc,
-                NAMING_ADDITIONAL_ID: s.naming_additional_desc,
-            }
-            formatted = unformatted.lower()
-            for k, v in mapping.items():
-                formatted = formatted.replace(k, v)
-            return formatted
-
-        data: dict[str, str] = {k.lower(): _replace_var(k) for k in formats}
-        actions, current = MenuRomNaming._generate_config_actions(
-            data,
+        return self._generate_keyboard_config_item(
             "name_format",
-        )
-        return MenuItemMulti(
             Strings().name_format,
-            actions,
-            current,
-            SidePane(Strings().name_format, Strings().name_format_desc),
+            [
+                Strings().get_mapped_name_format(
+                    AppConfig().name_format, include_prefix=True
+                ),
+                "",
+                *Strings().name_format_desc,
+                "",
+                *Strings().get_format_mapping(": "),
+            ],
+            Strings().name_format_prompt,
+            help_info=[", ".join(Strings().get_format_mapping())],
         )
 
     def _build_dynamic_menu(
