@@ -7,7 +7,7 @@
     "language": "english",
     "logging_level": "WARNING",
     "console_naming": "CUSTOM",
-    "name_format": "$n ($h)",
+    "name_format": "$n",
     "db_rebuild_req": false,
     "remove_broken_images_on_refresh": true,
     "days_until_scrape_attempt": 7,
@@ -20,5 +20,9 @@
     "archive_userid": "",
     "archive_password": "",
     "clean_emu_on_refresh": true,
-    "version": "0.3.0"
+    "version": "0.3.0",
+    "separate_collections_by_system_default": true,
+    "override_collection_group_method": false,
+    "custom_collection_group_method": "$n",
+    "refresh_collections_on_refresh": false
 }
