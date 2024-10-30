@@ -25,6 +25,78 @@ class Strings(JsonDataClass):  # pylint: disable=too-many-instance-attributes
     no: str = ""
     stock: str = ""
     custom: str = ""
+    separated: str = ""
+    collapsed: str = ""
+    inherit: str = ""
+    collection_group_method_override: str = ""
+    collection_group_method_override_desc: list[str] = field(
+        default_factory=list
+    )
+    collections_group_method_override: str = ""
+    collections_group_method_override_desc: list[str] = field(
+        default_factory=list
+    )
+    collection_management: str = ""
+    collection_management_desc: list[str] = field(default_factory=list)
+    new_collection: str = ""
+    new_collection_desc: list[str] = field(default_factory=list)
+    delete_collection: str = ""
+    delete_collection_desc: list[str] = field(default_factory=list)
+    refresh_collection: str = ""
+    refresh_collection_desc: list[str] = field(default_factory=list)
+    rename_collection: str = ""
+    rename_collection_desc: list[str] = field(default_factory=list)
+    rename_collection_prompt: str = ""
+    delete_all_collections: str = ""
+    delete_all_collections_desc: list[str] = field(default_factory=list)
+    refresh_all_collections: str = ""
+    refresh_all_collections_desc: list[str] = field(default_factory=list)
+    separate_all_collections: str = ""
+    separate_all_collections_desc: list[str] = field(default_factory=list)
+    collapse_all_collections: str = ""
+    collapse_all_collections_desc: list[str] = field(default_factory=list)
+    separate_collection_systems: str = ""
+    separate_collection_systems_desc: list[str] = field(default_factory=list)
+    collapse_collection_systems: str = ""
+    collapse_collection_systems_desc: list[str] = field(default_factory=list)
+    custom_collection: str = ""
+    custom_collection_desc: list[str] = field(default_factory=list)
+    custom_collection_prompt: str = ""
+    _collection_description: list[str] = field(default_factory=list)
+    collections_separated_systems_default: str = ""
+    collections_separated_systems_default_desc: list[str] = field(
+        default_factory=list
+    )
+    collection_custom_group_method: str = ""
+    collection_custom_group_method_desc: list[str] = field(
+        default_factory=list
+    )
+    collections_custom_group_method: str = ""
+    collections_custom_group_method_desc: list[str] = field(
+        default_factory=list
+    )
+    collection_add_include_words: str = ""
+    collection_add_include_words_desc: list[str] = field(default_factory=list)
+    collection_add_exclude_words: str = ""
+    collection_add_exclude_words_desc: list[str] = field(default_factory=list)
+    collection_clear_include_words: str = ""
+    collection_clear_include_words_desc: list[str] = field(
+        default_factory=list
+    )
+    collection_clear_exclude_words: str = ""
+    collection_clear_exclude_words_desc: list[str] = field(
+        default_factory=list
+    )
+    collection_remove_include_words: str = ""
+    collection_remove_include_words_desc: list[str] = field(
+        default_factory=list
+    )
+    collection_remove_exclude_words: str = ""
+    collection_remove_exclude_words_desc: list[str] = field(
+        default_factory=list
+    )
+    collection_include_words_prompt: str = ""
+    collection_exclude_words_prompt: str = ""
     rom_naming: str = ""
     rom_naming_desc: list[str] = field(default_factory=list)
     downloader: str = ""
@@ -51,6 +123,7 @@ class Strings(JsonDataClass):  # pylint: disable=too-many-instance-attributes
     name_format: str = ""
     name_format_desc: list[str] = field(default_factory=list)
     name_format_prompt: str = ""
+    group_method_prompt: str = ""
     options: str = ""
     options_desc: list[str] = field(default_factory=list)
     logging_level: str = ""
@@ -143,6 +216,8 @@ class Strings(JsonDataClass):  # pylint: disable=too-many-instance-attributes
     restore_launch_scripts_desc: list[str] = field(default_factory=list)
     clean_emus_refresh: str = ""
     clean_emus_refresh_desc: list[str] = field(default_factory=list)
+    refresh_collections_refresh: str = ""
+    refresh_collections_refresh_desc: list[str] = field(default_factory=list)
     default_emu: str = ""
     default_emu_desc: list[str] = field(default_factory=list)
     cpu_governor_on_demand: str = ""
@@ -178,6 +253,11 @@ class Strings(JsonDataClass):  # pylint: disable=too-many-instance-attributes
     emu: str = ""
     keyboard_input_history: str = ""
     keyboard_help_info: str = ""
+    refreshing_collections: str = ""
+    create_all_template_collections: str = ""
+    create_all_template_collections_desc: list[str] = field(
+        default_factory=list
+    )
 
     @property
     def _format_mapping(self) -> dict[str, str]:
@@ -208,3 +288,26 @@ class Strings(JsonDataClass):  # pylint: disable=too-many-instance-attributes
         return (
             f"{self.formatted}: {formatted}" if include_prefix else formatted
         )
+
+    def collection_description(
+        self, label: str, include: list[str], exclude: list[str]
+    ) -> list[str]:
+        """TODO."""
+        placeholders = {
+            "label": label,
+            "include": ", ".join(include) if include else "",
+            "exclude": ", ".join(exclude) if exclude else "",
+        }
+        return [
+            entry.format(**placeholders)
+            for entry in self._collection_description
+            if "{include}" not in entry or include  # pylint: disable=magic-value-comparison
+            if "{exclude}" not in entry or exclude  # pylint: disable=magic-value-comparison
+        ]
+
+    def append_list(self, attribute: str, items: list[str]) -> list[str]:
+        """TODO."""
+        value = getattr(self, attribute)
+        if not isinstance(value, list):
+            value = [str(value)]
+        return [*value, "", *items]
