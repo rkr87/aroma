@@ -1,11 +1,12 @@
 """CacheManager module for managing ROM caching operations."""
 
+from collections.abc import Mapping
+from contextlib import suppress
 from dataclasses import dataclass
 from pathlib import Path
 
 from apsw import Connection, Cursor
-from data.model.rom_detail import RomDetail
-from manager.image_manager import ImageManager
+from data.model.launchable_detail import LaunchableDetail, LaunchableType
 from shared.classes.class_singleton import ClassSingleton
 from shared.constants import (
     APP_NAME,
@@ -36,41 +37,86 @@ INSERT_STATEMENT = """
     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
 """
 
-IGNORE_ANCESTORS: int = 2
-
 
 class CacheManager(ClassSingleton):
     """Manage caching operations for ROM data."""
 
     @dataclass
-    class _RowEntry:
+    class _RowEntry:  # pylint: disable=too-many-instance-attributes
         """Represents a single entry for ROM or directory details."""
 
         raw_path: Path
         _name: str
         _is_dir: bool = False
+        _launchable_item: LaunchableDetail | None = None
+        is_valid_dir: bool = False
+        _ignore_ancestors: int | None = None
+
+        def __post_init__(self) -> None:
+            with suppress(ValueError):
+                self._ignore_ancestors = self.raw_path.parts.index("Roms") + 1
+                if self.raw_path.is_relative_to(ROM_PATH):
+                    self._ignore_ancestors += 1
+            if (
+                self._is_dir
+                and self._ignore_ancestors
+                and self.raw_path.parts[self._ignore_ancestors :]
+            ):
+                self.is_valid_dir = True
+
+        def _is_arcade_rom(self) -> bool:
+            """TODO."""
+            return (
+                self._launchable_item is not None
+                and self._launchable_item.item_type == LaunchableType.ROM
+                and self._launchable_item.parent in ARCADE_NAMING_SYSTEMS
+            )
 
         @property
         def display_name(self) -> str:
             """Return the display name of the ROM or directory."""
             if self._is_dir:
-                return ">".join(self.raw_path.parts[1:])
-            if self._system in ARCADE_NAMING_SYSTEMS:
+                return self._get_dir_string()
+            if self._is_arcade_rom():
                 return f"{self._name} "
             return self._name
+
+        def _get_dir_string(self, *, exclude_self: bool = False) -> str:
+            """TODO."""
+            if not self._ignore_ancestors:
+                return "."
+            if exclude_self:
+                return (
+                    ">".join(self.raw_path.parts[self._ignore_ancestors : -1])
+                    or "."
+                )
+            return (
+                ">".join(self.raw_path.parts[self._ignore_ancestors :]) or "."
+            )
 
         @property
         def rom_path(self) -> str:
             """Return the ROM file path."""
-            return str(self._emu_path / "Roms" / self.raw_path)
+            if (
+                self._launchable_item is None
+                or self._launchable_item.item_type == LaunchableType.SHORTCUT
+            ):
+                return str(self.raw_path)
+            return str(
+                EMU_PATH
+                / self._launchable_item.parent
+                / ".."
+                / ".."
+                / "Roms"
+                / self._launchable_item.item_path
+            )
 
         @property
         def img_path(self) -> str:
             """Return the image path for the ROM or directory."""
-            if not self._is_dir:
-                img_path = ImageManager.get_rom_img_relpath(self.raw_path)
-                return str(self._emu_path / "Imgs" / img_path)
-            return str(self._emu_path / "Roms" / self.raw_path / "_root.png")
+            if self._is_dir or not self._launchable_item:
+                return str(self.raw_path / "_root.png")
+            return str(self._launchable_item.get_image_path())
 
         @property
         def type(self) -> int:
@@ -80,24 +126,7 @@ class CacheManager(ClassSingleton):
         @property
         def parent_path(self) -> str:
             """Return the parent directory path."""
-            if len(self.raw_path.parts) == IGNORE_ANCESTORS:
-                return "."
-            return ">".join(self.raw_path.parts[1:-1])
-
-        @property
-        def _emu_path(self) -> Path:
-            """Return the emulation base path."""
-            return EMU_PATH / self._system / ".." / ".."
-
-        @property
-        def _system(self) -> str:
-            """Return the system name derived from the path."""
-            return self.raw_path.parts[0]
-
-        def _get_dir_path(self, name: str) -> str:
-            """Return the formatted directory path for a given name."""
-            parts = self.raw_path.parts[1:]
-            return f"{'_'*(parts.count(name)-1)}{name}"
+            return self._get_dir_string(exclude_self=True)
 
         def to_db_tuple(self) -> tuple[str, str, str, int, str, str, str, str]:
             """Generate a tuple for database insertion."""
@@ -115,67 +144,68 @@ class CacheManager(ClassSingleton):
         @property
         def opinyin(self) -> str:
             """Return the pinyin value for the ROM or directory."""
-            if self._system in ARCADE_NAMING_SYSTEMS:
+            if self._is_arcade_rom():
                 return f"{APP_NAME}_{self.raw_path.stem}"
             return self.display_name
 
     @staticmethod
-    def _replace_table(cursor: Cursor, system: str) -> None:
+    def _replace_table(cursor: Cursor, parent: str) -> None:
         """Drop and recreate the cache table for a system."""
-        table_name = f"{system}_roms"
+        table_name = f"{parent}_roms"
         statement = RESET_TABLE % (table_name, table_name)
         cursor.execute(statement)
 
     @staticmethod
     def _generate_rows(
-        roms: dict[str, RomDetail],
+        launchables: Mapping[str, LaunchableDetail],
     ) -> dict[str, list["CacheManager._RowEntry"]]:
         """Generate row entries for ROMs and directories."""
-        system_dict: dict[str, list[CacheManager._RowEntry]] = {}
-        for path_str, rom in roms.items():
-            CacheManager._add_rom_entry(system_dict, path_str, rom)
-        for system, rows in system_dict.items():
-            CacheManager._add_directory_entries(system_dict, system, rows)
-        return system_dict
+        parent_dict: dict[str, list[CacheManager._RowEntry]] = {}
+        for launchable in launchables.values():
+            CacheManager._add_launchable_entry(parent_dict, launchable)
+        for parent, rows in parent_dict.items():
+            CacheManager._add_directory_entries(parent_dict, parent, rows)
+        return parent_dict
 
     @staticmethod
-    def _add_rom_entry(
-        system_dict: dict[str, list["CacheManager._RowEntry"]],
-        path_str: str,
-        rom: RomDetail,
+    def _add_launchable_entry(
+        parent_dict: dict[str, list["CacheManager._RowEntry"]],
+        launchable: LaunchableDetail,
     ) -> None:
         """Add a ROM entry to the system dictionary."""
-        path = Path(path_str)
-        system = path.parts[0]
-        rom_entry = CacheManager._RowEntry(path, rom.format_name())
-        system_dict.setdefault(system, []).append(rom_entry)
+        row_entry = CacheManager._RowEntry(
+            launchable.full_path,
+            launchable.format_name(),
+            _launchable_item=launchable,
+        )
+        parent_dict.setdefault(launchable.parent, []).append(row_entry)
 
     @staticmethod
     def _add_directory_entries(
-        system_dict: dict[str, list["CacheManager._RowEntry"]],
-        system: str,
+        parent_dict: dict[str, list["CacheManager._RowEntry"]],
+        parent: str,
         rows: list["CacheManager._RowEntry"],
     ) -> None:
         """Add directory entries to the system dictionary."""
-        dirs = {
-            ancestor
-            for r in rows
-            for ancestor in r.raw_path.parents
-            if len(ancestor.parts) > 1
-        }
+        dirs = {ancestor for r in rows for ancestor in r.raw_path.parents}
         for i in sorted(dirs):
             dir_entry = CacheManager._RowEntry(i, i.name, _is_dir=True)
-            system_dict.setdefault(system, []).append(dir_entry)
+            if dir_entry.is_valid_dir:
+                parent_dict.setdefault(parent, []).append(dir_entry)
 
     @staticmethod
-    def update_cache_db(roms: dict[str, RomDetail]) -> None:
+    def update_cache_db(
+        launchables: Mapping[str, LaunchableDetail], base_path: Path
+    ) -> None:
         """Update the cache database with ROM and directory entries."""
-        systems = CacheManager._generate_rows(roms)
-        for system, rows in systems.items():
-            cache_db = ROM_PATH / system / f"{system}{TSP_CACHE_DB_SUFFIX}"
+        for parent, rows in CacheManager._generate_rows(launchables).items():
+            base_parent = Path(parent).name
+            cache_db = (
+                base_path / parent / f"{base_parent}{TSP_CACHE_DB_SUFFIX}"
+            )
             with Connection(str(cache_db)) as conn:
                 cursor = conn.cursor()
-                CacheManager._replace_table(cursor, system)
+                CacheManager._replace_table(cursor, base_parent)
                 data_to_insert = [entry.to_db_tuple() for entry in rows]
-                statement = INSERT_STATEMENT % (system)
+                statement = INSERT_STATEMENT % base_parent
                 cursor.executemany(statement, data_to_insert)
