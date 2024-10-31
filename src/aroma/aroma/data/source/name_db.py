@@ -206,6 +206,8 @@ class NameDB(ClassSingleton):
         rom = result.roms[result.rom_vals.index(rom_id)]
         result.processed[path] = RomDetail(
             title=rom.title,
+            parent=Path(path).parts[0],
+            item_path=path,
             name=rom.name,
             source=rom.source,
             id="" if id_method == ARCADE_ID_METHOD else rom.rom_id,

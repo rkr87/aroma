@@ -147,7 +147,7 @@ class CacheManager(ClassSingleton):
         """Add a ROM entry to the system dictionary."""
         path = Path(path_str)
         system = path.parts[0]
-        rom_entry = CacheManager._RowEntry(path, rom.format_name)
+        rom_entry = CacheManager._RowEntry(path, rom.format_name())
         system_dict.setdefault(system, []).append(rom_entry)
 
     @staticmethod
