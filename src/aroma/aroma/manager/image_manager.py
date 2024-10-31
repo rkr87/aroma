@@ -16,7 +16,6 @@ from shared.constants import (
     ARCADE_NAMING_SYSTEMS,
     CONSOLE_ID_METHOD,
     IMG_PATH,
-    ROM_PATH,
     SCRAPER_LOG_RESOURCE,
     SCRAPER_REGION_TREE,
     SCRAPER_SYSTEM_MAP,
@@ -34,27 +33,18 @@ class ImageManager(ClassSingleton):
     CONNECTION_LIMIT = 50
 
     @staticmethod
-    def remove_broken_images(valid_rom_paths: list[str] | list[Path]) -> None:
+    def remove_broken_images(rom_db: dict[str, RomDetail]) -> None:
         """Remove images not associated with valid ROM paths."""
         valid_images: set[Path] = {
-            ImageManager.get_rom_img_relpath(path) for path in valid_rom_paths
+            rom.get_image_path() for rom in rom_db.values()
         }
         for path in IMG_PATH.rglob("*.png"):
-            if path.relative_to(IMG_PATH) in valid_images:
+            if path in valid_images:
                 continue
             util.delete_file(path)
             ImageManager.get_static_logger().info(
                 "Deleted broken image: %s", path
             )
-
-    @staticmethod
-    def get_rom_img_relpath(rom_path: Path | str) -> Path:
-        """Get the relative image path for a given ROM path."""
-        if isinstance(rom_path, str):
-            rom_path = Path(rom_path)
-        if util.is_relative_path(rom_path, ROM_PATH):
-            rom_path = rom_path.relative_to(ROM_PATH)
-        return Path(rom_path.parts[0]) / rom_path.with_suffix(".png").name
 
     @staticmethod
     def _get_unscraped_image_paths(
@@ -63,9 +53,8 @@ class ImageManager(ClassSingleton):
         """Get paths of images that have not been scraped."""
         return {
             img_path: rom
-            for path, rom in rom_db.items()
-            if (img_path := ImageManager.get_rom_img_relpath(path))
-            and not (IMG_PATH / img_path).is_file()
+            for rom in rom_db.values()
+            if (img_path := rom.get_image_path()) and not img_path.is_file()
         }
 
     @staticmethod

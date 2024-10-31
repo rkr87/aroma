@@ -173,6 +173,8 @@ class FilenameParser(ClassSingleton):
         self._logger.debug("Parsed ROM details: title=%s", path.stem)
         return RomDetail(
             title=path.stem,
+            parent=path.parts[0],
+            item_path=str(path),
             name=self._clean_name(path.stem),
             source="file_name",
             id_method=self._get_id_method(path.parts[0], crc),
