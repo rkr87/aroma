@@ -6,6 +6,7 @@ import logging
 import re
 import shutil
 from collections.abc import Callable
+from contextlib import suppress
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from functools import partial
@@ -285,3 +286,14 @@ def restore_backup_file(file_path: Path) -> None:
     backup_file = file_path.with_suffix(BACKUP_EXT)
     if backup_file.is_file():
         shutil.move(backup_file, file_path)
+
+
+def delete_empty_dirs(root_path: Path) -> None:
+    """TODO."""
+    for dir_path in sorted(
+        root_path.glob("**/"), key=lambda p: len(p.parts), reverse=True
+    ):
+        if not dir_path.is_dir() or dir_path == root_path:
+            continue
+        with suppress(OSError):
+            dir_path.rmdir()
