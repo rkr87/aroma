@@ -15,6 +15,7 @@ from app.navigation.menu_stack import MenuStack
 from app.strings import Strings
 from data.model.collection_config import CollectionConfig
 from manager.collection_manager import CollectionManager
+from manager.rom_manager import RomManager
 from shared.constants import COLLECTION_PATH
 
 if TYPE_CHECKING:
@@ -66,11 +67,15 @@ class MenuCollectionEdit(MenuBase):
         )
 
     @staticmethod
-    def _refresh_collection() -> MenuItemSingle:
+    def _refresh_collection(collection: CollectionConfig) -> MenuItemSingle:
         """TODO."""
+
+        def refresh() -> None:
+            RomManager().refresh_collection(collection)
+
         return MenuItemSingle(
             Strings().refresh_collection,
-            None,
+            refresh,
             SidePane(
                 Strings().refresh_collection, Strings().refresh_collection_desc
             ),
@@ -311,7 +316,7 @@ class MenuCollectionEdit(MenuBase):
 
         if config.is_aroma_collection:
             self.content.add_section(
-                ("REFRESH_COLLECTION", self._refresh_collection()),
+                ("REFRESH_COLLECTION", self._refresh_collection(config)),
                 ("SET_SEPARATION", self._set_separation_status(path, config)),
             )
             self._build_grouping_menu(path, config)

@@ -4,6 +4,7 @@ from collections import OrderedDict
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+from app.background_worker import BackgroundWorker
 from app.menu.menu_base import MenuBase
 from app.menu.menu_item_multi import MenuItemMulti
 from app.menu.menu_item_single import MenuItemSingle
@@ -13,6 +14,7 @@ from app.navigation.menu_collection_new import MenuCollectionNew
 from app.navigation.menu_stack import MenuStack
 from app.strings import Strings
 from manager.collection_manager import CollectionManager
+from manager.rom_manager import RomManager
 from shared.app_config import AppConfig
 from shared.constants import COLLECTION_PATH
 
@@ -33,24 +35,36 @@ class MenuCollectionManagement(MenuBase):  # pylint: disable=too-many-instance-a
 
     def _dynamic_menu_default_items(self) -> None:
         """TODO."""
-        self.content.add_section(("NEW_COLLECTION", self._new_collection()))
-        separation: list[tuple[str, MenuItemBase]] = []
+        self.content.add_section(
+            ("NEW_COLLECTION", self._new_collection()),
+        )
+        separation: list[tuple[str, MenuItemBase]] = [
+            ("DEFAULT_SEPARATION", self._set_collections_separated())
+        ]
+        refresh: list[tuple[str, MenuItemBase]] = [
+            ("REFRESH_ON_REFRESH", self._set_refresh_collections_on_refresh())
+        ]
         if colls := self.collection.config.get_collections(aroma_only=True):
             self._aroma_collection_names = [coll.label for coll in colls]
-            self.content.add_section(
-                ("REFRESH_COLLECTIONS", self._refresh_collections()),
-                ("DELETE_COLLECTIONS", self._delete_collections()),
+            refresh.insert(
+                0, (("REFRESH_COLLECTIONS", self._refresh_collections()))
             )
+
             separation.append(("SEPARATE_ALL", self._set_all_separated()))
             separation.append(
                 ("COLLAPSE_ALL", self._set_all_separated(separated=False))
             )
+        self.content.add_section(*refresh)
         self.content.add_section(*separation)
         grouping: list[tuple[str, MenuItemBase]] = [
             ("GROUP_METHOD_OVERRIDE", self._group_method_override())
         ]
         if AppConfig().override_collection_group_method:
             grouping.append(("GROUP_METHOD", self._group_method()))
+        if colls:
+            self.content.add_section(
+                ("DELETE_COLLECTIONS", self._delete_collections()),
+            )
         self.content.add_section(*grouping)
 
     def _set_all_separated(self, *, separated: bool = True) -> MenuItemSingle:
@@ -133,6 +147,26 @@ class MenuCollectionManagement(MenuBase):  # pylint: disable=too-many-instance-a
             ),
         )
 
+    @staticmethod
+    def _set_refresh_collections_on_refresh() -> MenuItemMulti:
+        """TODO."""
+        data: dict[bool, str] = {
+            True: Strings().yes,
+            False: Strings().no,
+        }
+        actions, current = MenuCollectionManagement._generate_config_actions(
+            data, "refresh_collections_on_refresh"
+        )
+        return MenuItemMulti(
+            Strings().refresh_collections_refresh,
+            actions,
+            current,
+            SidePane(
+                Strings().refresh_collections_refresh,
+                Strings().refresh_collections_refresh_desc,
+            ),
+        )
+
     def _new_collection(self) -> MenuItemSingle:
         """TODO."""
         return self.dynamic_sub_menu(
@@ -168,7 +202,10 @@ class MenuCollectionManagement(MenuBase):  # pylint: disable=too-many-instance-a
         """TODO."""
 
         def refresh() -> None:
-            pass
+            BackgroundWorker().do_work(
+                RomManager().refresh_collections,
+                Strings().refreshing_collections,
+            )
 
         return MenuItemSingle(
             Strings().refresh_all_collections,
