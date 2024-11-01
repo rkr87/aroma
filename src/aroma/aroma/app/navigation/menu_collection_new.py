@@ -23,11 +23,17 @@ class MenuCollectionNew(MenuBase):
         super().__init__(Strings().new_collection, OrderedDict())
         self.edit_collection = MenuCollectionEdit()
         self.collection = CollectionManager()
+        self._template_list: list[CollectionConfig] = []
 
     def _dynamic_menu_default_items(self) -> None:
         """TODO."""
+        self._template_list = sorted(
+            self.collection.config.get_templates(),
+            key=lambda item: item.label,
+        )
         self.content.add_section(
-            ("CUSTOM_COLLECTION", self._custom_collection())
+            ("CUSTOM_COLLECTION", self._custom_collection()),
+            ("CREATE_TEMPLATES", self._create_all_templates()),
         )
 
     def _custom_collection_keywords(self, collection: Path) -> None:
@@ -46,6 +52,30 @@ class MenuCollectionNew(MenuBase):
         """TODO."""
         self.menu_stack.pop(regenerate_all=True)
         self.menu_stack.push(self.edit_collection)
+
+    def _create_all_templates(self) -> MenuItemSingle:
+        """TODO."""
+
+        def create_templates() -> None:
+            self.collection.bulk.create_template_collections()
+            self.menu_stack.pop(regenerate_all=True)
+
+        desc = [
+            item.label
+            for item in self._template_list
+            if not self.collection.config.template_exists(item.directory)
+        ]
+
+        return MenuItemSingle(
+            Strings().create_all_template_collections,
+            create_templates,
+            side_pane=SidePane(
+                Strings().create_all_template_collections,
+                Strings().append_list(
+                    "create_all_template_collections_desc", desc
+                ),
+            ),
+        )
 
     def _custom_collection(self) -> MenuItemSingle:
         """TODO."""
@@ -89,10 +119,7 @@ class MenuCollectionNew(MenuBase):
         path: Path | None,  # noqa: ARG002
         identifier: str | None,  # noqa: ARG002
     ) -> None:
-        for collection in sorted(
-            self.collection.config.get_templates(),
-            key=lambda item: item.label,
-        ):
+        for collection in self._template_list:
             self._create_template_menu_item(collection)
 
     def _create_template_menu_item(
