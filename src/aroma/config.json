@@ -19,5 +19,6 @@
     "_scrape_cpu_threads": 0,
     "archive_userid": "",
     "archive_password": "",
-    "clean_emu_on_refresh": true
+    "clean_emu_on_refresh": true,
+    "version": "0.1.0"
 }

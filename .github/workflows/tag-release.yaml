@@ -1,0 +1,42 @@
+name: 'Tag and Release'
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - 'master'
+
+jobs:
+  tag-release:
+    permissions: write-all
+    name: 'Create tag on master'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 'Checkout source code'
+        uses: 'actions/checkout@v4'
+        with:
+          fetch-depth: 0
+          ref: 'master'
+          ssh-key: ${{ secrets.DEPLOY_KEY }}
+
+      - name: Install python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install python dependencies
+        run: pip install commitizen
+
+      - name: Prepare for commits
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+
+      - name: Create tag
+        run: |
+          git tag $(cz version --project)
+
+      - name: Push tag
+        run: |
+          git push origin tag $(cz version --project)
