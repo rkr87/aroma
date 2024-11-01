@@ -15,14 +15,9 @@ jobs:
       - name: 'Checkout source code'
         uses: 'actions/checkout@v4'
         with:
+          fetch-depth: 0
+          ref: 'develop'
           ssh-key: ${{ secrets.DEPLOY_KEY }}
-      - name: 'Automated Version Bump'
-        id: version-bump
-        uses: 'phips28/gh-action-bump-version@master'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PACKAGE_FILENAME: 'src/aroma/config.json'
-        with:
-          skip-tag: 'true'
-          commit-message: 'ci(bump): increment to version {{version}} [skip ci]'
-
+      - name: Push commits
+        run: |
+          git push
