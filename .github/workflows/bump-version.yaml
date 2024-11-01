@@ -31,6 +31,15 @@ jobs:
       - name: bump version
         run: cz bump --files-only --yes
 
+      - name: Prepare for commits
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+
+      - name: Commit Bump
+        run: |
+          git add .
+
       - name: Push commits
         run: |
           git push
