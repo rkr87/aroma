@@ -1,0 +1,25 @@
+name: 'Bump Version'
+
+on:
+  push:
+    branches:
+      - 'development-branch'
+
+jobs:
+  bump-version:
+    name: 'Bump Version on development-branch'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 'Checkout source code'
+        uses: 'actions/checkout@v4'
+      - name: 'Automated Version Bump'
+        id: version-bump
+        uses: 'phips28/gh-action-bump-version@master'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PACKAGE_FILENAME: 'config.json'
+        with:
+          skip-tag: 'true'
+          commit-message: 'ci(bump): increment to version {{version}} [skip ci]'
+
