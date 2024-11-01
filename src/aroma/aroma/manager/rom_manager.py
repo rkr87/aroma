@@ -1,9 +1,13 @@
 """Defines the RomManager class for managing ROMs and associated resources."""
 
+from pathlib import Path
+
+from data.model.collection_config import CollectionConfig
 from data.model.rom_detail import RomDetail
 from data.source.name_db import NameDB
 from data.source.rom_db import RomDB
 from manager.cache_manager import CacheManager
+from manager.collection_manager import CollectionManager
 from manager.emu_manager import EmuManager
 from manager.image_manager import ImageManager
 from shared.app_config import AppConfig
@@ -33,6 +37,18 @@ class RomManager(ClassSingleton):
             ImageManager().scrape_images(self._rom_db.data)
         if AppConfig().clean_emu_on_refresh:
             EmuManager().clean_emus(self._rom_db.data)
+        if AppConfig().refresh_collections_on_refresh:
+            CollectionManager().refresh_collections(self._rom_db.data)
+
+    def refresh_collection(self, collection: CollectionConfig | Path) -> None:
+        """TODO."""
+        self._rom_db.update()
+        CollectionManager().refresh_collection(collection, self._rom_db.data)
+
+    def refresh_collections(self) -> None:
+        """TODO."""
+        self._rom_db.update()
+        CollectionManager().refresh_collections(self._rom_db.data)
 
     def remove_broken_images(self) -> None:
         """Remove images not associated with valid ROM paths."""
