@@ -1,0 +1,46 @@
+name: 'Bump Version'
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - 'develop'
+
+jobs:
+  bump-version:
+    permissions: write-all
+    name: 'Bump Version on development-branch'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 'Checkout source code'
+        uses: 'actions/checkout@v4'
+        with:
+          fetch-depth: 0
+          ref: 'develop'
+          ssh-key: ${{ secrets.DEPLOY_KEY }}
+
+      - name: Install python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install python dependencies
+        run: pip install commitizen
+
+      - name: bump version
+        run: cz bump --files-only --yes
+
+      - name: Prepare for commits
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+
+      - name: Commit Bump
+        run: |
+          git add .
+          git commit -m 'chore: bump dev-branch version [skip ci]'
+
+      - name: Push commits
+        run: |
+          git push
