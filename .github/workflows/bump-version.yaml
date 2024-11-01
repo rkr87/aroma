@@ -3,7 +3,7 @@ name: 'Bump Version'
 on:
   push:
     branches:
-      - 'development-branch'
+      - 'develop'
 
 jobs:
   bump-version:
@@ -18,7 +18,7 @@ jobs:
         uses: 'phips28/gh-action-bump-version@master'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PACKAGE_FILENAME: 'config.json'
+          PACKAGE_FILENAME: 'src/aroma/config.json'
         with:
           skip-tag: 'true'
           commit-message: 'ci(bump): increment to version {{version}} [skip ci]'
