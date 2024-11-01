@@ -39,6 +39,7 @@ jobs:
       - name: Commit Bump
         run: |
           git add .
+          git commit -m 'ci(bump): bump dev-branch version'
 
       - name: Push commits
         run: |
