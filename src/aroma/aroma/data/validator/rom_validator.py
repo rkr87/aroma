@@ -54,7 +54,7 @@ class RomValidator(ClassSingleton):
         )
 
     @staticmethod
-    def check_path(path: Path) -> bool:
+    def check_launchable_path(path: Path) -> bool:
         """Validate the entire path based on multiple criteria."""
         if not path.is_file():
             return False
@@ -62,6 +62,14 @@ class RomValidator(ClassSingleton):
             RomValidator._is_not_hidden,
             RomValidator._is_not_ignored_ext,
             RomValidator._is_not_ignored_word,
+        ]
+        return all(check(path) for check in checks)
+
+    @staticmethod
+    def check_rom_path(path: Path) -> bool:
+        """Validate the entire path based on multiple criteria."""
+        checks = [
+            RomValidator.check_launchable_path,
             RomValidator._has_valid_relative_path,
             RomValidator._has_valid_system_directory,
             RomValidator.has_valid_ext,

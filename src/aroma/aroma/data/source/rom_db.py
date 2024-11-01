@@ -68,7 +68,7 @@ class RomDB(ClassSingleton):
             self._load_db()
         valid_files: list[tuple[Path, RomDetail | None]] = []
         for path in ROM_PATH.rglob("*"):
-            if not self._validator.check_path(path):
+            if not self._validator.check_rom_path(path):
                 continue
             rel_path = path.relative_to(ROM_PATH)
             current = self._db.get("/".join(rel_path.parts))
@@ -262,7 +262,7 @@ class RomDB(ClassSingleton):
             self._db = {
                 k: RomDetail(**v)
                 for k, v in util.load_simple_json(APP_ROM_DB_PATH).items()
-                if self._validator.check_path(ROM_PATH / k)
+                if self._validator.check_rom_path(ROM_PATH / k)
             }
             RomDB.get_static_logger().info(
                 "Loaded %d ROM details.", len(self._db)
