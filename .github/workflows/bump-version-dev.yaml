@@ -1,15 +1,15 @@
-name: 'Tag and Release'
+name: 'Bump Version - Dev'
 
 on:
   push:
     branches:
-      - 'master'
+      - 'develop'
   workflow_dispatch:
 
 jobs:
-  tag-release:
+  bump-version:
     permissions: write-all
-    name: 'Create tag on master'
+    name: 'Bump Version on development-branch'
     runs-on: ubuntu-latest
 
     steps:
@@ -17,7 +17,7 @@ jobs:
         uses: 'actions/checkout@v4'
         with:
           fetch-depth: 0
-          ref: 'master'
+          ref: 'develop'
           ssh-key: ${{ secrets.DEPLOY_KEY }}
 
       - name: Install python
@@ -34,12 +34,11 @@ jobs:
           git config --local user.name "GitHub Action"
 
       - name: bump version
-        run: cz bump --yes
+        run: cz bump --yes --prerelease alpha --tag-format="v$major.$minor.$patch/$prerelease"
         continue-on-error: true
 
       - name: Push
         run: |
           git push
-          git push origin tag $(cz version --project)
+          git push --tags
         continue-on-error: true
-

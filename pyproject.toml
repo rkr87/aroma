@@ -11,7 +11,7 @@ version = "0.2.0"
 version_files = ["pyproject.toml:version", "src/aroma/config.json"]
 
 # Format for the git tag, useful for old projects, that use a convention like "v1.2.1"
-tag_format = "$major.$minor.$patch$prerelease"
+tag_format = "v$major.$minor.$patch"
 major_version_zero = true
 # Create changelog when running cz bump
 update_changelog_on_bump = false
