@@ -36,6 +36,10 @@ jobs:
       - name: bump version
         run: cz bump --yes --prerelease alpha
 
+      - name: Push commits
+        run: |
+          git push
+
       - name: Push tag
         run: |
           git push origin tag $(cz version --project)
