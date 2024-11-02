@@ -13,6 +13,7 @@ session.json
 test_dl_list.json
 log.txt
 scraper_log.json
+aroma.zip
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
