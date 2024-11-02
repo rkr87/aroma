@@ -1,4 +1,4 @@
-name: 'Tag and Release'
+name: 'Bump Version - Master'
 
 on:
   push:
@@ -7,9 +7,9 @@ on:
   workflow_dispatch:
 
 jobs:
-  tag-release:
+  bump-version:
     permissions: write-all
-    name: 'Create tag on master'
+    name: 'Bump Version on master-branch'
     runs-on: ubuntu-latest
 
     steps:
@@ -35,11 +35,21 @@ jobs:
 
       - name: bump version
         run: cz bump --yes
-        continue-on-error: true
 
       - name: Push
         run: |
           git push
-          git push origin tag $(cz version --project)
-        continue-on-error: true
+          git push --tags
 
+      - name: Create Assets
+        run: python generate_release.py
+
+      - name: Get Tag
+        id: tag
+        run: echo "release_tag=$(cz version --project)" >> $GITHUB_OUTPUT
+  
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.tag.outputs.release_tag }}
+          files: aroma.zip
