@@ -1,0 +1,22 @@
+name: 'Reset Branch - Dev'
+
+on:
+  workflow_dispatch:
+
+jobs:
+  reset-dev:
+    permissions: write-all
+    name: 'Hard Reset on development-branch'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 'Checkout source code'
+        uses: 'actions/checkout@v4'
+        with:
+          ref: 'develop'
+          ssh-key: ${{ secrets.DEPLOY_KEY }}
+
+      - name : Reset Dev Branch
+        run: |
+          git reset --hard master
+          git push -f
