@@ -1,4 +1,4 @@
-name: 'Bump Dev Version'
+name: 'Bump Version - Dev'
 
 on:
   push:
@@ -40,5 +40,5 @@ jobs:
       - name: Push
         run: |
           git push
-          git push origin tag $(cz version --project)
+          git push --tags
         continue-on-error: true

@@ -1,4 +1,4 @@
-name: 'Tag and Release'
+name: 'Bump Version - Master'
 
 on:
   push:
@@ -7,9 +7,9 @@ on:
   workflow_dispatch:
 
 jobs:
-  tag-release:
+  bump-version:
     permissions: write-all
-    name: 'Create tag on master'
+    name: 'Bump Version on master-branch'
     runs-on: ubuntu-latest
 
     steps:
@@ -40,6 +40,6 @@ jobs:
       - name: Push
         run: |
           git push
-          git push origin tag $(cz version --project)
+          git push --tags
         continue-on-error: true
 
