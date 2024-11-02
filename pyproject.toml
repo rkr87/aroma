@@ -11,8 +11,8 @@ version = "0.3.0"
 version_files = ["pyproject.toml:version", "src/aroma/config.json"]
 
 # Format for the git tag, useful for old projects, that use a convention like "v1.2.1"
-tag_format = "v$version"
-
+tag_format = "v$major.$minor.$patch$prerelease"
+major_version_zero = true
 # Create changelog when running cz bump
 update_changelog_on_bump = false
 
@@ -23,7 +23,7 @@ update_changelog_on_bump = false
 # annotated_tag = false
 
 # Create custom commit message, useful to skip ci.
-bump_message = "release: $current_version -> $new_version [skip ci]"
+bump_message = "chore(ci): bump $current_version -> $new_version [skip ci]"
 
 # Disallow empty commit messages, useful in ci.
 # allow_abort = false
