@@ -5,7 +5,7 @@
 name = "cz_customize"
 
 # Current version. Example: "0.1.2"
-version = "0.3.0"
+version = "0.4.0a0"
 
 # Files where the version will be updated. A pattern to match a line, can also be specified, separated by :
 version_files = ["pyproject.toml:version", "src/aroma/config.json"]
