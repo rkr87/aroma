@@ -35,11 +35,17 @@ jobs:
 
       - name: bump version
         run: cz bump --yes
+        continue-on-error: true
 
-      - name: Push commits
+      - name: Push
         run: |
           git push
-
-      - name: Push tag
-        run: |
           git push origin tag $(cz version --project)
+        continue-on-error: true
+
+      - name : Reset Dev Branch
+        run: |
+          git checkout develop
+          git reset --hard master
+          git push -f
+        continue-on-error: true

@@ -1,4 +1,4 @@
-name: 'Bump Version'
+name: 'Bump Dev Version'
 
 on:
   push:
@@ -35,11 +35,10 @@ jobs:
 
       - name: bump version
         run: cz bump --yes --prerelease alpha
+        continue-on-error: true
 
-      - name: Push commits
+      - name: Push
         run: |
           git push
-
-      - name: Push tag
-        run: |
           git push origin tag $(cz version --project)
+        continue-on-error: true
