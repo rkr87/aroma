@@ -53,3 +53,32 @@ jobs:
         with:
           tag_name: ${{ steps.tag.outputs.release_tag }}
           files: aroma.zip
+
+      - name: Identify second most recent tag without "a"
+        id: identify_tag
+        run: |
+          SECOND_MOST_RECENT_TAG=$(git for-each-ref --sort=-creatordate --format '%(refname:short)' refs/tags | grep -v 'a' | sed -n '2p')
+          echo "SECOND_MOST_RECENT_TAG=$SECOND_MOST_RECENT_TAG" >> $GITHUB_ENV
+          if [ -z "$SECOND_MOST_RECENT_TAG" ]; then
+            echo "No second most recent tag found. Exiting."
+            exit 0
+          fi
+          TAG_DATE=$(git log -1 --format='%aI' "$SECOND_MOST_RECENT_TAG")
+          echo "TAG_DATE=$TAG_DATE" >> $GITHUB_ENV
+
+      - name: Delete old tags containing "a"
+        if: env.SECOND_MOST_RECENT_TAG
+        run: |
+          for tag in $(git for-each-ref --sort=creatordate --format '%(refname:short)' refs/tags | grep 'a'); do
+              TAG_CREATION_DATE=$(git log -1 --format='%aI' "$tag")
+              if [[ "$TAG_CREATION_DATE" < "$TAG_DATE" ]]; then
+                  echo "Deleting tag $tag"
+                  git tag -d "$tag"
+                  git push origin --delete "$tag"  # Delete tag from the remote
+              fi
+          done
+
+      - name: Push changes
+        if: success()
+        run: |
+          git push origin --tags
