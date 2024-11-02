@@ -33,9 +33,8 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
 
-      - name: Create tag
-        run: |
-          git tag $(cz version --project)
+      - name: bump version
+        run: cz bump --yes
 
       - name: Push tag
         run: |

@@ -28,19 +28,14 @@ jobs:
       - name: Install python dependencies
         run: pip install commitizen
 
-      - name: bump version
-        run: cz bump --files-only --yes
-
       - name: Prepare for commits
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
 
-      - name: Commit Bump
-        run: |
-          git add .
-          git commit -m 'chore(ci): bump dev-branch version [skip ci]'
+      - name: bump version
+        run: cz bump --yes --prerelease alpha
 
-      - name: Push commits
+      - name: Push tag
         run: |
-          git push
+          git push origin tag $(cz version --project)
