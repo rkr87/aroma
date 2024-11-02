@@ -5,13 +5,13 @@
 name = "cz_customize"
 
 # Current version. Example: "0.1.2"
-version = "0.4.0a0"
+version = "0.2.0"
 
 # Files where the version will be updated. A pattern to match a line, can also be specified, separated by :
 version_files = ["pyproject.toml:version", "src/aroma/config.json"]
 
 # Format for the git tag, useful for old projects, that use a convention like "v1.2.1"
-tag_format = "v$major.$minor.$patch$prerelease"
+tag_format = "$major.$minor.$patch$prerelease"
 major_version_zero = true
 # Create changelog when running cz bump
 update_changelog_on_bump = false
