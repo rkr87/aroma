@@ -1,0 +1,52 @@
+name: 'Create Release'
+
+on:
+  workflow_run:
+    workflows: ['Bump Version - Master']
+    types:
+      - completed
+  workflow_dispatch:
+
+jobs:
+
+  generate-release:
+    permissions: write-all
+    name: 'Generate a Release from Master'
+    runs-on: ubuntu-latest
+
+    # if: ${{ startsWith(github.event.workflow_run.head_commit.message, 'chore(ci)') }}
+    steps:
+      - name: 'Checkout source code'
+        uses: 'actions/checkout@v4'
+        with:
+          ref: 'master'
+          ssh-key: ${{ secrets.DEPLOY_KEY }}
+
+      - name: Create Assets
+        run: echo ${{github.event.workflow_run.head_commit.message}}
+        continue-on-error: true
+
+      - name: Create Assets
+        run: echo ${{github.ref}}
+        continue-on-error: true
+
+    # steps:
+    #   - name: 'Checkout source code'
+    #     uses: 'actions/checkout@v4'
+    #     with:
+    #       ref: 'master'
+    #       ssh-key: ${{ secrets.DEPLOY_KEY }}
+
+    #   - name: Install python
+    #     uses: actions/setup-python@v5
+    #     with:
+    #       python-version: '3.12'
+
+    #   - name: Create Assets
+    #     run: python generate_release.py
+    #     continue-on-error: true
+
+    #   - name: Release
+    #     uses: softprops/action-gh-release@v2
+    #     with:
+    #       files: aroma.zip
