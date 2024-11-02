@@ -1,10 +1,10 @@
 name: 'Bump Version'
 
 on:
-  workflow_dispatch:
   push:
     branches:
       - 'develop'
+  workflow_dispatch:
 
 jobs:
   bump-version:
@@ -39,7 +39,7 @@ jobs:
       - name: Commit Bump
         run: |
           git add .
-          git commit -m 'chore: bump dev-branch version [skip ci]'
+          git commit -m 'chore(ci): bump dev-branch version [skip ci]'
 
       - name: Push commits
         run: |
