@@ -1,10 +1,10 @@
 name: 'Tag and Release'
 
 on:
-  workflow_dispatch:
   push:
     branches:
       - 'master'
+  workflow_dispatch:
 
 jobs:
   tag-release:
@@ -33,10 +33,13 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
 
-      - name: Create tag
-        run: |
-          git tag $(cz version --project)
+      - name: bump version
+        run: cz bump --yes
+        continue-on-error: true
 
-      - name: Push tag
+      - name: Push
         run: |
+          git push
           git push origin tag $(cz version --project)
+        continue-on-error: true
+
