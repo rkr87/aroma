@@ -1,10 +1,10 @@
-name: 'Bump Version'
+name: 'Bump Dev Version'
 
 on:
-  workflow_dispatch:
   push:
     branches:
       - 'develop'
+  workflow_dispatch:
 
 jobs:
   bump-version:
@@ -28,19 +28,17 @@ jobs:
       - name: Install python dependencies
         run: pip install commitizen
 
-      - name: bump version
-        run: cz bump --files-only --yes
-
       - name: Prepare for commits
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
 
-      - name: Commit Bump
-        run: |
-          git add .
-          git commit -m 'chore: bump dev-branch version [skip ci]'
+      - name: bump version
+        run: cz bump --yes --prerelease alpha
+        continue-on-error: true
 
-      - name: Push commits
+      - name: Push
         run: |
           git push
+          git push origin tag $(cz version --project)
+        continue-on-error: true
