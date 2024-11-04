@@ -32,7 +32,7 @@ class CollectionManager(ClassSingleton):  # pylint: disable=too-many-instance-at
             collection = self.config.get_collection(collection)
         if not collection.is_aroma_collection:
             return
-        self.operations.clear_aroma_data(collection)
+        self.operations.clear_data(collection)
         shortcuts = self.shortcuts.get_non_aroma_shortcuts(collection, rom_db)
         aroma = self.shortcuts.create_aroma_shortcuts(collection, rom_db)
         shortcuts.update(aroma)
