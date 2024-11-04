@@ -28,7 +28,27 @@ class MenuOptions(MenuBase):
         logger = MenuOptions.get_static_logger()
         logger.debug("Building Options menu options.")
         self.content.add_item("LANGUAGE", self._language())
+        self.content.add_item("UPDATES", self._check_for_updates())
         self.content.add_item("LOGGING", self._logging_level())
+
+    def _check_for_updates(self) -> MenuItemMulti:
+        """TODO."""
+        data: dict[bool, str] = {
+            True: Strings().yes,
+            False: Strings().no,
+        }
+        actions, current = self._generate_config_actions(
+            data, "check_for_updates"
+        )
+        return MenuItemMulti(
+            Strings().check_for_updates,
+            actions,
+            current,
+            SidePane(
+                Strings().check_for_updates,
+                Strings().check_for_updates_desc,
+            ),
+        )
 
     def _language(self) -> MenuItemMulti:
         """Create menu item for selecting the language."""
