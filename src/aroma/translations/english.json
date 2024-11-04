@@ -23,6 +23,14 @@
     ],
     "applying_update": "APPLYING UPDATE...",
     "update_available": "AROMA UPDATE AVAILABLE",
+    "import_from_collagen": "IMPORT FROM COLLAGEN",
+    "import_from_collagen_desc": [
+        "Add description of options here"
+    ],
+    "collagen_import_all": "IMPORT ALL",
+    "collagen_import_all_desc": [
+        "Add description of options here"
+    ],
     "collection_group_method_override": "GROUP METHOD",
     "collections_group_method_override": "GROUP METHOD",
     "collection_group_method_override_desc": [
@@ -345,6 +353,7 @@
     "removing_broken_imgs": "REMOVING BROKEN IMAGES...",
     "refreshing_roms": "REFRESHING ROMS...",
     "refreshing_collections": "REFRESHING COLLECTIONS...",
+    "refreshing_collection": "REFRESHING COLLECTION...",
     "launch_rom": "LAUNCH ROM",
     "rom": "ROM",
     "emu": "EMU",
