@@ -7,6 +7,7 @@ from app.background_worker import BackgroundWorker
 from app.menu.menu_base import MenuBase
 from app.menu.menu_item_single import MenuItemSingle
 from app.model.side_pane import SidePane
+from app.navigation.menu_collection_management import MenuCollectionManagement
 from app.navigation.menu_downloader import MenuDownloader
 from app.navigation.menu_emu_management import MenuEmuManagement
 from app.navigation.menu_image_management import MenuImageManagement
@@ -29,12 +30,27 @@ class MenuMain(MenuBase):
         """Build the initial main menu."""
         logger = self.get_static_logger()
         logger.debug("Building Main menu options.")
+        self.content.add_item("COLLECTIONS", self._collections_menu())
         self.content.add_item("ROM_NAMING", self._rom_naming_menu())
         self.content.add_item("IMG_MNGT", self._image_management_menu())
         self.content.add_item("EMU_MNGT", self._emu_management_menu())
         self.content.add_item("DOWNLOADER", self._downloader_menu())
         self.content.add_item("OPTIONS", self._options_menu())
         self.content.add_item("REFRESH", self._refresh_roms())
+
+    def _collections_menu(self) -> MenuItemSingle:
+        """TODO."""
+        return self.dynamic_sub_menu(
+            Strings().collection_management,
+            None,
+            None,
+            MenuCollectionManagement(),
+            MenuStack().push,
+            side_pane=SidePane(
+                Strings().collection_management,
+                Strings().collection_management_desc,
+            ),
+        )
 
     def _rom_naming_menu(self) -> MenuItemSingle:
         """TODO."""
@@ -102,7 +118,6 @@ class MenuMain(MenuBase):
         """Create a menu item that refreshes the ROM database."""
 
         def refresh_roms() -> None:
-            """TODO."""
             BackgroundWorker().do_work(
                 RomManager().refresh_roms, Strings().refreshing_roms
             )

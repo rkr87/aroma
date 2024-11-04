@@ -267,12 +267,17 @@ def tsp_path(path: str | Path) -> str:
     return path_str.replace(TSP_SD, WIN_SD)
 
 
-def read_text_file(file_path: Path) -> list[str]:
+def read_text_file(
+    file_path: Path, *, convert_paths: bool = False
+) -> list[str]:
     """TODO."""
     if not file_path.is_file():
         return []
     with file_path.open("r", encoding="utf-8") as f:
-        return list(f)
+        lines = list(f)
+        if not convert_paths:
+            return lines
+        return [tsp_path(line) for line in lines]
 
 
 def create_backup_file(file_path: Path) -> None:
@@ -297,3 +302,15 @@ def delete_empty_dirs(root_path: Path) -> None:
             continue
         with suppress(OSError):
             dir_path.rmdir()
+
+
+def make_valid_path(path: Path | str) -> Path:
+    """TODO."""
+    if isinstance(path, str):
+        path = Path(path)
+    invalid_chars = set('<>:"/\\|?*')
+    sanitized_parts = [
+        "".join("-" if char in invalid_chars else char for char in part)
+        for part in path.parts[1:]
+    ]
+    return Path(path.parts[0], *sanitized_parts)

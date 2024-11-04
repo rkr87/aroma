@@ -1,0 +1,11 @@
+{
+    "label": "Sonic",
+    "include": [
+        "sonic",
+        "robotnik"
+    ],
+    "exclude": [
+        "aero",
+        "blast man"
+    ]
+}
