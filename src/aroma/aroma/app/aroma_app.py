@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING
 from app.background_worker import BackgroundWorker
 from app.input.controller import Controller
 from app.input.keyboard_controller import KeyboardController
+from app.navigation.menu_app_update import MenuAppUpdate
 from app.navigation.menu_launch_options import MenuLaunchOptions
 from app.navigation.nav_controller import NavController
 from app.screen_manager import ScreenManager
@@ -91,6 +92,8 @@ class AromaApp(ClassSingleton):  # pylint: disable=too-many-instance-attributes
             return
         while BackgroundWorker().busy:  # pylint: disable=while-used
             time.sleep(0.01)
+        if BackgroundWorker().exit_required:
+            self.stop()
         menu = self.navigator.current_menu(force_update=True)
         self.screen.render(menu)
 
@@ -113,13 +116,22 @@ class AromaApp(ClassSingleton):  # pylint: disable=too-many-instance-attributes
 
     def start_launch_menu(self, shortcut_path: Path) -> None:
         """TODO."""
-        self._logger.info("Application starting.")
+        self._logger.info("Launching rom.")
         shortcut_menu = MenuLaunchOptions()
         shortcut_menu.init_dynamic_menu(
             f"LAUNCHING {shortcut_path.stem.upper()}", shortcut_path, None
         )
         menu: CurrentMenu = self.navigator.current_menu(
             start_menu=shortcut_menu
+        )
+        self.screen.render(menu)
+        self.poll_event()
+
+    def start_update(self) -> None:
+        """Start the application."""
+        self._logger.info("Application update process.")
+        menu: CurrentMenu = self.navigator.current_menu(
+            start_menu=MenuAppUpdate()
         )
         self.screen.render(menu)
         self.poll_event()

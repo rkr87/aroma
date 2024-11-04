@@ -1,9 +1,11 @@
 # pylint: disable=too-many-arguments
 """Module for defining application configuration settings."""
 
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
+from pathlib import Path
 
 from shared.classes.json_dataclass import JsonDataClass
+from shared.tools import util
 
 
 @dataclass
@@ -31,11 +33,11 @@ class AppConfig(JsonDataClass):  # pylint: disable=too-many-instance-attributes
     archive_userid: str = ""
     archive_password: str = ""
     clean_emu_on_refresh: bool = False
-    version: str = ""
     separate_collections_by_system_default: bool = True
     override_collection_group_method: bool = False
     custom_collection_group_method: str = ""
     refresh_collections_on_refresh: bool = False
+    check_for_updates: bool = True
 
     @property
     def scrape_cpu_threads(self) -> int | None:
@@ -52,3 +54,10 @@ class AppConfig(JsonDataClass):  # pylint: disable=too-many-instance-attributes
                 "Force full rebuild of RomDB: %s",
                 reason,
             )
+
+    def update_user_config(self, new_version_path: Path) -> None:
+        """TODO."""
+        new_config = util.load_simple_json(new_version_path)
+        current = asdict(self)
+        new_config.update(current)
+        util.save_simple_json(new_config, new_version_path)

@@ -13,11 +13,13 @@ class MenuStack(ClassSingleton):
 
     menus: list[MenuBase] = field(default_factory=list)
 
-    def push(self, item: MenuBase) -> CurrentMenu:
+    def push(self, item: MenuBase, *, reset: bool = False) -> CurrentMenu:
         """Add a new menu to the stack and returns the current menu state."""
         logger = MenuStack.get_static_logger()
         logger.info("Menu pushed: %s", item.breadcrumb)
         self.menus.append(item)
+        if reset:
+            self.menus = self.menus[-1:]
         return CurrentMenu(
             self.menus[-1],
             [x.breadcrumb for x in self.menus],

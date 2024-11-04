@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh 
 controlfolder="/mnt/SDCARD/Apps/aroma"
 source /mnt/SDCARD/System/etc/ex_config
 exec > >(tee "$controlfolder/log.txt") 2>&1
@@ -8,5 +8,9 @@ chmod -R +x .
 ./bin/sdl2imgshow -z "./resources/ui/splash.ini" &
 sleep 0.5
 pkill -f sdl2imgshow
-./init
-unset LD_LIBRARY_PATH
+out=$(./init)
+echo "$out"
+if [[ "$out" == *"AROMA UPDATED|RESTART REQUIRED"* ]]; then
+    exec "$0" "$@"
+    exit
+fi

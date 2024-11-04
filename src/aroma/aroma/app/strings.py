@@ -28,6 +28,14 @@ class Strings(JsonDataClass):  # pylint: disable=too-many-instance-attributes
     separated: str = ""
     collapsed: str = ""
     inherit: str = ""
+    update: str = ""
+    update_desc: list[str] = field(default_factory=list)
+    check_for_updates: str = ""
+    check_for_updates_desc: list[str] = field(default_factory=list)
+    launch_app: str = ""
+    launch_app_desc: list[str] = field(default_factory=list)
+    applying_update: str = ""
+    update_available: str = ""
     collection_group_method_override: str = ""
     collection_group_method_override_desc: list[str] = field(
         default_factory=list

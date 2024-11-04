@@ -14,9 +14,17 @@ class BackgroundWorker(ClassSingleton):
         super().__init__()
         self.busy = False
         self.message = ""
+        self.exit_required: bool = False
 
-    def do_work(self, function: Callable[..., Any], message: str) -> None:
+    def do_work(
+        self,
+        function: Callable[..., Any],
+        message: str,
+        *,
+        exit_on_complete: bool = False,
+    ) -> None:
         """TODO."""
+        self.exit_required = exit_on_complete
 
         def worker() -> None:
             self.busy = True

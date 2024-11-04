@@ -2,7 +2,7 @@
 
 import json
 import logging
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, fields
 from pathlib import Path
 from typing import Self
 
@@ -34,6 +34,8 @@ class JsonDataClass(ClassSingleton):
             "Successfully loaded and processed data from file: %s",
             file_path,
         )
+        class_fields = [field.name for field in fields(cls)]
+        data = {k: v for k, v in data.items() if k in class_fields}
         return cls.reset_instance(**data)
 
     def save(self) -> None:

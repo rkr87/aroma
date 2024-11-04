@@ -36,13 +36,6 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def init() -> None:
-    """Initialise core app components."""
-    config = AppConfig.load(constants.APP_CONFIG_PATH)
-    logging.config.fileConfig(constants.APP_LOGGING_CONFIG_PATH)
-    logging.getLogger().setLevel(config.logging_level)
-
-
 def refresh_roms() -> None:
     """Refresh the ROM database and system cache."""
     logging.info("Refreshing ROM database and system cache...")
@@ -56,14 +49,17 @@ def refresh_roms() -> None:
     sys.exit()
 
 
-def launch_aroma() -> None:
+def launch_aroma(*, check_for_updates: bool) -> None:
     """Initialise and starts aroma."""
     logging.info("Launching aROMa.")
     from app.aroma_app import (  # pylint: disable=import-outside-toplevel
         AromaApp,
     )
+    from updater import Updater  # pylint: disable=import-outside-toplevel
 
     app: AromaApp = AromaApp()
+    if check_for_updates and Updater.check_for_update():
+        app.start_update()
     app.start_main()
 
 
@@ -79,11 +75,14 @@ def rom_launch_menu(file_path: str) -> None:
 
 
 if __name__ == "__main__":
+    config = AppConfig.load(constants.APP_CONFIG_PATH)
+    logging.config.fileConfig(constants.APP_LOGGING_CONFIG_PATH)
+    logging.getLogger().setLevel(config.logging_level)
+
     args = parse_args()
-    init()
     if args.refresh:
         refresh_roms()
     elif args.launch:
         rom_launch_menu(args.launch)
     else:
-        launch_aroma()
+        launch_aroma(check_for_updates=config.check_for_updates)

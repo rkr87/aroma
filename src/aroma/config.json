@@ -20,9 +20,9 @@
     "archive_userid": "",
     "archive_password": "",
     "clean_emu_on_refresh": true,
-    "version": "0.4.0a0",
     "separate_collections_by_system_default": true,
     "override_collection_group_method": false,
     "custom_collection_group_method": "$n",
-    "refresh_collections_on_refresh": false
+    "refresh_collections_on_refresh": false,
+    "check_for_updates": true
 }

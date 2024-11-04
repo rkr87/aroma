@@ -9,6 +9,20 @@
     "current": "CURRENT",
     "formatted": "FORMATTED",
     "inherit": "INHERIT",
+    "update": "UPDATE",
+    "update_desc": [
+        "Add description of options here"
+    ],
+    "check_for_updates": "CHECK FOR UPDATES",
+    "check_for_updates_desc": [
+        "Add description of options here"
+    ],
+    "launch_app": "LAUNCH AROMA",
+    "launch_app_desc": [
+        "Add description of options here"
+    ],
+    "applying_update": "APPLYING UPDATE...",
+    "update_available": "AROMA UPDATE AVAILABLE",
     "collection_group_method_override": "GROUP METHOD",
     "collections_group_method_override": "GROUP METHOD",
     "collection_group_method_override_desc": [
