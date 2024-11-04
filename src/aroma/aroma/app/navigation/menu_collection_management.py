@@ -9,6 +9,7 @@ from app.menu.menu_base import MenuBase
 from app.menu.menu_item_multi import MenuItemMulti
 from app.menu.menu_item_single import MenuItemSingle
 from app.model.side_pane import SidePane
+from app.navigation.menu_collection_collagen import MenuCollectionCollagen
 from app.navigation.menu_collection_edit import MenuCollectionEdit
 from app.navigation.menu_collection_new import MenuCollectionNew
 from app.navigation.menu_stack import MenuStack
@@ -28,6 +29,7 @@ class MenuCollectionManagement(MenuBase):  # pylint: disable=too-many-instance-a
     def __init__(self) -> None:
         self.menu_stack: MenuStack = MenuStack()
         self.new_collection = MenuCollectionNew()
+        self.collagen = MenuCollectionCollagen()
         self.edit_collection = MenuCollectionEdit()
         self.collection = CollectionManager()
         super().__init__(Strings().collection_management, OrderedDict())
@@ -35,9 +37,14 @@ class MenuCollectionManagement(MenuBase):  # pylint: disable=too-many-instance-a
 
     def _dynamic_menu_default_items(self) -> None:
         """TODO."""
-        self.content.add_section(
-            ("NEW_COLLECTION", self._new_collection()),
-        )
+        new: list[tuple[str, MenuItemBase]] = [
+            ("NEW_COLLECTION", self._new_collection())
+        ]
+        if self.collection.config.get_collagen_collections(
+            non_aroma_only=True
+        ):
+            new.append(("IMPORT_COLLAGEN", self._import_collagen()))
+        self.content.add_section(*new)
         separation: list[tuple[str, MenuItemBase]] = [
             ("DEFAULT_SEPARATION", self._set_collections_separated())
         ]
@@ -54,6 +61,7 @@ class MenuCollectionManagement(MenuBase):  # pylint: disable=too-many-instance-a
             separation.append(
                 ("COLLAPSE_ALL", self._set_all_separated(separated=False))
             )
+
         self.content.add_section(*refresh)
         self.content.add_section(*separation)
         grouping: list[tuple[str, MenuItemBase]] = [
@@ -177,6 +185,20 @@ class MenuCollectionManagement(MenuBase):  # pylint: disable=too-many-instance-a
             MenuStack().push,
             side_pane=SidePane(
                 Strings().new_collection, Strings().new_collection_desc
+            ),
+        )
+
+    def _import_collagen(self) -> MenuItemSingle:
+        """TODO."""
+        return self.dynamic_sub_menu(
+            Strings().import_from_collagen,
+            None,
+            None,
+            self.collagen,
+            MenuStack().push,
+            side_pane=SidePane(
+                Strings().import_from_collagen,
+                Strings().import_from_collagen_desc,
             ),
         )
 

@@ -63,7 +63,7 @@ class MenuCollectionNew(MenuBase):
         desc = [
             item.label
             for item in self._template_list
-            if not self.collection.config.template_exists(item.directory)
+            if not self.collection.config.collection_exists(item.directory)
         ]
 
         return MenuItemSingle(
@@ -164,7 +164,7 @@ class MenuCollectionNew(MenuBase):
             create_from_template,
             side_pane=side_pane,
         )
-        menu_item.deactivated = self.collection.config.template_exists(
+        menu_item.deactivated = self.collection.config.collection_exists(
             template_config.directory
         )
         self.content.add_item(template_config.label, menu_item)

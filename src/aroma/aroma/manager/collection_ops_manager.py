@@ -47,7 +47,6 @@ class CollectionOpsManager(ClassSingleton):  # pylint: disable=too-many-public-m
         self._config.save_collection(config)
         files = [
             config.background,
-            config.launch,
             config.icon,
             config.iconsel,
         ]
@@ -60,8 +59,18 @@ class CollectionOpsManager(ClassSingleton):  # pylint: disable=too-many-public-m
             )
             if source.is_file():
                 shutil.copy2(source, dest_path / file_name)
+        launch = self.get_default_file(
+            config.launch, config.directory, from_template=from_template
+        )
+        if launch.is_file():
+            shutil.copy2(launch, dest_path / config.launch)
         (dest_path / config.rompath).mkdir(parents=True, exist_ok=True)
         (dest_path / config.imgpath).mkdir(parents=True, exist_ok=True)
+
+    def create_collagen_collection(self, collagen: CollectionConfig) -> None:
+        """TODO."""
+        self._create_collection(collagen)
+        self.clear_data(collagen, aroma_data_only=False)
 
     def create_template_collection(self, template: CollectionConfig) -> None:
         """TODO."""
@@ -116,18 +125,33 @@ class CollectionOpsManager(ClassSingleton):  # pylint: disable=too-many-public-m
             return
         config.systems_separated = separated
         self._config.save_collection(config)
-        self.clear_aroma_data(config)
+        self.clear_data(config)
 
-    def clear_aroma_data(self, config: CollectionConfig | Path) -> None:
+    def clear_data(
+        self, config: CollectionConfig | Path, *, aroma_data_only: bool = True
+    ) -> None:
         """TODO."""
         if isinstance(config, Path):
             config = self._config.get_collection(config)
-        rom_path = COLLECTION_PATH / config.directory / config.rompath
-        if not rom_path.is_dir():
+        paths = [
+            COLLECTION_PATH / config.directory / config.rompath,
+            COLLECTION_PATH / config.directory / config.imgpath,
+        ]
+        for path in paths:
+            if not path.is_dir():
+                continue
+            self._clear_path(path, aroma_data_only=aroma_data_only)
+
+    @staticmethod
+    def _clear_path(path: Path, *, aroma_data_only: bool) -> None:
+        """TODO."""
+        if not aroma_data_only:
+            shutil.rmtree(path)
+            path.mkdir(parents=True, exist_ok=True)
             return
-        for shortcut in rom_path.rglob(f"*{APP_NAME}~*.txt"):
+        for shortcut in path.rglob(f"*{APP_NAME}~*.txt"):
             shortcut.unlink()
-        util.delete_empty_dirs(rom_path)
+        util.delete_empty_dirs(path)
 
     def set_group_method_override(
         self, config: CollectionConfig | Path, *, override: bool

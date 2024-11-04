@@ -268,13 +268,18 @@ def tsp_path(path: str | Path) -> str:
 
 
 def read_text_file(
-    file_path: Path, *, convert_paths: bool = False
+    file_path: Path,
+    *,
+    convert_paths: bool = False,
+    remove_line_breaks: bool = False,
 ) -> list[str]:
     """TODO."""
     if not file_path.is_file():
         return []
     with file_path.open("r", encoding="utf-8") as f:
         lines = list(f)
+        if remove_line_breaks:
+            lines = [line.strip() for line in lines]
         if not convert_paths:
             return lines
         return [tsp_path(line) for line in lines]

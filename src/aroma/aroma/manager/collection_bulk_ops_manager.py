@@ -19,6 +19,12 @@ class CollectionBulkOpsManager(ClassSingleton):
         for item in templates:
             self._operations.create_template_collection(item)
 
+    def create_collagen_collections(self) -> None:
+        """TODO."""
+        collagen = self._config.get_collagen_collections(non_aroma_only=True)
+        for item in collagen:
+            self._operations.create_template_collection(item)
+
     def delete_all_collections(self) -> None:
         """TODO."""
         for item in self._config.get_collections(aroma_only=True):

@@ -36,6 +36,10 @@ class Strings(JsonDataClass):  # pylint: disable=too-many-instance-attributes
     launch_app_desc: list[str] = field(default_factory=list)
     applying_update: str = ""
     update_available: str = ""
+    import_from_collagen: str = ""
+    import_from_collagen_desc: list[str] = field(default_factory=list)
+    collagen_import_all: str = ""
+    collagen_import_all_desc: list[str] = field(default_factory=list)
     collection_group_method_override: str = ""
     collection_group_method_override_desc: list[str] = field(
         default_factory=list
@@ -262,6 +266,7 @@ class Strings(JsonDataClass):  # pylint: disable=too-many-instance-attributes
     keyboard_input_history: str = ""
     keyboard_help_info: str = ""
     refreshing_collections: str = ""
+    refreshing_collection: str = ""
     create_all_template_collections: str = ""
     create_all_template_collections_desc: list[str] = field(
         default_factory=list
