@@ -13,6 +13,6 @@ def zip_directory_contents(source_dir: Path, output_zip: Path) -> None:
 
 
 if __name__ == "__main__":
-    source_directory = Path().cwd() / "src"
+    source_directory = Path.cwd() / "src"
     output_zip_path = Path.cwd() / "aroma.zip"
     zip_directory_contents(source_directory, output_zip_path)
