@@ -24,6 +24,10 @@ EMU_PATH = SD_PATH / "Emus"
 COLLECTION_PATH = SD_PATH / "Best"
 COLLECTION_DEFAULTS = RESOURCES / "collections" / "default"
 COLLECTION_TEMPLATES = RESOURCES / "collections" / "templates"
+COLLAGEN_PATHS = [
+    SD_PATH / "Apps" / "CollaGen" / "config",
+    SD_PATH / "Apps" / "CollGen" / "config",
+]
 TSP_USER_LIBRARY_PATH = Path("/usr/trimui/lib")
 SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
