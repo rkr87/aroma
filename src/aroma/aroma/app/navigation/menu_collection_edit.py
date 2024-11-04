@@ -4,6 +4,7 @@ from collections import OrderedDict
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+from app.background_worker import BackgroundWorker
 from app.menu.menu_base import MenuBase
 from app.menu.menu_item_multi import MenuItemMulti
 from app.menu.menu_item_single import MenuItemSingle
@@ -73,9 +74,14 @@ class MenuCollectionEdit(MenuBase):
         def refresh() -> None:
             RomManager().refresh_collection(collection)
 
+        def work() -> None:
+            BackgroundWorker().do_work(
+                refresh, Strings().refreshing_collection
+            )
+
         return MenuItemSingle(
             Strings().refresh_collection,
-            refresh,
+            work,
             SidePane(
                 Strings().refresh_collection, Strings().refresh_collection_desc
             ),
