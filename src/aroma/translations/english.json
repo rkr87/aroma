@@ -11,7 +11,7 @@
     "inherit": "INHERIT",
     "update": "UPDATE",
     "update_desc": [
-        "Apply the latest aROMa update.",
+        "Download and apply the latest aROMa update.",
         "",
         "This will take a minute or two, aROMa will automatically restart on completion."
     ],
@@ -21,7 +21,7 @@
     ],
     "launch_app": "LAUNCH AROMA",
     "launch_app_desc": [
-        "Launch currently installed version of aROMA.",
+        "Launch currently installed version of aROMa.",
         "",
         "You will be prompted to update again on the next launch, you can disable this behaviour in the options menu."
     ],
@@ -29,7 +29,7 @@
     "update_available": "AROMA UPDATE AVAILABLE",
     "import_from_collagen": "IMPORT FROM COLLAGEN",
     "import_from_collagen_desc": [
-        "Convert CollaGen collections on your device to aROMa compatible collections.."
+        "Convert CollaGen collections on your device to aROMa compatible collections."
     ],
     "collagen_import_all": "IMPORT ALL",
     "collagen_import_all_desc": [
@@ -45,7 +45,6 @@
     "collections_group_method_override": "GROUP METHOD",
     "collections_group_method_override_desc": [
         "Set the default grouping method for all collections.",
-        "",
         "",
         "INHERIT: collections will inherit from ROM NAMING > NAME FORMAT.",
         "CUSTOM: allow setting an override format for all collections."
@@ -66,7 +65,7 @@
     ],
     "collections_separated_systems_default": "SEPARATION BEHAVIOUR",
     "collections_separated_systems_default_desc": [
-        "Set the default separation method for all collections.",
+        "Set the default separation method for new collections.",
         "",
         "By default, CrossMix expects roms in a collection to be separated by system. aROMa can override this behaviour and collapse all roms into a single menu, regardless of system.",
         "",
@@ -356,7 +355,7 @@
     "restore_launch_scripts_desc": [
         "Restore emulator scripts from backup for all emulators.",
         "",
-        "To be extra cautious, aROMa create a backup of all emulator scripts before adding launch menus.",
+        "To be extra cautious, aROMa creates a backup of all emulator scripts before adding launch menus.",
         "",
         "This feature shouldn't ever be required, but if needed, it will restore un-modified CrossMix emulator launch scripts."
     ],
@@ -398,11 +397,12 @@
     ],
     "scrape_days_to_retry": "RESCRAPE ATTEMPT",
     "scrape_days_to_retry_desc": [
-        "When aROMa fails to find a matching images for a rom, it will be added to a list for rescraping.",
+        "When aROMa fails to find a matching image for a rom, it will be added to a list for rescraping.",
         "",
         "This setting determines how long aROMa should wait before trying to scrape that rom again.",
         "",
-        "Roms with missing images: "
+        "You can view details of unscraped images in the file below on your SDCARD:",
+        " - /Apps/aroma/resources/scraping/scraper_log.json"
     ],
     "scrape_days_to_retry_never": "NEVER",
     "scrape_days_to_retry_always": "ALWAYS",
@@ -437,9 +437,10 @@
     "scrape_password_prompt": "ENTER SCREENSCRAPER.FR PASSWORD",
     "scrape_preferred_region": "REGION",
     "scrape_preferred_region_desc": [
-        "Enter your preferred image for media downloads.",
+        "Enter your preferred region for media downloads.",
         "",
         "An automatic fallback is in place for all regions to maximise the likelihood of finding a relevant image.",
+        "",
         "EG, selecting USA in priority order:",
         " - USA",
         " - American continent",
@@ -530,8 +531,8 @@
         "",
         "SMART: A modified conservative governor that checks CPU load 2.5 times per second and scales up or down in response) (credit to rymsar from the spruce team).",
         "BALANCED: Balances performance with power-saving.",
-        "POWERSAVE: Prioritises power saving at the expense of performance.",
-        "PERFORMANCE: Prioritises performance at the expense of battery."
+        "POWERSAVE: Power saving at the expense of performance.",
+        "PERFORMANCE: Performance at the expense of battery."
     ],
     "cpu_profile_balanced": "BALANCED",
     "cpu_profile_powersave": "POWERSAVE",
