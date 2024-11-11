@@ -5,6 +5,7 @@ from typing import Any
 
 import requests
 from shared.classes.class_singleton import ClassSingleton
+from shared.tools import util
 
 
 class HttpRequestHandler(ClassSingleton):
@@ -23,7 +24,9 @@ class HttpRequestHandler(ClassSingleton):
     ) -> requests.Response | None:
         """Make a GET request."""
         try:
-            response = requests.get(url, params=params, timeout=timeout)
+            response = requests.get(
+                url, params=cls._validate_params(params), timeout=timeout
+            )
         except requests.exceptions.RequestException as e:
             HttpRequestHandler._log_error("GET request failed", e)
             return None
@@ -69,3 +72,11 @@ class HttpRequestHandler(ClassSingleton):
         except json.JSONDecodeError as e:
             HttpRequestHandler._log_error("Failed to decode JSON: %s", e)
             return None
+
+    @staticmethod
+    def _validate_params(params: dict[str, Any] | None) -> None:  # type: ignore[misc]
+        """TODO."""
+        if not params or "softname" not in params:  # pylint: disable=magic-value-comparison
+            return
+        params["devid"] = util.decode(params["devid"])[:-1]
+        params["devpassword"] = util.decode(params["devpassword"])[2:]
