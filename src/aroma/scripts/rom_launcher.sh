@@ -23,6 +23,9 @@ if [ $? -eq 10 ] || [ "$line_count" -gt 1 ]; then
     cd $aroma_dir
     chmod -R +x .
     out=$(./init --launch "$1")
+    if echo "$out" | grep -q "AROMA EXITED"; then
+        exit 0
+    fi
     result="${out#*"AROMA LAUNCH RESULT: "}"
     launch_script=$(echo "$result" | jq -r '.launch')
     rom_file=$(echo "$result" | jq -r '.rom')
@@ -37,3 +40,4 @@ else
 fi
 
 [ -f "$rom_file" ] && [ -f "$launch_script" ] && "$launch_script" "$rom_file"
+exit 0
