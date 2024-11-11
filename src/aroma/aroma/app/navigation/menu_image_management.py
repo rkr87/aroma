@@ -37,10 +37,6 @@ class MenuImageManagement(MenuBase):
             ("SCRAPE_ON_REFRESH", self._scrape_on_refresh()),
         )
         self.content.add_section(
-            ("SCRAPE_MISSING", self._scrape_missing()),
-            ("SCRAPE_ON_REFRESH", self._scrape_on_refresh()),
-        )
-        self.content.add_section(
             ("SCRAPE_CPU_THREADS", self._scrape_cpu_threads()),
             ("SCRAPE_MEDIA_TYPE", self._scrape_media_type()),
             ("SCRAPE_REGION", self._scrape_region()),
