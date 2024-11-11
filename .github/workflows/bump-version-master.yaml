@@ -53,11 +53,12 @@ jobs:
         with:
           tag_name: ${{ steps.tag.outputs.release_tag }}
           files: aroma.zip
+          make_latest: true
 
       - name: Identify second most recent tag without "a"
         id: identify_tag
         run: |
-          SECOND_MOST_RECENT_TAG=$(git for-each-ref --sort=-creatordate --format '%(refname:short)' refs/tags | grep -v 'a' | sed -n '2p')
+          SECOND_MOST_RECENT_TAG=$(git for-each-ref --sort=-creatordate --format '%(refname:short)' refs/tags | grep -v 'a' | sed -n '3p')
           echo "SECOND_MOST_RECENT_TAG=$SECOND_MOST_RECENT_TAG" >> $GITHUB_ENV
           if [ -z "$SECOND_MOST_RECENT_TAG" ]; then
             echo "No second most recent tag found. Exiting."

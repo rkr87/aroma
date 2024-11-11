@@ -1,0 +1,40 @@
+name: 'Generate PreRelease - Dev'
+
+on:
+  workflow_dispatch:
+
+jobs:
+  generate-release:
+    permissions: write-all
+    name: 'Generate release on dev-branch'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 'Checkout source code'
+        uses: 'actions/checkout@v4'
+        with:
+          fetch-depth: 0
+          ref: 'develop'
+          ssh-key: ${{ secrets.DEPLOY_KEY }}
+
+      - name: Install python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install python dependencies
+        run: pip install commitizen
+
+      - name: Get Tag
+        id: tag
+        run: echo "release_tag=$(cz version --project)" >> $GITHUB_OUTPUT
+
+      - name: Create Assets
+        run: python generate_release.py --output "aroma_prerelease_${{ steps.tag.outputs.release_tag }}.zip"
+
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.tag.outputs.release_tag }}
+          files: "aroma_prerelease_${{ steps.tag.outputs.release_tag }}.zip"
+          prerelease: true

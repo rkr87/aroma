@@ -1,7 +1,7 @@
 ---
 name: Other
 about: Use this for any other issues/questions/requests.
-title: '[OTHER] ENTER TITLE'
+title: '[OTHER]: ENTER TITLE'
 labels: ['triage']
 assignees: ''
 
