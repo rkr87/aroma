@@ -61,6 +61,7 @@ class AromaApp(ClassSingleton):  # pylint: disable=too-many-instance-attributes
         self.running = False
         RomManager().cleanup()
         self.controller.cleanup()
+        print("AROMA EXITED", flush=True)  # noqa: T201
         ext_quit()
         SDL_Quit()
         sys.exit()
