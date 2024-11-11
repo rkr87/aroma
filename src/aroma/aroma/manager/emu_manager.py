@@ -12,13 +12,15 @@ from shared.tools import util
 _MODIFIED_FLAG = "## MODIFIED BY AROMA ##"
 
 _LAUNCH_MENU_SCRIPT = (
-    'aroma="/mnt/SDCARD/Apps/aroma/scripts/rom_launcher.sh"'
-    ' && [ -f "$aroma" ]'
-    ' && "$aroma" "$1" "$0"'
-    " && exit 0\n"
+    'aroma="/mnt/SDCARD/Apps/aroma/scripts/rom_launcher.sh" '
+    '&& [ -f "$aroma" ] && "$aroma" "$1" "$0" && exit 0 || :\n'
 )
 
 _REMOVE_LAUNCH_MENU_LIST = [
+    (
+        'aroma="/mnt/SDCARD/Apps/aroma/scripts/rom_launcher.sh"'
+        ' && [ -f "$aroma" ] && "$aroma" "$1" "$0" && exit 0\n'
+    ),
     '/mnt/SDCARD/Apps/aroma/scripts/rom_launcher.sh "$1" "$0" && exit 0\n',
     _LAUNCH_MENU_SCRIPT,
 ]
