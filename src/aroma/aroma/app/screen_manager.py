@@ -36,9 +36,7 @@ class ScreenManager(ClassSingleton):  # pylint: disable=too-many-instance-attrib
         self.sidepane = SidepaneRenderer(
             self.renderer, _SPLIT_PANE, _PADDING, _SPACING
         )
-        self.menu = MenuRenderer(
-            self.renderer, _SPLIT_PANE, _PADDING, _SPACING
-        )
+        self.menu = MenuRenderer(self.renderer, _PADDING, _SPACING)
         self._logger.info("Screen initialised")
 
     def render(
@@ -51,15 +49,15 @@ class ScreenManager(ClassSingleton):  # pylint: disable=too-many-instance-attrib
             self.renderer.clear(tuple_to_sdl_color(BG_COLOR))
             button_hint_start = self.button_hint.render()
             breadcrumb_height = self.breadcrumb.render(current.breadcrumbs)
-            self.menu.render(
-                current.menu,
-                breadcrumb_height + _SPACING,
-                _SPLIT_PANE - _SPACING,
-            )
-            self.sidepane.render(
+            trim_x = self.sidepane.render(
                 current.menu.content.side_pane,
                 breadcrumb_height + _SPACING,
                 button_hint_start - _SPACING,
+            )
+            self.menu.render(
+                current.menu,
+                breadcrumb_height + _SPACING,
+                trim_x,
             )
             WorkOverlayRenderer.render(self.renderer)
             KeyboardRenderer.render(
