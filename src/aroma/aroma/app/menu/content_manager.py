@@ -35,7 +35,7 @@ class ContentManager(ClassBase):
     def add_item(self, key: str, item: MenuItemBase) -> None:
         """Add a menu item to the list."""
         self._items[key] = item
-        self.select.state.total += 1
+        self.select.state.total = len(self._items)
         self._logger.debug("Added item %s to list", item)
 
     def add_section(self, *items: tuple[str, MenuItemBase]) -> None:
@@ -56,7 +56,7 @@ class ContentManager(ClassBase):
         """Remove a menu item by index."""
         if key in self._items:
             removed_item = self._items.pop(key)
-            self.select.state.total -= 1
+            self.select.state.total = len(self._items)
             self._logger.debug("Removed item %s from list", removed_item)
 
     def clear_items(self) -> None:
