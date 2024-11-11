@@ -2,6 +2,7 @@
 
 from collections import OrderedDict
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from app.menu.menu_base import MenuBase
 from app.menu.menu_item_single import MenuItemSingle
@@ -10,7 +11,10 @@ from app.navigation.menu_downloader_list import MenuDownloaderList
 from app.navigation.menu_stack import MenuStack
 from app.strings import Strings
 from data.source.emu_config_handler import EmuConfigHandler
-from shared.constants import DOWNLOADER_PATH
+from shared.constants import ARCHIVE_AUTH_CONFIG, DOWNLOADER_PATH
+
+if TYPE_CHECKING:
+    from app.menu.menu_item_base import MenuItemBase
 
 
 class MenuDownloader(MenuBase):
@@ -23,10 +27,13 @@ class MenuDownloader(MenuBase):
         super().__init__(Strings().downloader, OrderedDict())
 
     def _dynamic_menu_default_items(self) -> None:
-        self.content.add_section(
+        items: list[tuple[str, MenuItemBase]] = [
             ("ARCHIVE_USER_ID", self._archive_user()),
             ("ARCHIVE_PASSWORD", self._archive_password()),
-        )
+        ]
+        if ARCHIVE_AUTH_CONFIG.is_file():
+            items.append(("ARCHIVE_RESET", self._reset_auth()))
+        self.content.add_section(*items)
 
     def _archive_user(self) -> MenuItemSingle:
         """TODO."""
@@ -44,6 +51,22 @@ class MenuDownloader(MenuBase):
             Strings().archive_password,
             Strings().archive_password_desc,
             Strings().archive_password_prompt,
+        )
+
+    def _reset_auth(self) -> MenuItemSingle:
+        """TODO."""
+
+        def reset() -> None:
+            ARCHIVE_AUTH_CONFIG.unlink()
+            self.regenerate_dynamic_menu()
+
+        return MenuItemSingle(
+            Strings().archive_reset,
+            reset,
+            side_pane=SidePane(
+                Strings().archive_reset,
+                Strings().archive_reset_desc,
+            ),
         )
 
     def _build_dynamic_menu(

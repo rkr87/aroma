@@ -119,6 +119,8 @@ class Strings(JsonDataClass):  # pylint: disable=too-many-instance-attributes
     archive_password: str = ""
     archive_password_desc: list[str] = field(default_factory=list)
     archive_password_prompt: str = ""
+    archive_reset: str = ""
+    archive_reset_desc: list[str] = field(default_factory=list)
     refresh_roms: str = ""
     refresh_roms_desc: list[str] = field(default_factory=list)
     console_naming: str = ""
