@@ -5,6 +5,7 @@ import json
 import logging
 import re
 import shutil
+from base64 import b32decode, b64decode
 from collections.abc import Callable
 from contextlib import suppress
 from dataclasses import dataclass
@@ -319,3 +320,8 @@ def make_valid_path(path: Path | str) -> Path:
         for part in path.parts[1:]
     ]
     return Path(path.parts[0], *sanitized_parts)
+
+
+def decode(text: str) -> str:
+    """TODO."""
+    return b64decode(b32decode(text).decode()).decode()

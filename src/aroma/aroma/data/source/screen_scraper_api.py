@@ -20,8 +20,8 @@ class ScreenScraperAPI(HttpRequestHandler):
             params = {}
         params.update(
             {
-                "devid": "Schmurtz",
-                "devpassword": "KH0ocJ3xt5N",
+                "devid": "KUZE433CLBLHSZCIOB2AU===",
+                "devpassword": "KZEFMTCTIRBHMWJQN55GKSCRGFKGOPJ5BI======",
                 "softname": "crossmix",
                 "output": "json",
                 "romtype": "rom",
