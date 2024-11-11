@@ -11,86 +11,155 @@
     "inherit": "INHERIT",
     "update": "UPDATE",
     "update_desc": [
-        "Add description of options here"
+        "Apply the latest aROMa update.",
+        "",
+        "This will take a minute or two, aROMa will automatically restart on completion."
     ],
     "check_for_updates": "CHECK FOR UPDATES",
     "check_for_updates_desc": [
-        "Add description of options here"
+        "Automatically check for updates on app launch."
     ],
     "launch_app": "LAUNCH AROMA",
     "launch_app_desc": [
-        "Add description of options here"
+        "Launch currently installed version of aROMA.",
+        "",
+        "You will be prompted to update again on the next launch, you can disable this behaviour in the options menu."
     ],
     "applying_update": "APPLYING UPDATE...",
     "update_available": "AROMA UPDATE AVAILABLE",
     "import_from_collagen": "IMPORT FROM COLLAGEN",
     "import_from_collagen_desc": [
-        "Add description of options here"
+        "Convert CollaGen collections on your device to aROMa compatible collections.."
     ],
     "collagen_import_all": "IMPORT ALL",
     "collagen_import_all_desc": [
-        "Add description of options here"
+        "Import all CollaGen collections, maintaining all keywords and images."
     ],
     "collection_group_method_override": "GROUP METHOD",
-    "collections_group_method_override": "GROUP METHOD",
     "collection_group_method_override_desc": [
-        "Add description of options here"
+        "Set the grouping method for this collection.",
+        "",
+        "INHERIT: the collection will inherit from COLLECTION MANAGEMENT > GROUP METHOD.",
+        "CUSTOM: allow setting an override format for this collection."
     ],
+    "collections_group_method_override": "GROUP METHOD",
     "collections_group_method_override_desc": [
-        "Add description of options here"
+        "Set the default grouping method for all collections.",
+        "",
+        "",
+        "INHERIT: collections will inherit from ROM NAMING > NAME FORMAT.",
+        "CUSTOM: allow setting an override format for all collections."
     ],
     "create_all_template_collections": "CREATE ALL TEMPLATES",
     "create_all_template_collections_desc": [
-        "Add description of options here"
+        "Add collections for all aROMa templates.",
+        "",
+        "These can be edited after creation."
     ],
     "collection_management": "COLLECTION MANAGEMENT",
     "collection_management_desc": [
-        "Add description of options here"
+        "Options for managing device collections."
     ],
     "new_collection": "NEW COLLECTION",
     "new_collection_desc": [
-        "Add description of options here"
+        "Create a new collection."
     ],
     "collections_separated_systems_default": "SEPARATION BEHAVIOUR",
     "collections_separated_systems_default_desc": [
-        "Add description of options here"
+        "Set the default separation method for all collections.",
+        "",
+        "By default, CrossMix expects roms in a collection to be separated by system. aROMa can override this behaviour and collapse all roms into a single menu, regardless of system.",
+        "",
+        "SEPARATED:",
+        " - GBA > Pokemon - FireRedVersion",
+        " - GB > Pokemon - Red Version",
+        "",
+        "COLLAPSED:",
+        " - Pokemon - FireRedVersion",
+        " - Pokemon - Red Version",
+        "",
+        "This option can be over-ridden for each individual collection."
     ],
     "delete_all_collections": "DELETE ALL AROMA COLLECTIONS",
     "delete_all_collections_desc": [
-        "Add description of options here"
+        "Delete all aROMa collections.",
+        "",
+        "This option won't delete any collections that haven't been converted to aROMa collections.",
+        "",
+        "However, it will delete any non-aROMa shortcuts that exist within aROMa collections.",
+        "",
+        "Collections below will be deleted:"
     ],
     "refresh_all_collections": "REFRESH ALL AROMA COLLECTIONS",
     "refresh_all_collections_desc": [
-        "Add description of options here"
+        "Refresh all aROMa collections.",
+        "",
+        "This option won't make any changes to non-aROMa collections, nor will it affect any non-aROMa shortcuts that exist within aROMa collections.",
+        "",
+        "Collections below will be refreshed:"
     ],
     "separate_all_collections": "SEPARATE ALL AROMA COLLECTIONS",
     "separate_all_collections_desc": [
-        "Add description of options here"
+        "Apply system separation to all aROMa collections.",
+        "",
+        "EG:",
+        " - GBA > Pokemon - FireRedVersion",
+        " - GB > Pokemon - Red Version",
+        "",
+        "Non-aROMa shortcuts will be not be impacted by this change and will remain in their current directory.",
+        "",
+        "Collections below will be separated:"
     ],
     "collapse_all_collections": "COLLAPSE ALL AROMA COLLECTIONS",
     "collapse_all_collections_desc": [
-        "Add description of options here"
+        "Apply system collapsing to all aROMa collections.",
+        "",
+        "EG:",
+        " - Pokemon - FireRedVersion",
+        " - Pokemon - Red Version",
+        "",
+        "Non-aROMa shortcuts will be not be impacted by this change and will remain in their current directory.",
+        "",
+        "Collections below will be collapsed:"
     ],
     "separate_collection_systems": "SEPARATE SYSTEMS",
     "separate_collection_systems_desc": [
-        "Add description of options here"
+        "Apply system separation to this collection.",
+        "",
+        "EG:",
+        " - GBA > Pokemon - FireRedVersion",
+        " - GB > Pokemon - Red Version",
+        "",
+        "Non-aROMa shortcuts will be not be impacted by this change and will remain in their current directory."
     ],
     "delete_collection": "DELETE COLLECTION",
     "delete_collection_desc": [
-        "Add description of options here"
+        "Delete this collection.",
+        "",
+        "This will delete any non-aROMa shortcuts that exist within the collection."
     ],
     "rename_collection": "RENAME COLLECTION",
     "rename_collection_desc": [
-        "Add description of options here"
+        "Rename this collection.",
+        "",
+        "This job will fail if you enter a collection name that already exists."
     ],
     "refresh_collection": "REFRESH COLLECTION",
     "refresh_collection_desc": [
-        "Add description of options here"
+        "Refresh this collection.",
+        "",
+        "This action will not affect any non-aROMa shortcuts that exist within the collection."
     ],
     "rename_collection_prompt": "ENTER A NEW NAME (B TO CANCEL)",
     "collapse_collection_systems": "COLLAPSE SYSTEMS",
     "collapse_collection_systems_desc": [
-        "Add description of options here"
+        "Apply system collapsing to this collection.",
+        "",
+        "EG:",
+        " - Pokemon - FireRedVersion",
+        " - Pokemon - Red Version",
+        "",
+        "Non-aROMa shortcuts will be not be impacted by this change and will remain in their current directory."
     ],
     "_collection_description": [
         "Name: {label}",
@@ -99,72 +168,128 @@
     ],
     "custom_collection": "CUSTOM COLLECTION",
     "custom_collection_desc": [
-        "Add description of options here"
+        "Create a new custom collection with default art.",
+        "",
+        "You can apply custom art by navigating to the below directory on your SDCARD after creation;",
+        " - /Best/<COLLECTION NAME>"
     ],
     "custom_collection_prompt": "ENTER COLLECTION NAME",
     "collection_add_include_words": "ADD INCLUSION KEYWORD(S)",
     "collection_add_include_words_desc": [
-        "Add description of options here"
+        "Add inclusion keywords to this collection.",
+        "",
+        "A rom will be included in the collection if it contains any inclusion word and no exclusion words."
     ],
     "collection_include_words_prompt": "ENTER COLLECTION INCLUSION WORD (B TO EXIT)",
     "collection_add_exclude_words": "ADD EXCLUSION KEYWORD(S)",
     "collection_add_exclude_words_desc": [
-        "Add description of options here"
+        "Add exclusion keywords to this collection.",
+        "",
+        "A rom will be included in the collection if it contains any inclusion word and no exclusion words."
     ],
     "collection_exclude_words_prompt": "ENTER COLLECTION EXCLUSION WORD (B TO EXIT)",
     "collection_clear_include_words": "CLEAR INCLUSION KEYWORDS",
     "collection_clear_include_words_desc": [
-        "Add description of options here"
+        "Clear all inclusion keywords from this collection."
     ],
     "collection_clear_exclude_words": "CLEAR EXCLUSION KEYWORDS",
     "collection_clear_exclude_words_desc": [
-        "Add description of options here"
+        "Clear all exclusion keywords from this collection."
     ],
     "collection_remove_include_words": "REMOVE INCLUSION KEYWORD(S)",
     "collection_remove_include_words_desc": [
-        "Add description of options here"
+        "Remove inclusion keywords to this collection.",
+        "",
+        "A rom will be included in the collection if it contains any inclusion word and no exclusion words."
     ],
     "collection_remove_exclude_words": "REMOVE EXCLUSION KEYWORD(S)",
     "collection_remove_exclude_words_desc": [
-        "Add description of options here"
+        "Remove exclusion keywords to this collection.",
+        "",
+        "A rom will be included in the collection if it contains any inclusion word and no exclusion words."
     ],
     "rom_naming": "ROM NAMING",
     "rom_naming_desc": [
-        "Add description of options here"
+        "Options for customising the display of rom names in emulator menus."
     ],
     "downloader": "ARCHIVE.ORG DOWNLOADER",
     "downloader_desc": [
-        "Add description of options here"
+        "View and download files from archive.org.",
+        "",
+        "This functionality requires download lists to be provided within the following directory on your SDCARD;",
+        " - /Apps/aroma/resources/downloader",
+        "",
+        "Download lists should be separated by system. An example list for homebrew GBA games is provided.",
+        "",
+        "Please note that downloading and using ROM files for games you do not own is against copyright law in many countries and may be considered piracy. This app does not condone or support any illegal activity, including unauthorised downloads of copyrighted content.",
+        "",
+        "By using this app, you agree to download and use only legally acquired ROMs, such as those made from your own legally owned copies. Please respect the rights of game developers and copyright holders."
     ],
     "archive_user": "EMAIL",
     "archive_user_desc": [
-        "Add description of options here"
+        "Provide the email address of your archive.org user account.",
+        "",
+        "Some files on archive.org require a user account to download."
     ],
     "archive_user_prompt": "ENTER ARCHIVE.ORG EMAIL",
     "archive_password": "PASSWORD",
     "archive_password_desc": [
-        "Add description of options here"
+        "Provide the password of your archive.org user account.",
+        "",
+        "Some files on archive.org require a user account to download."
     ],
     "archive_password_prompt": "ENTER ARCHIVE.ORG PASSWORD",
     "refresh_roms": "REFRESH ROMS",
     "refresh_roms_desc": [
-        "Add description of options here"
+        "This functionality replaces the stock 'Refresh Roms' functionality which should not be used while using aROMa as it will revert any customisations you have made to rom naming.",
+        "",
+        "aROMa's refresh roms functionality can be accessed directly from the main Apps menu on your device to save time, you can also add additional functionality to the 'Refresh Roms' process, such as;",
+        " - Scrape missing images",
+        " - Delete broken images",
+        " - Refresh collections",
+        " - Clean emulators",
+        "",
+        "aROMa's refresh roms functionality is far quicker than the stock process, however, additional tasks included may cause a refresh to take much longer (eg scraping missing images).",
+        "",
+        "The first refresh will take a little longer than usual while aROMa builds its database."
     ],
     "console_naming": "CONSOLE ROM NAMING",
     "console_naming_desc": [
-        "Add description of options here"
+        "Set the method for determining console naming in emulator menus.",
+        "",
+        "aROMa can apply crc based checking to identify correct full names of console roms regardless of how the file is named on your device, select 'CUSTOM' to enable this functionality, otherwise, aROMa will use the file name to determine display names, as in stock.",
+        "",
+        "EG:",
+        "Filename: zelda.gba",
+        "crc32: 8e91cd13",
+        "aROMa Title: Legend of Zelda, The - A Link to the Past & Four Swords (USA)",
+        "",
+        "aROMa uses No-Intro and TOSEC to determine names, if a rom's crc doesn't exist in those databases aROMa will default to using filenames."
     ],
     "name_format": "NAME FORMAT",
     "name_format_desc": [
-        "Add description of options here"
+        "Apply a custom rom naming format, this format will determine how roms are displayed in Emu menus.",
+        "",
+        "A format code of '$n' will only display the rom's name;",
+        " - Pokemon - FireRed Version (USA, Europe) (Rev 1)",
+        "Becomes;",
+        " - Pokemon - FireRed Version",
+        "",
+        "Available codes:"
     ],
     "collection_custom_group_method": "CUSTOM FORMAT",
     "collection_custom_group_method_desc": [
-        "Add description of options here"
+        "Set the grouping method for this collection.",
+        "",
+        "When multiple roms share the same name based on this group method, they will be grouped into a single shortcut. When accessed, a grouped shortcut will open the rom launch menu by default to allow rom selection."
     ],
     "collections_custom_group_method": "CUSTOM FORMAT",
     "collections_custom_group_method_desc": [
-        "Add description of options here"
+        "Set the default grouping method for all collections.",
+        "",
+        "When multiple roms share the same name based on this group method, they will be grouped into a single shortcut. When accessed, a grouped shortcut will open the rom launch menu by default to allow rom selection.",
+        "",
+        "This option can be over-ridden for each individual collection."
     ],
     "name_format_prompt": "ENTER NAME FORMAT",
     "group_method_prompt": "ENTER GROUP METHOD FORMAT",
@@ -179,15 +304,17 @@
     "naming_additional_desc": "ADDITIONAL",
     "options": "OPTIONS",
     "options_desc": [
-        "Add description of options here"
+        "Options for configuring aROMa."
     ],
     "language": "LANGUAGE",
     "language_desc": [
-        "Add description of options here"
+        "Choose a language."
     ],
     "logging_level": "LOGGING LEVEL",
     "logging_desc": [
-        "Add description of options here"
+        "Set the logging level.",
+        "",
+        "Unless you're experiencing issues for which you require support, you probably don't need to change this."
     ],
     "logging_debug": "DEBUG",
     "logging_info": "INFO",
@@ -195,84 +322,127 @@
     "logging_error": "ERROR",
     "emu_management": "EMU MANAGEMENT",
     "emu_management_desc": [
-        "Add description of options here"
+        "Options for managing emulator settings."
     ],
     "clean_emus": "CLEAN EMUS",
     "clean_emus_desc": [
-        "Add description of options here"
+        "Cleans emulators displayed on your device to only those for which you have roms installed.",
+        "",
+        "This functionality replaces the CrossMix 'EmuCleaner' app, it is both faster than the CrossMix solution and can be set to automatically run when using aROMa's 'Refresh Roms' functionality."
     ],
     "add_launch_menus": "ADD LAUNCH MENUS",
     "add_launch_menus_desc": [
-        "Add description of options here"
+        "Add aROMa Rom Launch menus to all emulators.",
+        "",
+        "aROMa includes a custom rom launch menu where rom specific settings can be accessed, however, this needs to be enabled for each emulator individually.",
+        "",
+        "Once added, the aROMa Rom Launch menu can be accessed by holding the 'R' (right bumper) button when launching a rom.",
+        "",
+        "Additional functionality is coming, including;",
+        " - Setting a rom specific default core",
+        " - Setting a rom specific name format or name override",
+        "",
+        "This process may need to be performed again following a CrossMix update."
     ],
     "remove_launch_menus": "REMOVE LAUNCH MENUS",
     "remove_launch_menus_desc": [
-        "Add description of options here"
+        "Remove aROMa Rom Launch menus from all emulators."
     ],
     "restore_launch_scripts": "RESTORE FROM BACKUP",
     "restore_launch_scripts_desc": [
-        "Add description of options here"
+        "Restore emulator scripts from backup for all emulators.",
+        "",
+        "To be extra cautious, aROMa create a backup of all emulator scripts before adding launch menus.",
+        "",
+        "This feature shouldn't ever be required, but if needed, it will restore un-modified CrossMix emulator launch scripts."
     ],
     "default_emu": "DEFAULT EMU",
     "default_emu_desc": [
-        "Add description of options here"
+        "Set the default emulator to use when launching roms for this system."
     ],
     "clean_emus_refresh": "CLEAN EMUS ON REFRESH",
     "clean_emus_refresh_desc": [
-        "Add description of options here"
+        "Whether or not to perform the 'EmuClean' functionality when running aROMa's 'Refresh Roms' process."
     ],
     "refresh_collections_refresh": "REFRESH ALL ON REFRESH",
     "refresh_collections_refresh_desc": [
-        "Add description of options here"
+        "Whether or not to refresh aROMa collections when running aROMa's 'Refresh Roms' process."
     ],
     "image_management": "IMAGE MANAGEMENT",
     "image_management_desc": [
-        "Add description of options here"
+        "Options for managing image scraping."
     ],
     "remove_broken": "DELETE BROKEN IMAGES",
     "remove_broken_desc": [
-        "Add description of options here"
+        "This option can restore storage space by deleting any images on your device that don't have a linked rom.",
+        "",
+        "EG: If you have scraped images and then deleted roms from your device, the images associated with those roms will still be on your device. This process will delete them."
     ],
     "remove_broken_refresh": "DELETE BROKEN ON REFRESH",
     "remove_broken_refresh_desc": [
-        "Add description of options here"
+        "Whether or not to delete broken images when running aROMa's 'Refresh Roms' process."
     ],
     "scrape_missing": "SCRAPE MISSING IMAGES",
     "scrape_missing_desc": [
-        "Add description of options here"
+        "This option will scrape all missing images for roms on your device.",
+        "",
+        "It replaces the functionality of CrossMix's 'Scraper' app, it is far quicker than the standard CrossMix solution as it is asyncronous and multi-threaded. It will also scrape all systems automatically."
     ],
     "scrape_missing_refresh": "SCRAPE MISSING ON REFRESH",
     "scrape_missing_refresh_desc": [
-        "Add description of options here"
+        "Whether or not to scrape missing images when running aROMa's 'Refresh Roms' process."
     ],
     "scrape_days_to_retry": "RESCRAPE ATTEMPT",
     "scrape_days_to_retry_desc": [
-        "Add description of options here"
+        "When aROMa fails to find a matching images for a rom, it will be added to a list for rescraping.",
+        "",
+        "This setting determines how long aROMa should wait before trying to scrape that rom again.",
+        "",
+        "Roms with missing images: "
     ],
     "scrape_days_to_retry_never": "NEVER",
     "scrape_days_to_retry_always": "ALWAYS",
     "scrape_days_to_retry_days": "DAYS",
     "scrape_media_type": "MEDIA TYPE",
     "scrape_media_type_desc": [
-        "Add description of options here"
+        "Select the media type to be downloaded."
     ],
     "scrape_max_cpu_threads": "MAX CPU THREADS",
     "scrape_max_cpu_threads_desc": [
-        "Add description of options here"
+        "Set the number of threads to use for scraping.",
+        "",
+        "0 to allow aROMa to determine a limit."
     ],
     "scrape_user": "USERNAME",
     "scrape_user_desc": [
-        "Add description of options here"
+        "Provide the username of your ScreenScraper.fr user account.",
+        "",
+        "ScreenScraper limits both the download speed and the max daily downloads for scraping attempts without a user account.",
+        "",
+        "Create an account to both download images faster and have a personal limit of 20,000 downloads per day."
     ],
     "scrape_user_prompt": "ENTER SCREENSCRAPER.FR USERNAME",
     "scrape_password": "PASSWORD",
     "scrape_password_desc": [
-        "Add description of options here"
+        "Provide the password of your ScreenScraper.fr user account.",
+        "",
+        "ScreenScraper limits both the download speed and the max daily downloads for scraping attempts without a user account.",
+        "",
+        "Create an account to both download images faster and have a personal limit of 20,000 downloads per day."
     ],
     "scrape_password_prompt": "ENTER SCREENSCRAPER.FR PASSWORD",
     "scrape_preferred_region": "REGION",
     "scrape_preferred_region_desc": [
-        "Add description of options here"
+        "Enter your preferred image for media downloads.",
+        "",
+        "An automatic fallback is in place for all regions to maximise the likelihood of finding a relevant image.",
+        "EG, selecting USA in priority order:",
+        " - USA",
+        " - American continent",
+        " - World",
+        " - United Kingdom",
+        " - Europe",
+        " - Other"
     ],
     "scrape_region_ae": "United Arab Emirates",
     "scrape_region_afr": "African continent",
@@ -326,23 +496,38 @@
     "cpu_governor_interactive": "INTERACTIVE",
     "cpu_governor": "CPU GOVERNOR",
     "cpu_governor_desc": [
-        "Add description of options here"
+        "Recommended:",
+        "ondemand: Dynamically adjusts frequency based on demand with a performance bias.",
+        "conservative: Similar to 'ondemand' but with a power-saving bias.",
+        "",
+        "More Details: https://github.com/guiopen/tsp-optimization"
     ],
     "cpu_min_frequency": "CPU MIN FREQUENCY",
     "cpu_min_frequency_desc": [
-        "Add description of options here"
+        "Set the minimum CPU frequency.",
+        "",
+        "Minimum and maximum frequency limits dictate the allowable range for the CPU frequency. For instance, setting a minimum of 800MHz and a maximum of 1800MHz allows the CPU to operate at any frequency within that range. However, the actual frequency selection is determined by the governor."
     ],
     "cpu_max_frequency": "CPU MAX FREQUENCY",
     "cpu_max_frequency_desc": [
-        "Add description of options here"
+        "Set the maximum CPU frequency.",
+        "",
+        "Minimum and maximum frequency limits dictate the allowable range for the CPU frequency. For instance, setting a minimum of 800MHz and a maximum of 1800MHz allows the CPU to operate at any frequency within that range. However, the actual frequency selection is determined by the governor."
     ],
     "cpu_cores": "ACTIVE CPU CORES",
     "cpu_cores_desc": [
-        "Add description of options here"
+        "Set the number of active CPU cores for this emulator.",
+        "",
+        "This should almost always be set to four."
     ],
     "cpu_profile": "CPU PROFILE",
     "cpu_profile_desc": [
-        "Add description of options here"
+        "Select a CPU Profile to use when launching this emulator.",
+        "",
+        "SMART: A modified conservative governor that checks CPU load 2.5 times per second and scales up or down in response) (credit to rymsar from the spruce team).",
+        "BALANCED: Balances performance with power-saving.",
+        "POWERSAVE: Prioritises power saving at the expense of performance.",
+        "PERFORMANCE: Prioritises performance at the expense of battery."
     ],
     "cpu_profile_balanced": "BALANCED",
     "cpu_profile_powersave": "POWERSAVE",
