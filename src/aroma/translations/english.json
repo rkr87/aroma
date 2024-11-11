@@ -239,6 +239,10 @@
         "Some files on archive.org require a user account to download."
     ],
     "archive_password_prompt": "ENTER ARCHIVE.ORG PASSWORD",
+    "archive_reset": "RESET ARCHIVE.ORG COOKIES",
+    "archive_reset_desc": [
+        "Reset stored archive.org authentication, useful after manually resetting password or changing user account credentials."
+    ],
     "refresh_roms": "REFRESH ROMS",
     "refresh_roms_desc": [
         "This functionality replaces the stock 'Refresh Roms' functionality which should not be used while using aROMa as it will revert any customisations you have made to rom naming.",
