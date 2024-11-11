@@ -20,22 +20,19 @@ from shared.tools.util import tuple_to_sdl_color
 class MenuRenderer(ClassSingleton):
     """TODO."""
 
-    def __init__(
-        self, renderer: Renderer, x_end: int, padding: int, spacing: int
-    ) -> None:
+    def __init__(self, renderer: Renderer, padding: int, spacing: int) -> None:
         super().__init__()
         self.renderer = renderer
-        self.x_end = x_end
         self.padding = padding
         self.spacing = spacing
 
-    def _draw_menu_separator(self, y: int) -> None:
+    def _draw_menu_separator(self, y: int, width: int) -> None:
         """TODO."""
         # pylint: disable=duplicate-code
         SDLHelpers.draw_line(
             self.renderer,
             tuple_to_sdl_color(SECONDARY_COLOR),
-            (0, self.x_end),
+            (0, width),
             (y, y),
         )
         # pylint: enable=duplicate-code
@@ -48,9 +45,11 @@ class MenuRenderer(ClassSingleton):
                 y: int = i * (surfaces[0].h + self.spacing) + y_start
                 if item.bottom_separator:
                     self._draw_menu_separator(
-                        y + surfaces[0].h + self.spacing // 2
+                        y + surfaces[0].h + self.spacing // 2, max_width
                     )
-                self._render_item(surfaces[0], surfaces[1], surfaces[2], y)
+                self._render_item(
+                    surfaces[0], surfaces[1], surfaces[2], y, max_width
+                )
 
         self._logger.debug("Rendered menu items")
 
@@ -86,12 +85,13 @@ class MenuRenderer(ClassSingleton):
             return pfx_surface, select_surface, chevron_surface
         return None, None, None
 
-    def _render_item(
+    def _render_item(  # pylint: disable=too-many-positional-arguments
         self,
         text_surface: SDL_Surface,
         multi_val: SDL_Surface | None,
         chevron: SDL_Surface | None,
         y: int,
+        width: int,
     ) -> None:
         """Render the item and its associated surfaces."""
         txt_width = text_surface.w
@@ -112,7 +112,7 @@ class MenuRenderer(ClassSingleton):
             SDLHelpers.render_surface(
                 self.renderer,
                 chevron,
-                self.x_end - chevron.w - self.spacing,
+                width - chevron.w - self.spacing,
                 y,
             )
         self._logger.debug("Rendered item at y-offset %d", y)
