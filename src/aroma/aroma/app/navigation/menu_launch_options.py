@@ -107,6 +107,7 @@ class MenuLaunchOptions(MenuBase):
         self._selected_emu = str(EMU_PATH / system / config.launch)
 
         if len(config.launchlist) <= 1:
+            self.content.remove_item("EMU_SELECTOR")
             return
         actions: list[MenuAction] = []
         current = 0
