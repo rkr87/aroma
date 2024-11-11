@@ -12,7 +12,7 @@ _REPO_PATH = "rkr87/aroma/releases/latest"
 _LATEST_RELEASE = f"https://api.github.com/repos/{_REPO_PATH}"
 _ASSET = f"https://github.com/{_REPO_PATH}/download/aroma.zip"
 
-VERSION = "0.4.0a3"
+VERSION = "0.4.0a4"
 
 
 class Updater(ClassSingleton):
