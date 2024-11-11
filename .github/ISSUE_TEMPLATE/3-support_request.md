@@ -1,7 +1,7 @@
 ---
 name: Support
 about: Request support
-title: '[SUPPORT] ENTER TITLE'
+title: '[SUPPORT]: ENTER TITLE'
 labels: ['help wanted', 'triage']
 assignees: ''
 
